@@ -1,132 +1,67 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, Square, Bed, Bath, ArrowRight } from "lucide-react";
-
-interface FloorPlan {
-  id: string;
-  name: string;
-  area: string;
-  bedrooms: number;
-  bathrooms: number;
-  spaces: string[];
-  svgPath: React.ReactNode;
-}
-
-const FLOOR_PLANS: FloorPlan[] = [
-  {
-    id: "ground",
-    name: "01 / Ground Level",
-    area: "5,400 SQ FT",
-    bedrooms: 1,
-    bathrooms: 2,
-    spaces: ["Grand Foyer", "Living Lounge", "Chef's Kitchen", "Dining Lounge", "Infinity Mirror Pool", "Thermal Spa Suite"],
-    svgPath: (
-      <g stroke="#C5A880" strokeWidth="1" fill="none">
-        {/* Exterior walls */}
-        <rect x="50" y="50" width="400" height="250" strokeWidth="2" />
-        {/* Pool outline */}
-        <rect x="250" y="200" width="180" height="80" strokeDasharray="3,3" strokeWidth="1.5" />
-        <text x="340" y="245" fill="#C5A880" fontSize="10" fontFamily="monospace" letterSpacing="2">INFINITY POOL</text>
-        {/* Room partitions */}
-        <line x1="180" y1="50" x2="180" y2="300" />
-        <line x1="50" y1="180" x2="180" y2="180" />
-        <line x1="300" y1="50" x2="300" y2="200" />
-        {/* Labels */}
-        <text x="80" y="110" fill="#fff" fontSize="12" fontFamily="serif">Chef's Kitchen</text>
-        <text x="80" y="240" fill="#fff" fontSize="12" fontFamily="serif">Grand Foyer</text>
-        <text x="210" y="110" fill="#fff" fontSize="12" fontFamily="serif">Living Lounge</text>
-        <text x="330" y="110" fill="#fff" fontSize="12" fontFamily="serif">Dining Lounge</text>
-        {/* Core pillar indicators */}
-        <circle cx="180" cy="180" r="4" fill="#C5A880" />
-        <circle cx="300" cy="180" r="4" fill="#C5A880" />
-      </g>
-    )
-  },
-  {
-    id: "upper",
-    name: "02 / First Level",
-    area: "4,600 SQ FT",
-    bedrooms: 4,
-    bathrooms: 4,
-    spaces: ["Master Suite V", "VIP Guest Suite", "Double En-Suite 03", "Double En-Suite 04", "Night Lounge", "Library & Study"],
-    svgPath: (
-      <g stroke="#C5A880" strokeWidth="1" fill="none">
-        {/* Exterior walls */}
-        <rect x="50" y="50" width="400" height="250" strokeWidth="2" />
-        {/* Room partitions */}
-        <line x1="250" y1="50" x2="250" y2="300" />
-        <line x1="50" y1="170" x2="450" y2="170" />
-        <line x1="150" y1="170" x2="150" y2="300" />
-        <line x1="350" y1="170" x2="350" y2="300" />
-        {/* Labels */}
-        <text x="110" y="110" fill="#fff" fontSize="12" fontFamily="serif">Master Suite V</text>
-        <text x="300" y="110" fill="#fff" fontSize="12" fontFamily="serif">Night Lounge</text>
-        <text x="90" y="240" fill="#fff" fontSize="12" fontFamily="serif">Guest Suite VIP</text>
-        <text x="190" y="240" fill="#fff" fontSize="12" fontFamily="serif">Suite 03</text>
-        <text x="290" y="240" fill="#fff" fontSize="12" fontFamily="serif">Suite 04</text>
-        <text x="380" y="240" fill="#fff" fontSize="12" fontFamily="serif">Study</text>
-        {/* Structural cross overlays */}
-        <line x1="50" y1="50" x2="80" y2="80" opacity="0.3" />
-        <line x1="450" y1="50" x2="420" y2="80" opacity="0.3" />
-      </g>
-    )
-  },
-  {
-    id: "rooftop",
-    name: "03 / Rooftop Oasis",
-    area: "2,400 SQ FT",
-    bedrooms: 0,
-    bathrooms: 1,
-    spaces: ["Sunset Firepit", "Outdoor Kitchen & Bar", "Jacuzzi Deck", "Observatory Platform", "Solarium Lounge"],
-    svgPath: (
-      <g stroke="#C5A880" strokeWidth="1" fill="none">
-        {/* Exterior walls */}
-        <rect x="50" y="50" width="400" height="250" strokeWidth="2" strokeDasharray="6,4" />
-        {/* Center observatory */}
-        <circle cx="250" cy="175" r="50" strokeWidth="1.5" />
-        <circle cx="250" cy="175" r="10" strokeDasharray="2,2" />
-        {/* Firepit deck */}
-        <rect x="90" y="100" width="70" height="150" />
-        <circle cx="125" cy="175" r="15" />
-        {/* Hot tub deck */}
-        <rect x="340" y="100" width="70" height="150" />
-        <circle cx="375" cy="175" r="20" strokeDasharray="3,3" />
-        {/* Labels */}
-        <text x="100" y="85" fill="#fff" fontSize="11" fontFamily="serif">Sunset Firepit</text>
-        <text x="345" y="85" fill="#fff" fontSize="11" fontFamily="serif">Jacuzzi Deck</text>
-        <text x="205" y="250" fill="#fff" fontSize="11" fontFamily="serif">Outdoor Sky Bar</text>
-        <text x="215" y="110" fill="#fff" fontSize="11" fontFamily="serif">Observatory</text>
-      </g>
-    )
-  }
-];
 
 export default function FloorPlans() {
-  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  const [activeLevel, setActiveLevel] = useState(0);
 
-  const plan = FLOOR_PLANS[selectedPlanIndex];
+  const levels = [
+    {
+      id: "ground",
+      name: "Ground Level",
+      desc: "Open spaces designed for effortless entertaining.",
+      highlights: ["Infinity Pool", "Chef's Kitchen", "Grand Living Area"],
+      imageSrc: "/images/pool.webp"
+    },
+    {
+      id: "first",
+      name: "First Floor",
+      desc: "Private retreats crafted with ultimate comfort.",
+      highlights: ["Master Suite", "Walk-in Closet", "Private Lounge"],
+      imageSrc: "/images/bedroom.webp"
+    },
+    {
+      id: "sky",
+      name: "Sky Terrace",
+      desc: "Elevated outdoor living above the clouds.",
+      highlights: ["Rooftop Lounge", "Fire Pit", "Sky Pool"],
+      imageSrc: "/images/terrace.webp"
+    }
+  ];
+
+  const currentLevel = levels[activeLevel];
+
+  const stats = [
+    { value: "12,400 SQ FT", label: "Crafted Interior" },
+    { value: "Panoramic Views", label: "Every Room" },
+    { value: "Private Living", label: "Absolute Comfort" }
+  ];
 
   return (
-    <section id="floor-plans" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
-      <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+    <section 
+      id="floor-plans" 
+      className="relative py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-hidden select-none"
+    >
+      {/* Subtle Architectural Grid Texture (Almost invisible) */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
         
-        {/* Header */}
-        <div className="max-w-3xl mb-16 md:mb-24 flex flex-col gap-4">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16 lg:mb-24 flex flex-col">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
-              The Geometry
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
+              THE RESIDENCE
             </span>
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight mt-2">
-              Spatial Architecture
+            <h2 className="text-[38px] sm:text-[46px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6">
+              Explore{"\n"}Every Level
             </h2>
           </motion.div>
           <motion.p
@@ -134,123 +69,136 @@ export default function FloorPlans() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm text-white/55 tracking-wider font-light"
+            className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[520px]"
           >
-            Explore the calculated dimensions and room layouts across three levels of luxury.
+            Experience thoughtfully crafted spaces designed for extraordinary living.
           </motion.p>
         </div>
 
-        {/* Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Two-Column Tour Layout (Left 40%, Right 60%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center">
           
-          {/* Left Column: Floor plan selectors & specs */}
-          <div className="lg:col-span-4 flex flex-col gap-8">
-            <div className="flex flex-col gap-3">
-              {FLOOR_PLANS.map((item, index) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedPlanIndex(index)}
-                  className={`text-left p-5 border cursor-pointer transition-all duration-500 uppercase tracking-widest text-xs flex justify-between items-center ${
-                    selectedPlanIndex === index
-                      ? "bg-gold text-[#0A0A0A] border-gold font-semibold"
-                      : "bg-transparent text-white/70 border-white/10 hover:border-gold/30"
-                  }`}
-                >
-                  {item.name}
-                  <ArrowRight className={`w-4 h-4 transition-transform ${selectedPlanIndex === index ? "translate-x-0" : "-translate-x-2 opacity-0"}`} />
-                </button>
-              ))}
+          {/* COLUMN 1: Editorial Navigation & Highlight bullets (Responsive Order 2 on Mobile) */}
+          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
+            
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-6 block">
+              LEVELS
+            </span>
+
+            {/* Horizontal scroll chips on Mobile, Vertical tab list on Desktop */}
+            <div 
+              role="tablist"
+              aria-label="Residence levels tour selector"
+              className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 gap-3 lg:gap-0 border-b lg:border-b-0 border-white/5 whitespace-nowrap lg:whitespace-normal scrollbar-none"
+            >
+              {levels.map((item, idx) => {
+                const isActive = activeLevel === idx;
+                return (
+                  <button
+                    key={item.id}
+                    role="tab"
+                    aria-selected={isActive}
+                    tabIndex={0}
+                    onClick={() => setActiveLevel(idx)}
+                    className={`text-left py-3 lg:py-4 lg:border-b transition-all duration-300 relative text-[13px] sm:text-[14px] tracking-[0.14em] font-medium uppercase cursor-pointer focus-visible:outline-none flex justify-between items-center rounded-full lg:rounded-none px-5 lg:px-0 border lg:border-x-0 lg:border-t-0 ${
+                      isActive 
+                        ? "text-[#C8A96A] border-[#C8A96A] bg-[#C8A96A]/5 lg:bg-transparent" 
+                        : "text-[#F6F3EB]/60 border-white/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 bg-transparent"
+                    }`}
+                  >
+                    <span>{item.name}</span>
+                    <span className="hidden lg:inline text-[#C8A96A] text-xs transition-transform duration-300">
+                      {isActive ? "▼" : "→"}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Spec details of selected plan */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.5 }}
-                className="glass p-6 md:p-8 flex flex-col gap-6"
-              >
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">Area</span>
-                  <div className="flex items-center gap-2 text-gold">
-                    <Square className="w-4 h-4" />
-                    <span className="text-sm font-semibold tracking-widest font-mono">{plan.area}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 border-b border-white/10 pb-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase">Bedrooms</span>
-                    <div className="flex items-center gap-2 text-white/80">
-                      <Bed className="w-4 h-4 text-gold-light" />
-                      <span className="text-sm font-medium font-mono">{plan.bedrooms}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-mono tracking-wider text-white/50 uppercase">Bathrooms</span>
-                    <div className="flex items-center gap-2 text-white/80">
-                      <Bath className="w-4 h-4 text-gold-light" />
-                      <span className="text-sm font-medium font-mono">{plan.bathrooms}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <span className="text-[10px] font-mono tracking-wider text-white/50 uppercase">Featured Spaces</span>
-                  <ul className="grid grid-cols-2 gap-y-2 gap-x-4">
-                    {plan.spaces.map((space) => (
-                      <li key={space} className="text-xs text-white/70 font-light tracking-wide flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-gold" />
-                        {space}
+            {/* Level Content Info Stagger Box */}
+            <div className="min-h-[180px] flex flex-col">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentLevel.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
+                  className="flex flex-col gap-6 mt-10"
+                >
+                  <h4 className="font-serif text-[#F6F3EB] text-[22px] sm:text-[26px] font-light leading-tight">
+                    {currentLevel.desc}
+                  </h4>
+                  
+                  <ul className="flex flex-col gap-3">
+                    {currentLevel.highlights.map((highlight) => (
+                      <li 
+                        key={highlight} 
+                        className="text-[#B8B8B8] text-[15px] sm:text-[16px] flex items-center gap-3 font-normal"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C8A96A]" />
+                        <span>{highlight}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
           </div>
 
-          {/* Right Column: Interactive Blueprint Render */}
-          <div className="lg:col-span-8">
-            <div className="relative aspect-[16/11] w-full border border-gold/15 glass-light p-6 flex flex-col justify-between">
+          {/* COLUMN 2: Large Cinematic Showcase Container (Responsive Order 1 on Mobile) */}
+          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 flex flex-col">
+            
+            <div className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[5/4] w-full overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
               
-              {/* Compass symbol HUD overlay */}
-              <div className="absolute top-6 right-6 font-mono text-[9px] text-white/35 flex items-center gap-2">
-                <Compass className="w-6 h-6 stroke-[1] text-gold animate-spin" style={{ animationDuration: "12s" }} />
-                <span>ORIENTATION: TRUE NORTH</span>
-              </div>
+              {/* Internal Bezel Decoration */}
+              <div className="absolute inset-0 border border-white/5 rounded-[24px] z-10 pointer-events-none" />
 
-              {/* Grid overlay */}
-              <div className="absolute inset-0 grid-overlay opacity-30 pointer-events-none" />
+              {/* Crossfade Image Frame (Slow Ken Burns zoom effect) */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentLevel.id}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1.05 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ 
+                    opacity: { duration: 0.7 },
+                    scale: { duration: 15, ease: "linear" }
+                  }}
+                  className="absolute inset-0 w-full h-full"
+                >
+                  <Image
+                    src={currentLevel.imageSrc}
+                    alt={currentLevel.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    className="object-cover filter brightness-95"
+                    priority
+                  />
+                </motion.div>
+              </AnimatePresence>
 
-              {/* Interactive blueprint SVG display */}
-              <div className="w-full h-full flex items-center justify-center p-4">
-                <AnimatePresence mode="wait">
-                  <motion.svg
-                    key={plan.id}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.6 }}
-                    viewBox="0 0 500 350"
-                    className="w-full h-full max-h-[400px]"
-                  >
-                    {plan.svgPath}
-                  </motion.svg>
-                </AnimatePresence>
-              </div>
-
-              {/* Footer specs HUD */}
-              <div className="flex justify-between font-mono text-[9px] text-[#444] border-t border-white/5 pt-4">
-                <div>SYSTEMS CHECK: BIOMETRICS ACTIVE</div>
-                <div>SCHEMATIC: LEVEL_{plan.id.toUpperCase()}_v1.12</div>
-              </div>
             </div>
+
           </div>
 
         </div>
+
+        {/* BOTTOM AREA: Editorial Luxury Highlights Block */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 pt-12 border-t border-white/10 mt-20 lg:mt-28">
+          {stats.map((stat) => (
+            <div key={stat.label} className="flex flex-col select-none">
+              <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
+                {stat.value}
+              </span>
+              <span className="font-sans text-[10px] tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
