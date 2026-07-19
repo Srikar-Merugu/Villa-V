@@ -125,8 +125,8 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
         const diff = targetTime - currentTimeRef.current;
         currentTimeRef.current += diff * 0.07;
 
-        // Prevent micro-adjustments that can cause visual jitter
-        if (Math.abs(diff) > 0.002) {
+        // Prevent micro-adjustments and check seeking state (crucial for mobile hardware decoders)
+        if (Math.abs(diff) > 0.002 && !video.seeking) {
           video.currentTime = currentTimeRef.current;
         }
       }
@@ -140,6 +140,36 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       cancelAnimationFrame(rAFId);
     };
   }, []);
+
+  // Unlock video playback on mobile devices (iOS / Android) by triggering a temporary play/pause
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const unlockVideo = () => {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            video.pause();
+            // Ensure first frame is loaded
+            video.currentTime = 0;
+          })
+          .catch((err) => {
+            console.warn("Mobile video decoder unlock prevented:", err);
+          });
+      }
+    };
+
+    video.addEventListener("loadedmetadata", unlockVideo);
+    if (video.readyState >= 1) {
+      unlockVideo();
+    }
+
+    return () => {
+      video.removeEventListener("loadedmetadata", unlockVideo);
+    };
+  }, [videoUrl]);
 
   // Handle CTA Smooth Scroll to contact form
   const handleScrollToContact = () => {
@@ -172,6 +202,8 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           preload="auto"
           muted
           playsInline
+          webkit-playsinline="true"
+          x5-playsinline="true"
           className="absolute inset-0 w-full h-full object-cover filter brightness-[0.7] contrast-[1.05]"
           style={{ willChange: "transform" }}
         />
