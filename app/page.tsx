@@ -16,6 +16,7 @@ const Location = dynamic(() => import("../components/Location"));
 const Testimonials = dynamic(() => import("../components/Testimonials"));
 const FAQ = dynamic(() => import("../components/FAQ"));
 const Contact = dynamic(() => import("../components/Contact"));
+const Footer = dynamic(() => import("../components/Footer"));
 
 // Reusable luxury inline Call-to-Action block (Conversion Optimization)
 function CallToActionBlock() {
@@ -126,6 +127,7 @@ export default function Home() {
 
         <FAQ />
         <Contact />
+        <Footer />
       </main>
 
       {/* Sticky Mobile CTA Overlay */}

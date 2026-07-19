@@ -327,47 +327,6 @@ export default function Contact() {
           </div>
 
         </div>
-
-        {/* Centered Footer Logo */}
-        <div className="w-full flex flex-col items-center justify-center mb-10 select-none opacity-60 hover:opacity-100 transition-opacity duration-500">
-          <img
-            src="/shield_icon.png"
-            alt=""
-            className="h-10 md:h-12 w-auto object-contain mb-3 select-none pointer-events-none"
-          />
-          <span className="text-[9px] tracking-[0.25em] uppercase text-[#C8A96A] font-sans font-medium mb-1">
-            timeless, calm luxury
-          </span>
-          <span className="text-lg md:text-xl font-serif tracking-[0.1em] text-[#F6F3EB] leading-none font-normal">
-            Villa Sérénité
-          </span>
-        </div>
-
-        {/* Global Footer (Trust pages & copyrights) */}
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-mono tracking-[0.2em] text-[#444] select-none">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            VILLA SÉRÉNITÉ CONCIERGE SECURE CHANNEL ENABLED
-          </div>
-          
-          {/* Trust Policies Links */}
-          <div className="flex flex-wrap justify-center gap-6">
-            <Link href="/privacy" className="hover:text-gold transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-gold transition-colors">
-              Terms
-            </Link>
-            <Link href="/cookies" className="hover:text-gold transition-colors">
-              Cookies
-            </Link>
-            <Link href="/disclaimer" className="hover:text-gold transition-colors">
-              Disclaimer
-            </Link>
-          </div>
-
-          <div>© 2026 VILLA SÉRÉNITÉ RESIDENCES. ALL RIGHTS RESERVED.</div>
-        </div>
       </div>
     </section>
   );
