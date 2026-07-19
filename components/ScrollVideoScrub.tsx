@@ -7,6 +7,42 @@ interface ScrollVideoScrubProps {
   videoUrl: string;
 }
 
+interface SceneContent {
+  serifTitle: string;
+  scriptTitle: string;
+}
+
+const SCENES: SceneContent[] = [
+  {
+    serifTitle: "VILLA V",
+    scriptTitle: "Elegance"
+  },
+  {
+    serifTitle: "EVERY MASTERPIECE",
+    scriptTitle: "Begins"
+  },
+  {
+    serifTitle: "PRECISION",
+    scriptTitle: "Matters"
+  },
+  {
+    serifTitle: "TIMELESS",
+    scriptTitle: "Luxury"
+  },
+  {
+    serifTitle: "DESIGNED FOR",
+    scriptTitle: "Living"
+  },
+  {
+    serifTitle: "PRIVATE",
+    scriptTitle: "Retreat"
+  },
+  {
+    serifTitle: "WELCOME HOME",
+    scriptTitle: "Luxury"
+  }
+];
+
 export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -143,6 +179,8 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     };
   }, [videoUrl]);
 
+  const currentScene = SCENES[activeSceneIndex];
+
   return (
     <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
       {/* Sticky Video Canvas Wrapper */}
@@ -223,28 +261,36 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           )}
         </AnimatePresence>
 
-        {/* Text Storytelling Layout: Simplified to VILLA V and Elegance ONLY */}
+        {/* Unified Storytelling Layout: Centered stacked text with elegant intersecting scripts */}
         <div className="absolute inset-0 flex items-center justify-center p-6 md:p-24 z-10">
           <div className="max-w-4xl w-full text-center flex flex-col items-center select-none">
             
             {/* Serif & Script Overlap Container */}
             <div className="relative w-full flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="relative flex flex-col items-center justify-center"
-              >
-                {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
-                <h1 className="font-serif text-[#F6F3EB] text-[clamp(48px,10vw,220px)] leading-[1.0] uppercase tracking-[0.05em] font-light">
-                  VILLA V
-                </h1>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentScene.serifTitle}
+                  initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative flex flex-col items-center justify-center"
+                >
+                  {/* Stacked Serif Title (Warm Ivory: #F6F3EB) with tight editorial leading */}
+                  <h1 className="font-serif text-[#F6F3EB] text-[clamp(44px,7.8vw,140px)] leading-[0.82] uppercase tracking-[0.05em] font-light flex flex-col items-center">
+                    {currentScene.serifTitle.split(" ").map((word, index) => (
+                      <span key={index} className="block text-shadow-subtle">
+                        {word}
+                      </span>
+                    ))}
+                  </h1>
 
-                {/* Luxury Script Overlay (Champagne Gold: #D6B15C) - proportional em-offset overlap */}
-                <span className="font-script text-[#D6B15C] text-[clamp(56px,12vw,240px)] leading-[0.8] absolute bottom-[-32%] md:bottom-[-28%] left-1/2 -translate-x-1/2 block select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                  Elegance
-                </span>
-              </motion.div>
+                  {/* Luxury Script Overlay (Champagne Gold: #D6B15C) - intersecting the lower line by exactly 20% */}
+                  <span className="font-script text-[#D6B15C] text-[clamp(56px,11vw,200px)] leading-[0.8] absolute bottom-[-22%] md:bottom-[-20%] left-1/2 -translate-x-1/2 block select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                    {currentScene.scriptTitle}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
           </div>
