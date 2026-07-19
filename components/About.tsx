@@ -1,114 +1,213 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function About() {
-  const stats = [
-    { label: "Total Area", value: "12,400 SQ FT" },
-    { label: "Levels", value: "3 FLOORS" },
-    { label: "Suites", value: "5 BEDROOMS" },
-    { label: "Completion", value: "Q4 2026" }
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Bind scroll-linked parallax adjustments directly to the GPU rendering timeline
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Parallax transform shifts and scroll scales
+  const yParallax = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const scaleParallax = useTransform(scrollYProgress, [0, 1], [1.08, 1.00]);
+
+  const headingLines = ["Sculpting", "Light,", "Space &", "Stone"];
+
+  const features = [
+    {
+      title: "Architecture",
+      desc: "Minimal contemporary design.",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.176v10.764a1 1 0 01-.553.894L15 18l-6 3z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 20V2m6 16V5" />
+        </svg>
+      )
+    },
+    {
+      title: "Craftsmanship",
+      desc: "Every detail carefully finished.",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+        </svg>
+      )
+    },
+    {
+      title: "Panoramic Living",
+      desc: "Uninterrupted mountain views.",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+        </svg>
+      )
+    }
   ];
 
-  return (
-    <section id="about" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
-      {/* Decorative Blueprint Background Grid */}
-      <div className="absolute inset-0 grid-overlay opacity-15 pointer-events-none" />
+  const metrics = [
+    { val: "12,400", label: "SQ FT", posClass: "xl:top-[8%] xl:-left-12" },
+    { val: "5", label: "Bedrooms", posClass: "xl:top-[38%] xl:-right-12" },
+    { val: "Infinity", label: "Views", posClass: "xl:bottom-[38%] xl:-left-12" },
+    { val: "Private", label: "Residence", posClass: "xl:bottom-[8%] xl:-right-12" }
+  ];
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.15 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 25 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
+    }
+  };
+
+  return (
+    <section 
+      ref={sectionRef}
+      id="about" 
+      className="relative py-[100px] lg:py-[140px] bg-[#0B0B0C] overflow-hidden select-none"
+    >
+      {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
+
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+        
+        {/* Two-Column Responsive Grid Layout (Desktop Left 45%, Right 55%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 xl:gap-32 items-center">
           
-          {/* Left Column: Storytelling Content */}
-          <div className="lg:col-span-6 flex flex-col gap-6 md:gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
+          {/* COLUMN 1: Storytelling Details & Feature Cards (Responsive Order 2 on Mobile) */}
+          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
+            
+            {/* Small Luxury Label */}
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
+              THE CONCEPTION
+            </span>
+
+            {/* Editorial Heading (Line by Line reveal) */}
+            <h3 className="font-serif text-[#F6F3EB] font-light text-[38px] sm:text-[46px] lg:text-[72px] xl:text-[84px] leading-[1.05] tracking-tight mb-8">
+              {headingLines.map((line, i) => (
+                <span key={i} className="block overflow-hidden pb-1">
+                  <motion.span
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                    className="block"
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+            </h3>
+
+            {/* Premium single statement summary */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-[#F6F3EB] text-[16px] sm:text-[18px] font-normal leading-[1.6] text-shadow-subtle text-opacity-95 max-w-[520px] mb-12"
             >
-              <h2 className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium mb-3">
-                The Conception
-              </h2>
-              <h3 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight">
-                Sculpting Light, Space, and Stone
-              </h3>
+              Designed to blur the boundary between architecture and nature.
+            </motion.p>
+
+            {/* Feature Cards Vertical Block */}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="flex flex-col w-full"
+            >
+              {features.map((feature, idx) => (
+                <motion.div
+                  key={feature.title}
+                  variants={itemVariants}
+                  className="border-t border-white/10 py-5 flex items-start gap-4"
+                >
+                  <div className="p-2 border border-white/5 bg-white/[0.02] rounded-lg shrink-0 mt-0.5">
+                    {feature.icon}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[#F6F3EB] text-[14px] sm:text-[16px] font-semibold tracking-[0.15em] uppercase mb-1 leading-none">
+                      {feature.title}
+                    </span>
+                    <span className="text-[#B8B8B8] text-[14px] sm:text-[15px] font-normal leading-relaxed">
+                      {feature.desc}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-sm md:text-base text-white/60 tracking-wider font-light leading-relaxed"
-            >
-              Villa V represents a paradigm shift in residential architecture. Designed by
-              acclaimed visionaries, it sits harmoniously on the cliffs, sculpted into the natural
-              landscape. Every angle, material, and system has been engineered to frame spectacular
-              panoramas while creating an oasis of absolute privacy and luxury.
-            </motion.p>
+          </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-sm text-white/40 tracking-wider font-light leading-relaxed"
+          {/* COLUMN 2: Hero Visual Showcase & Metric Overlay (Responsive Order 1 on Mobile) */}
+          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 relative w-full flex flex-col">
+            
+            {/* Main Image Container */}
+            <motion.div
+              style={{ y: yParallax }}
+              className="relative aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] xl:aspect-[11/13] w-full overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#C8A96A]/20 shadow-[0_24px_50px_rgba(0,0,0,0.6)] group"
             >
-              Constructed from low-carbon textured concrete, high-end Italian travertine stone,
-              and low-iron ultra-clear structural glass, the villa blends indoor comfort and
-              outdoor wilderness. It is not merely a house; it is a permanent sculptural masterpiece
-              built to endure for generations.
-            </motion.p>
+              {/* Luxury interior outline overlay */}
+              <div className="absolute inset-0 border border-white/5 z-10 rounded-[24px] sm:rounded-[32px] pointer-events-none" />
 
-            {/* Premium Stats Grid */}
-            <div className="grid grid-cols-2 gap-6 md:gap-8 pt-6 border-t border-white/10 mt-4">
-              {stats.map((stat, i) => (
+              <motion.div 
+                style={{ scale: scaleParallax }}
+                className="w-full h-full relative"
+              >
+                <Image
+                  src="/images/about.webp"
+                  alt="Villa Sérénité Exterior Concept View"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105 filter brightness-95"
+                  priority
+                  loading="eager"
+                />
+              </motion.div>
+
+              {/* Decorative HUD Coordinates */}
+              <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] tracking-widest text-[#F6F3EB]/50 bg-[#0A0A0A]/40 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded uppercase">
+                LAT: 43.7225° N | ALT: 114M
+              </div>
+            </motion.div>
+
+            {/* Staggered Premium Glass Metric Cards */}
+            {/* Desktop: Absolute Positioned Floaters | Mobile/Tablet: 2x2 Grid Layout below container */}
+            <div className="grid grid-cols-2 gap-4 mt-8 xl:mt-0 xl:block">
+              {metrics.map((metric, i) => (
                 <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 15 }}
+                  key={metric.label}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 * i + 0.4 }}
-                  className="flex flex-col gap-1"
+                  transition={{ duration: 0.8, delay: i * 0.15 + 0.2, ease: "easeOut" }}
+                  className={`p-4 sm:p-5 flex flex-col items-center justify-center text-center rounded-[16px] border border-white/10 bg-[#0A0A0A]/60 backdrop-blur-md shadow-xl select-none shrink-0 ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
                 >
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-[#666] font-mono">
-                    {stat.label}
+                  <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
+                    {metric.val}
                   </span>
-                  <span className="text-xl md:text-2xl font-serif text-gold font-light tracking-wide">
-                    {stat.value}
+                  <span className="font-sans text-[10px] tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
+                    {metric.label}
                   </span>
                 </motion.div>
               ))}
             </div>
-          </div>
 
-          {/* Right Column: Visual Showcase */}
-          <div className="lg:col-span-6">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative aspect-[4/5] w-full overflow-hidden border border-gold/15 shadow-2xl group"
-            >
-              {/* Luxury Frame Accent */}
-              <div className="absolute inset-0 border border-white/5 z-10 pointer-events-none" />
-
-              <Image
-                src="/images/about.webp"
-                alt="Villa V Dusk Exterior"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-1000 group-hover:scale-105 filter brightness-95"
-                priority
-              />
-
-              {/* Float Coordinate HUD */}
-              <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] tracking-widest text-white/50 bg-[#0A0A0A]/40 backdrop-blur-md px-3 py-1.5 border border-white/10 uppercase">
-                LAT: 43.7225° N | ALT: 114M
-              </div>
-            </motion.div>
           </div>
           
         </div>
