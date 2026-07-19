@@ -8,6 +8,7 @@
   --color-charcoal-light: #161616;
   --font-serif: var(--font-serif-luxury), Georgia, serif;
   --font-sans: var(--font-sans-luxury), system-ui, sans-serif;
+  --font-script: var(--font-script-luxury), cursive;
   
   --animate-fade-in: fade-in 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -112,6 +113,10 @@ h1, h2, h3, h4, .font-serif-luxury {
 p, .body-text {
   line-height: 1.85 !important;
   letter-spacing: 0.06em !important;
+}
+
+.font-script {
+  font-family: var(--font-script);
 }
 
 /* Lenis smooth scrolling requirement */

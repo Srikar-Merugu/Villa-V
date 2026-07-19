@@ -9,7 +9,8 @@ interface ScrollVideoScrubProps {
 }
 
 interface SceneContent {
-  title: string;
+  scriptTitle: string;
+  serifTitle?: string;
   subtitle: string;
   indicator: string;
   theme: string;
@@ -17,43 +18,46 @@ interface SceneContent {
 
 const SCENES: SceneContent[] = [
   {
-    title: "Luxury, Built Before Your Eyes.",
+    scriptTitle: "Luxury",
+    serifTitle: "Built Before Your Eyes.",
     subtitle: "Experience the complete journey of your future home—from vision to reality.",
     indicator: "00 / VISION",
     theme: "hero"
   },
   {
-    title: "Every masterpiece begins with a vision.",
+    scriptTitle: "Every masterpiece begins with a vision.",
     subtitle: "Luxury starts long before the first stone is placed.",
     indicator: "01 / LAND",
     theme: "grid"
   },
   {
-    title: "Precision engineering. Every detail matters.",
+    scriptTitle: "Precision engineering.",
+    serifTitle: "Every detail matters.",
     subtitle: "Exceptional homes are built through craftsmanship, precision, and uncompromising standards.",
     indicator: "02 / STRUCTURE",
     theme: "blueprint"
   },
   {
-    title: "Architecture without compromise.",
+    scriptTitle: "Architecture without compromise.",
     subtitle: "A timeless design crafted to inspire for generations.",
     indicator: "03 / COMPLETED",
     theme: "elevation"
   },
   {
-    title: "Designed for extraordinary living.",
+    scriptTitle: "Designed for extraordinary living.",
     subtitle: "Every room balances elegance, comfort, and intelligent design.",
     indicator: "04 / INTERIOR",
     theme: "interior"
   },
   {
-    title: "Resort-inspired private spaces.",
+    scriptTitle: "Resort-inspired private spaces.",
     subtitle: "Experience infinity pools, panoramic views, and luxurious outdoor living.",
     indicator: "05 / OASIS",
     theme: "water"
   },
   {
-    title: "Welcome Home.",
+    scriptTitle: "Luxury",
+    serifTitle: "Welcome Home.",
     subtitle: "Your future begins here.",
     indicator: "06 / HOME",
     theme: "final"
@@ -321,18 +325,28 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
             </AnimatePresence>
 
             {/* Title / Header */}
-            <div className="h-[140px] md:h-[180px] flex items-center justify-center mb-6 overflow-hidden">
+            <div className="h-[220px] md:h-[300px] flex items-center justify-center mb-6 overflow-visible select-none filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               <AnimatePresence mode="wait">
-                <motion.h1
-                  key={currentScene.title}
-                  initial={{ opacity: 0, y: 35, filter: "blur(8px)" }}
+                <motion.div
+                  key={currentScene.scriptTitle + (currentScene.serifTitle || "")}
+                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -35, filter: "blur(8px)" }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-3xl md:text-5xl lg:text-6xl font-serif tracking-[0.06em] text-white leading-tight font-light"
+                  exit={{ opacity: 0, y: -30, filter: "blur(8px)" }}
+                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col items-center justify-center text-center w-full"
                 >
-                  {currentScene.title}
-                </motion.h1>
+                  {/* Primary Champagne Gold Script Line */}
+                  <span className="font-script text-[#E6D2A2] text-[clamp(44px,11vw,210px)] leading-[0.85] block mb-2 select-none tracking-normal font-normal">
+                    {currentScene.scriptTitle}
+                  </span>
+
+                  {/* Secondary Warm White Serif Line */}
+                  {currentScene.serifTitle && (
+                    <span className="font-serif text-[#F5F5F2] text-2xl md:text-[clamp(28px,4vw,56px)] leading-[1.1] font-light tracking-[0.08em] block mt-1 select-none">
+                      {currentScene.serifTitle}
+                    </span>
+                  )}
+                </motion.div>
               </AnimatePresence>
             </div>
 
