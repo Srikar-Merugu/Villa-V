@@ -476,7 +476,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           </div>
         </div>
 
-        {/* Floating Scroll Indicator (bottom center) */}
+        {/* Floating Scroll Indicator (bottom center - High Contrast Gold & Ivory) */}
         <AnimatePresence>
           {showScrollIndicator && isInitialized && (
             <motion.div
@@ -484,10 +484,10 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none z-15"
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none z-15 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]"
             >
-              {/* Computer Mouse Outline Container */}
-              <div className="w-[22px] h-[36px] rounded-full border border-[#F6F3EB]/35 flex justify-center p-1.5">
+              {/* Computer Mouse Outline Container (Solid Champagne Gold #C8A96A) */}
+              <div className="w-[22px] h-[36px] rounded-full border-[1.5px] border-[#C8A96A] flex justify-center p-1.5">
                 {/* Moving Scroll Wheel Dot */}
                 <motion.div
                   animate={{
@@ -499,10 +499,10 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="w-[3px] h-[3px] rounded-full bg-[#F6F3EB]"
+                  className="w-[3px] h-[3px] rounded-full bg-[#C8A96A]"
                 />
               </div>
-              <span className="text-[9px] font-mono tracking-[0.25em] text-[#F6F3EB]/50 uppercase mt-1">
+              <span className="text-[9.5px] font-mono tracking-[0.3em] text-[#F6F3EB] font-bold uppercase mt-1 text-shadow-subtle">
                 Scroll
               </span>
             </motion.div>
