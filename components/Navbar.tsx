@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Menu, X, ArrowRight } from "lucide-react";
 
 export default function Navbar() {
   const [scrollState, setScrollState] = useState<"top" | "scrolling" | "solid">("top");
+  const [isBrightVideoFrame, setIsBrightVideoFrame] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -19,19 +20,27 @@ export default function Navbar() {
     { name: "Contact", id: "contact" }
   ];
 
-  // Monitor window scroll coordinates to shift between the 3 adaptive states
+  // Monitor scroll height and dynamically adapt style & opacity based on scrubbing video scenes (Fix 1 & 2)
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const heroHeight = window.innerHeight;
+      const totalScrubHeight = heroHeight * 4.2; // Match total ScrollVideoScrub height track
 
+      // 1. Determine base Scroll State (Hero Top, Scroll started, Solid dark background)
       if (scrollY < 80) {
         setScrollState("top");
-      } else if (scrollY >= 80 && scrollY < heroHeight * 0.9) {
+      } else if (scrollY >= 80 && scrollY < heroHeight * 4.2) {
         setScrollState("scrolling");
       } else {
         setScrollState("solid");
       }
+
+      // 2. Video frame brightness adaptation (link scroll position to video content timeline)
+      // Bright scenes correspond to Land, Structure, and Completed elevations (progress 5% to 60%)
+      const pct = Math.max(0, Math.min(1, scrollY / totalScrubHeight));
+      const isBrightZone = pct >= 0.05 && pct < 0.60;
+      setIsBrightVideoFrame(scrollY < totalScrubHeight && isBrightZone);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -74,8 +83,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      // Offset matches current navbar height specs
-      const offset = scrollState === "top" ? 90 : 70;
+      const offset = 88; // Locked height of navbar
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -88,16 +96,17 @@ export default function Navbar() {
     }
   };
 
-  // Determine current classes for adaptive scroll states
-  const getNavbarClasses = () => {
-    const base = "fixed top-0 left-0 w-full z-45 transition-all duration-500 ease-in-out border-b select-none";
-    if (scrollState === "top") {
-      return `${base} py-5 bg-[#0A0A0A]/18 backdrop-blur-[18px] border-white/8 shadow-sm`;
-    } else if (scrollState === "scrolling") {
-      return `${base} py-4 bg-[#0A0A0A]/50 backdrop-blur-[20px] border-white/12 shadow-md`;
-    } else {
-      return `${base} py-4 bg-[#0B0B0C] border-gold/10 shadow-lg`;
+  // Determine current classes for adaptive background & opacity levels based on scroll and frame brightness
+  const getNavbarStyles = () => {
+    const base = "fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out border-b select-none h-[88px] md:h-[96px] flex items-center shadow-[0_12px_40px_rgba(0,0,0,0.25)]";
+    
+    if (scrollState === "solid") {
+      return `${base} bg-[#0B0B0C] border-gold/10`;
     }
+
+    // Adaptive transparency: increase background opacity slightly during bright video frames for text legibility
+    const opacityVal = isBrightVideoFrame ? "0.65" : "0.42";
+    return `${base} bg-[#0C0C0E]/${opacityVal} backdrop-blur-[24px] backdrop-saturate-[1.8] border-white/8`;
   };
 
   return (
@@ -107,10 +116,10 @@ export default function Navbar() {
         Skip to main content
       </a>
 
-      <nav role="navigation" aria-label="Main Directory" className={getNavbarClasses()}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+      <nav role="navigation" aria-label="Main Directory" className={getNavbarStyles()}>
+        <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between">
           
-          {/* Luxury Logo (Warm Ivory: #F6F3EB) */}
+          {/* Luxury Logo (Warm Ivory: #F7F4EE) */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -122,60 +131,52 @@ export default function Navbar() {
             role="link"
             tabIndex={0}
             aria-label="VILLA V logo. Go back to top."
-            className="flex flex-col cursor-pointer group focus-visible:outline-none"
+            className="flex flex-col cursor-pointer group focus-visible:outline-none py-2"
           >
-            <span className="text-[8px] tracking-[0.45em] uppercase text-gold font-sans font-semibold transition-colors group-hover:text-[#E6D2A2]">
+            <span className="text-[8px] tracking-[0.45em] uppercase text-gold font-sans font-semibold mb-1.5 transition-colors group-hover:text-[#E6D2A2]">
               Architectural Vision
             </span>
-            <span className="text-xl md:text-2xl font-serif tracking-[0.25em] text-[#F6F3EB] leading-tight font-light transition-all duration-300 group-hover:tracking-[0.28em]">
+            <span className="text-2xl md:text-3xl font-serif tracking-[0.25em] md:tracking-[0.3em] text-[#F7F4EE] leading-none font-light transition-all duration-300 group-hover:tracking-[0.28em] select-none">
               VILLA V
             </span>
           </div>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links (Large uppercase with centered expanding underlines) */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
               return (
-                <div key={link.name} className="relative flex flex-col items-center py-1">
-                  <button
-                    onClick={() => handleScrollTo(link.id)}
-                    className={`text-[11px] uppercase tracking-[0.22em] font-sans font-medium transition-colors duration-300 cursor-pointer focus-visible:outline-none pb-1.5 ${
-                      isActive ? "text-gold font-semibold" : "text-white/95 hover:text-gold"
-                    }`}
-                  >
-                    {link.name}
-                  </button>
-                  
-                  {/* Springs-based active indicator line (Awwwards design aesthetic) */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeUnderline"
-                      className="absolute bottom-0 left-0 w-full h-[1.5px] bg-gold"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    />
-                  )}
-                </div>
+                <button
+                  key={link.name}
+                  onClick={() => handleScrollTo(link.id)}
+                  className={`relative text-[14px] md:text-[15px] tracking-[0.12em] font-sans font-medium pb-2 transition-colors duration-300 cursor-pointer focus-visible:outline-none after:absolute after:bottom-0 after:left-1/2 after:h-[1.5px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
+                    isActive
+                      ? "text-[#C8A96A] after:w-full font-semibold"
+                      : "text-white/95 hover:text-[#C8A96A] after:w-0 hover:after:w-full"
+                  }`}
+                >
+                  {link.name}
+                </button>
               );
             })}
           </div>
 
-          {/* Book Tour CTA Button (Luxury Gold rounded outline with scale hover) */}
+          {/* Book Tour CTA Button (Luxury Gold border, 48px height, Warm Ivory label) */}
           <div className="hidden lg:block">
             <button
               onClick={() => handleScrollTo("contact")}
-              className="group relative inline-flex items-center justify-center overflow-hidden border border-gold hover:bg-gold text-gold hover:text-[#0B0B0C] px-7 py-2.5 rounded-full bg-transparent hover:scale-105 hover:shadow-[0_4px_20px_rgba(214,177,92,0.25)] transition-all duration-300 cursor-pointer focus-visible:outline-none"
+              className="group relative h-12 px-8 rounded-full border-2 border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:scale-[1.03] transition-all duration-300 cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none shadow-md hover:shadow-[0_4px_25px_rgba(200,169,106,0.3)]"
             >
-              <span className="relative z-10 text-[10px] font-sans font-semibold uppercase tracking-[0.2em]">
+              <span className="relative z-10 text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-[#F7F4EE] group-hover:text-[#0B0B0C] transition-colors duration-300">
                 Book a Private Tour
               </span>
             </button>
           </div>
 
-          {/* Mobile Menu Icon Toggle */}
+          {/* Mobile Menu Icon Toggle (Tabbable, safe touch target dimensions > 44x44px) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-white/90 hover:text-gold transition-colors cursor-pointer focus-visible:outline-none"
+            className="lg:hidden w-11 h-11 flex items-center justify-center text-white/90 hover:text-gold transition-colors cursor-pointer focus-visible:outline-none"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -214,7 +215,7 @@ export default function Navbar() {
           })}
           <button
             onClick={() => handleScrollTo("contact")}
-            className="mt-8 flex items-center justify-between bg-gold text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-6 py-4 hover:bg-gold-light transition-colors focus-visible:outline-none"
+            className="mt-8 h-12 flex items-center justify-between bg-gold text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-6 hover:bg-gold-light transition-colors focus-visible:outline-none"
           >
             Book a Private Tour
             <ArrowRight className="w-4 h-4" />
