@@ -93,12 +93,10 @@ export default function Navbar() {
     const base = "fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out select-none h-[72px] md:h-[76px] flex items-center";
     
     if (scrollState === "solid") {
-      // Post-hero: solid dark base, 10px blur, thin border
       return {
         className: `${base} bg-[#121214]/82 backdrop-blur-[10px] border-b border-white/5 shadow-md`
       };
     } else if (scrollState === "scrolling") {
-      // Scrolled hero: increase gradient overlay slightly (~10%) to protect readability over bright video frames
       return {
         className: `${base} border-transparent`,
         style: {
@@ -106,7 +104,6 @@ export default function Navbar() {
         }
       };
     } else {
-      // Hero top: fully transparent minimal base with light visual gradient
       return {
         className: `${base} border-transparent`,
         style: {
@@ -131,9 +128,9 @@ export default function Navbar() {
         className={navStyles.className}
         style={navStyles.style}
       >
-        <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between">
+        <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between h-full">
           
-          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A, Size: 34-36px) */}
+          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A, Size: 34-36px - Locked to 1 line) */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -145,18 +142,18 @@ export default function Navbar() {
             role="link"
             tabIndex={0}
             aria-label="VILLA V logo. Go back to top."
-            className="flex flex-col cursor-pointer group focus-visible:outline-none py-1 text-shadow-subtle"
+            className="flex flex-col cursor-pointer group focus-visible:outline-none py-1 text-shadow-subtle shrink-0 text-left"
           >
-            <span className="text-[10px] tracking-[0.35em] uppercase text-[#C8A96A] font-sans font-medium mb-0.5 transition-colors group-hover:text-[#E6D2A2]">
+            <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] md:tracking-[0.35em] uppercase text-[#C8A96A] font-sans font-medium mb-0.5 whitespace-nowrap">
               Architectural Vision
             </span>
-            <span className="text-[34px] md:text-[36px] font-serif tracking-[0.18em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 group-hover:tracking-[0.20em] select-none">
+            <span className="text-[24px] sm:text-[28px] md:text-[34px] lg:text-[36px] font-serif tracking-[0.15em] sm:tracking-[0.18em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 group-hover:tracking-[0.20em] select-none whitespace-nowrap">
               VILLA V
             </span>
           </div>
 
           {/* Desktop Navigation Links (Warm Ivory #F6F3EB, Weight 500, tracking 0.12em, 2px active underline) */}
-          <div className="hidden lg:flex items-center gap-8 xl:gap-10">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8 mx-4">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
               return (
@@ -175,13 +172,13 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Book Tour CTA Button (Pill shaped, 48px height, Champagne Gold border, Warm Ivory text) */}
-          <div className="hidden lg:block">
+          {/* Book Tour CTA Button (Pill shaped, 46-48px height, Champagne Gold border, Warm Ivory text - Center alignment lock) */}
+          <div className="hidden lg:block shrink-0">
             <button
               onClick={() => handleScrollTo("contact")}
-              className="group relative h-12 px-8 rounded-full border-[1.2px] border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(200,169,106,0.3)] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none text-shadow-subtle"
+              className="group relative h-11 md:h-12 px-6 xl:px-8 rounded-full border-[1.2px] border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(200,169,106,0.3)] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none text-shadow-subtle"
             >
-              <span className="relative z-10 text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#F6F3EB] group-hover:text-[#0B0B0C] transition-colors duration-300">
+              <span className="relative z-10 text-[11px] md:text-[12px] lg:text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#F6F3EB] group-hover:text-[#0B0B0C] transition-colors duration-300 whitespace-nowrap">
                 Book a Private Tour
               </span>
             </button>
@@ -190,7 +187,7 @@ export default function Navbar() {
           {/* Mobile Menu Icon Toggle (Tabbable, safe touch target dimensions > 44x44px) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden w-11 h-11 flex items-center justify-center text-[#F6F3EB] hover:text-gold transition-colors cursor-pointer focus-visible:outline-none"
+            className="lg:hidden w-11 h-11 flex items-center justify-center text-[#F6F3EB] hover:text-gold transition-colors cursor-pointer focus-visible:outline-none shrink-0"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
