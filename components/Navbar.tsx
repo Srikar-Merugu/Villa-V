@@ -187,13 +187,24 @@ export default function Navbar() {
 
           {/* COLUMN 3: CTA & Hamburger Menu (Right Aligned) */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
-            {/* Book Consultation CTA Button (Pill-shaped, 46px height, transparent gold) */}
+            {/* Book Consultation CTA Button (Pill-shaped, 46px height, high contrast glass) */}
             <div className="hidden sm:block">
               <button
                 onClick={() => handleScrollTo("contact")}
-                className="group relative h-[46px] px-[34px] rounded-full border border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-[2px] hover:shadow-[0_4px_20px_rgba(200,169,106,0.35)] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#C8A96A] focus-visible:outline-none text-shadow-subtle"
+                className="group relative h-[46px] px-[34px] rounded-full border-[1.5px] border-[#C8A96A]/90 bg-[rgba(18,18,18,0.35)] hover:bg-[#C8A96A] hover:-translate-y-[2px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
+                style={{
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.20)"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.28)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.20)";
+                }}
               >
-                <span className="relative z-10 text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#C8A96A] group-hover:text-[#0a0a0a] transition-colors duration-300 whitespace-nowrap">
+                <span className="relative z-10 text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
                   Book Consultation
                 </span>
               </button>
@@ -261,7 +272,11 @@ export default function Navbar() {
                   setMobileMenuOpen(false);
                   handleScrollTo("contact");
                 }}
-                className="sm:hidden mt-8 h-12 flex items-center justify-center bg-[#C8A96A] text-[#0a0a0a] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 rounded-full shadow-[0_4px_16px_rgba(200,169,106,0.3)] hover:bg-[#D6B15C] transition-colors focus-visible:outline-none"
+                className="sm:hidden mt-8 h-[46px] px-[34px] rounded-full border-[1.5px] border-[#C8A96A]/90 bg-[rgba(18,18,18,0.35)] text-[#F8F5EE] font-sans font-semibold text-[13px] uppercase tracking-[0.18em] leading-none shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:bg-[#C8A96A] hover:text-[#111111] transition-all duration-300 focus-visible:outline-none"
+                style={{
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)"
+                }}
               >
                 Book Consultation
               </motion.button>
