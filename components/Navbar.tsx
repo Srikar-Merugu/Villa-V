@@ -92,7 +92,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const offset = 76; // Match height boundary of header
+      const offset = 60; // Match height boundary of header
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -138,21 +138,19 @@ export default function Navbar() {
         Skip to main content
       </a>
 
+      {/* Floating Slick Header - Compact & Flat */}
       <nav
         role="navigation"
         aria-label="Main Directory"
-        className={`fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] lg:w-[calc(100%-96px)] max-w-[1400px] z-45 transition-all duration-500 ease-in-out select-none h-[72px] md:h-[76px] flex items-center rounded-full px-6 sm:px-10 lg:px-12 border ${
+        className={`fixed top-3 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] md:w-[calc(100%-80px)] lg:w-[calc(100%-120px)] max-w-[1100px] z-45 transition-all duration-500 ease-in-out select-none h-[54px] md:h-[58px] flex items-center rounded-full px-5 sm:px-8 lg:px-10 border ${
           isScrolled 
-            ? "bg-[#0a0a0a]/72 backdrop-blur-[16px] border-white/10 shadow-md" 
-            : "bg-transparent border-transparent"
-        } ${visible ? "translate-y-0 opacity-100" : "-translate-y-28 opacity-0"}`}
-        style={!isScrolled ? {
-          background: "linear-gradient(180deg, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)",
-        } : undefined}
+            ? "bg-[#0a0a0a]/80 backdrop-blur-[16px] border-white/10" 
+            : "bg-black/30 backdrop-blur-[10px] border-white/5"
+        } ${visible ? "translate-y-0 opacity-100" : "-translate-y-24 opacity-0"}`}
       >
         <div className="w-full flex items-center justify-between h-full">
           
-          {/* COLUMN 1: Logo (Left Aligned, Max Height: Mobile 34px, Tablet 40px, Desktop 44-52px) */}
+          {/* COLUMN 1: Rebranded Bold Sans Logo (Smaller, No Tagline, Clean left alignment) */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -164,32 +162,27 @@ export default function Navbar() {
             role="link"
             tabIndex={0}
             aria-label="Villa Sérénité logo. Go back to top."
-            className="flex items-center gap-2.5 cursor-pointer focus-visible:outline-none shrink-0 py-1 transition-opacity duration-300 hover:opacity-90"
+            className="flex items-center gap-2 cursor-pointer focus-visible:outline-none shrink-0 py-1 transition-opacity duration-300 hover:opacity-90"
           >
             <img
               src="/shield_icon.png"
               alt=""
-              className="h-[34px] sm:h-[40px] lg:h-[44px] w-auto object-contain select-none pointer-events-none"
+              className="h-[26px] lg:h-[30px] w-auto object-contain select-none pointer-events-none"
             />
-            <div className="flex flex-col text-left select-none leading-none">
-              <span className="text-[7.5px] sm:text-[8px] md:text-[8.5px] tracking-[0.2em] sm:tracking-[0.25em] md:tracking-[0.3em] uppercase text-[#C8A96A] font-sans font-medium mb-1 whitespace-nowrap">
-                timeless, calm luxury
-              </span>
-              <span className="text-[16px] sm:text-[18px] md:text-[21px] lg:text-[22px] font-serif tracking-[0.08em] sm:tracking-[0.1em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 whitespace-nowrap">
-                Villa Sérénité
-              </span>
-            </div>
+            <span className="text-[12px] sm:text-[14px] md:text-[15px] font-sans font-bold tracking-[0.08em] uppercase text-[#F6F3EB] leading-none select-none whitespace-nowrap">
+              Villa Sérénité
+            </span>
           </div>
 
-          {/* COLUMN 2: Navigation Links (Center, Simplified to Amenities, Gallery, Contact) */}
-          <div className="hidden lg:flex items-center gap-10 xl:gap-14 mx-4">
+          {/* COLUMN 2: Navigation Links (Center, Simplified text sizing) */}
+          <div className="hidden lg:flex items-center gap-8 xl:gap-10 mx-4">
             {primaryLinks.map((link) => {
               const isActive = activeSection === link.id;
               return (
                 <button
                   key={link.name}
                   onClick={() => handleScrollTo(link.id)}
-                  className={`relative text-[14px] uppercase tracking-[0.14em] font-medium leading-none pb-1.5 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[1.5px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
+                  className={`relative text-[13px] uppercase tracking-[0.12em] font-medium leading-none pb-1 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[1.5px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
                     isActive
                       ? "text-[#C8A96A] after:w-full font-semibold"
                       : "text-[#F6F3EB] hover:text-[#C8A96A] after:w-0 hover:after:w-full"
@@ -201,26 +194,15 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* COLUMN 3: CTA & Hamburger Menu (Right Aligned) */}
-          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
-            {/* Book Consultation CTA Button (Pill-shaped, 46px height, high contrast glass) */}
+          {/* COLUMN 3: CTA & Hamburger Menu (Right Aligned, Compact & Flat) */}
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+            {/* Book Consultation CTA Button (Slick, Flat, Compact) */}
             <div className="hidden sm:block">
               <button
                 onClick={() => handleScrollTo("contact")}
-                className="group relative h-[46px] px-[34px] rounded-full border-[1.5px] border-[#C8A96A]/90 bg-[rgba(18,18,18,0.35)] hover:bg-[#C8A96A] hover:-translate-y-[2px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
-                style={{
-                  backdropFilter: "blur(18px)",
-                  WebkitBackdropFilter: "blur(18px)",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.20)"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.28)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.20)";
-                }}
+                className="group relative h-[36px] px-6 rounded-full border border-[#C8A96A]/60 hover:border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-[1.5px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
               >
-                <span className="relative z-10 text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
+                <span className="relative z-10 text-[11px] sm:text-[12px] font-sans font-semibold uppercase tracking-[0.14em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
                   Book Consultation
                 </span>
               </button>
@@ -229,13 +211,13 @@ export default function Navbar() {
             {/* Custom Morphing Hamburger Icon (3 thin lines, 22px size - HIDDEN ON DESKTOP) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-11 h-11 flex flex-col justify-center items-center gap-[5px] text-[#F6F3EB] hover:text-[#C8A96A] transition-colors cursor-pointer focus-visible:outline-none z-50 relative"
+              className="lg:hidden w-10 h-10 flex flex-col justify-center items-center gap-[5px] text-[#F6F3EB] hover:text-[#C8A96A] transition-colors cursor-pointer focus-visible:outline-none z-50 relative"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
             >
-              <span className={`w-[22px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`} />
-              <span className={`w-[22px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : ""}`} />
-              <span className={`w-[22px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 translate-y-[-6px]" : ""}`} />
+              <span className={`w-[20px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-[6px]" : ""}`} />
+              <span className={`w-[20px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : ""}`} />
+              <span className={`w-[20px] h-[1px] bg-current transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 translate-y-[-6px]" : ""}`} />
             </button>
           </div>
         </div>
@@ -288,7 +270,7 @@ export default function Navbar() {
                   setMobileMenuOpen(false);
                   handleScrollTo("contact");
                 }}
-                className="sm:hidden mt-8 h-[46px] px-[34px] rounded-full border-[1.5px] border-[#C8A96A]/90 bg-[rgba(18,18,18,0.35)] text-[#F8F5EE] font-sans font-semibold text-[13px] uppercase tracking-[0.18em] leading-none shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:bg-[#C8A96A] hover:text-[#111111] transition-all duration-300 focus-visible:outline-none"
+                className="sm:hidden mt-8 h-[38px] px-6 rounded-full border border-[#C8A96A]/60 bg-transparent text-[#F8F5EE] font-sans font-semibold text-[12px] uppercase tracking-[0.14em] leading-none hover:bg-[#C8A96A] hover:text-[#111111] transition-all duration-300 focus-visible:outline-none"
                 style={{
                   backdropFilter: "blur(18px)",
                   WebkitBackdropFilter: "blur(18px)"
