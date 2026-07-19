@@ -12,7 +12,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="relative py-24 md:py-36 bg-[#0A0A0A] overflow-hidden select-none border-t border-gold/5">
+    <section id="about" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
       {/* Decorative Blueprint Background Grid */}
       <div className="absolute inset-0 grid-overlay opacity-15 pointer-events-none" />
 

@@ -32,7 +32,7 @@ const AMENITIES: Amenity[] = [
   {
     icon: Dumbbell,
     title: "Private Wellness Gym",
-    desc: "Equipped with state-of-the-art TechnoGym gear, floor-to-ceiling mirrors, and outdoor yoga deck.",
+    desc: "Equipped with professional TechnoGym Skillrun and Kinesis equipment, floor-to-ceiling mirrors, and outdoor yoga deck.",
     spec: "EQUIPMENT: BESPOKE CHROME RANGE"
   },
   {
@@ -44,7 +44,7 @@ const AMENITIES: Amenity[] = [
   {
     icon: Cpu,
     title: "Savant Smart Control",
-    desc: "Voice and touch integrated lighting, HVAC, multi-room audio, and military-grade biometric security.",
+    desc: "Voice and touch integrated lighting, HVAC, multi-room audio, and encrypted biometric access control.",
     spec: "INTEGRATION: ZERO-LATENCY AUTOMATION"
   }
 ];

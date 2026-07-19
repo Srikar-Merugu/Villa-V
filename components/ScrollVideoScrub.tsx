@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play, Pause } from "lucide-react";
 
 interface ScrollVideoScrubProps {
   videoUrl: string;
@@ -82,15 +82,36 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const progressBarRef = useRef<HTMLDivElement>(null);
   
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
+  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   // Refs for tracking values inside the rAF loop without triggering React renders
   const progressRef = useRef(0);
   const currentTimeRef = useRef(0);
   const activeSceneIndexRef = useRef(0);
+  const isAutoplayActiveRef = useRef(false);
+
+  // Media Query listener for system-reduced motion compatibility (WCAG compliance)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
+    // If reduced motion is requested, do not bind scroll events or animate frame offsets
+    if (reducedMotion) {
+      const video = videoRef.current;
+      if (video) {
+        video.currentTime = 0;
+      }
+      return;
+    }
+
     const handleScroll = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || isAutoplayActiveRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       const scrollHeight = rect.height - window.innerHeight;
@@ -139,7 +160,40 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     const smoothScrub = () => {
       const video = videoRef.current;
       if (video && video.readyState >= 2) {
-        // Enforce pause state to prevent auto-play conflicts
+        // If autoplay is active, direct updates of DOM scroll line and scene highlights
+        if (isAutoplayActiveRef.current) {
+          const pct = video.currentTime / (video.duration || 53);
+          if (progressBarRef.current) {
+            progressBarRef.current.style.height = `${pct * 100}%`;
+          }
+
+          let sceneIndex = 0;
+          if (pct < 0.05) {
+            sceneIndex = 0;
+          } else if (pct >= 0.05 && pct < 0.22) {
+            sceneIndex = 1;
+          } else if (pct >= 0.22 && pct < 0.40) {
+            sceneIndex = 2;
+          } else if (pct >= 0.40 && pct < 0.60) {
+            sceneIndex = 3;
+          } else if (pct >= 0.60 && pct < 0.78) {
+            sceneIndex = 4;
+          } else if (pct >= 0.78 && pct < 0.93) {
+            sceneIndex = 5;
+          } else {
+            sceneIndex = 6;
+          }
+
+          if (sceneIndex !== activeSceneIndexRef.current) {
+            activeSceneIndexRef.current = sceneIndex;
+            setActiveSceneIndex(sceneIndex);
+          }
+
+          rAFId = requestAnimationFrame(smoothScrub);
+          return;
+        }
+
+        // Enforce pause state to prevent auto-play conflicts during scroll scrubbing
         if (!video.paused) {
           video.pause();
         }
@@ -169,7 +223,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rAFId);
     };
-  }, []);
+  }, [reducedMotion]);
 
   // Unlock video playback on mobile devices (iOS / Android) by triggering a temporary play/pause
   useEffect(() => {
@@ -200,6 +254,27 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     };
   }, [videoUrl]);
 
+  // Handle Autoplay film toggle
+  const toggleAutoplay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isAutoplayActive) {
+      video.pause();
+      setIsAutoplayActive(false);
+      isAutoplayActiveRef.current = false;
+    } else {
+      video.play()
+        .then(() => {
+          setIsAutoplayActive(true);
+          isAutoplayActiveRef.current = true;
+        })
+        .catch((err) => {
+          console.warn("Autoplay playback failed:", err);
+        });
+    }
+  };
+
   // Handle CTA Smooth Scroll to contact form
   const handleScrollToContact = () => {
     const contactSection = document.getElementById("contact");
@@ -229,6 +304,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           ref={videoRef}
           src={videoUrl}
           preload="auto"
+          poster="/images/about.webp"
           muted
           playsInline
           webkit-playsinline="true"
@@ -308,6 +384,25 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           )}
         </AnimatePresence>
 
+        {/* Play/Pause Autoplay Controller Button (Accessibility and Control) */}
+        <button
+          onClick={toggleAutoplay}
+          aria-label={isAutoplayActive ? "Pause cinematic autoplay" : "Start cinematic autoplay"}
+          className="absolute bottom-10 left-6 md:left-12 z-20 flex items-center gap-3 px-4 py-2 border border-white/10 hover:border-gold hover:text-gold bg-black/40 backdrop-blur-md text-white font-sans text-[10px] font-semibold uppercase tracking-[0.25em] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-gold"
+        >
+          {isAutoplayActive ? (
+            <>
+              <Pause className="w-3 h-3 text-gold" />
+              <span>Pause Film</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3 h-3 text-gold" fill="currentColor" />
+              <span>Play Film</span>
+            </>
+          )}
+        </button>
+
         {/* Sidebar Vertical Indicator */}
         <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-20">
           <div className="text-[10px] font-mono tracking-[0.2em] text-[#666] rotate-90 translate-y-[-20px] origin-center select-none uppercase">
@@ -348,7 +443,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
               </motion.span>
             </AnimatePresence>
 
-            {/* Serif & Script Overlap Container (Fix 3) */}
+            {/* Serif & Script Overlap Container */}
             <div className="relative w-full flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] mb-6 overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               <AnimatePresence mode="wait">
                 <motion.div

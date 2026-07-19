@@ -24,7 +24,7 @@ const FAQS: FAQItem[] = [
   },
   {
     q: "What security systems are integrated into the home?",
-    a: "The residence is secured by military-grade encryption systems. It features smart biometrics at all primary portals, CCTV cameras integrated with real-time AI perimeter detection, private security alarms, and a panic room backup option connected to localized emergency dispatch networks."
+    a: "The residence is secured by secure, encrypted home automation systems. It features smart biometrics at all primary portals, CCTV cameras integrated with real-time AI perimeter detection, private security alarms, and a panic room backup option connected to localized emergency dispatch networks."
   },
   {
     q: "How can I schedule a private tour of the construction site?",
@@ -40,7 +40,7 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="relative py-24 md:py-36 bg-[#0A0A0A] overflow-hidden select-none border-t border-gold/5">
+    <section id="faq" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
       <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">

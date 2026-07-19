@@ -149,3 +149,45 @@ html.lenis, html.lenis body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Global Keyboard Focus States (WCAG AA Compliance) */
+*:focus-visible {
+  outline: 2px solid #C8A96A !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 4px rgba(200, 169, 106, 0.15) !important;
+}
+
+/* Accessible Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #C8A96A;
+  color: #0B0B0C;
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  z-index: 100000;
+  transition: top 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.skip-link:focus-visible {
+  top: 16px;
+}
+
+/* Reduced Motion Overrides */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

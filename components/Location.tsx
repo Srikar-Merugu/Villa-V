@@ -28,7 +28,7 @@ const LANDMARKS: Landmark[] = [
   },
   {
     id: "beach",
-    name: "La Réserve Private Beach",
+    name: "Kašjuni Private Beach",
     category: "LEISURE",
     time: "3 MIN DRIVETIME",
     desc: "A secluded beach club with crystal waters and premium beachside cabanas.",
@@ -38,30 +38,30 @@ const LANDMARKS: Landmark[] = [
   },
   {
     id: "marina",
-    name: "Port Hercule Superyacht Club",
+    name: "ACI Marina Split",
     category: "TRANSIT",
     time: "10 MIN DRIVETIME",
-    desc: "World-famous deepwater marina offering full berthing facilities for megayachts.",
+    desc: "World-class deepwater marina offering full berthing facilities for megayachts.",
     x: 360,
     y: 90,
     icon: Anchor
   },
   {
     id: "dining",
-    name: "L'Ambroisie Michelin Bistro",
+    name: "Zrno Soli Michelin Star Bistro",
     category: "GASTRONOMY",
     time: "6 MIN DRIVETIME",
-    desc: "Three-Michelin-star culinary dining experience overlooking the bay.",
+    desc: "Michelin-recommended culinary dining experience overlooking Split harbor.",
     x: 110,
     y: 90,
     icon: MapPin
   },
   {
     id: "heli",
-    name: "Monaco Heliport Terminal",
+    name: "Split Airport Heliport",
     category: "TRANSIT",
     time: "8 MIN DRIVETIME",
-    desc: "Direct transfers to Nice Côte d'Azur Airport (7-minute flight time).",
+    desc: "Direct transfers to Split International Airport (5-minute flight time).",
     x: 380,
     y: 220,
     icon: Navigation
@@ -74,7 +74,7 @@ export default function Location() {
   const activeLandmark = LANDMARKS.find((l) => l.id === selectedLandmarkId) || LANDMARKS[0];
 
   return (
-    <section id="location" className="relative py-24 md:py-36 bg-[#0A0A0A] overflow-hidden select-none border-t border-gold/5">
+    <section id="location" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
       <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">

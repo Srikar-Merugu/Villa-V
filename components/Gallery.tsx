@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
@@ -28,7 +28,7 @@ const GALLERY_IMAGES: GalleryImage[] = [
     tag: "SUITE"
   },
   {
-    src: "/images/pool.webp",
+    src: "/images/terrace.webp",
     title: "Terrace Sunset Mirroring",
     tag: "OUTDOOR"
   }
@@ -37,15 +37,15 @@ const GALLERY_IMAGES: GalleryImage[] = [
 export default function Gallery() {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (activeImageIndex !== null) {
       setActiveImageIndex((activeImageIndex + 1) % GALLERY_IMAGES.length);
     }
   };
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (activeImageIndex !== null) {
       setActiveImageIndex(
         (activeImageIndex - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length
@@ -53,8 +53,32 @@ export default function Gallery() {
     }
   };
 
+  // Keyboard accessibility listeners for active lightbox
+  useEffect(() => {
+    if (activeImageIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveImageIndex(null);
+      } else if (e.key === "ArrowRight") {
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        handlePrev();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeImageIndex]);
+
   return (
-    <section id="gallery" className="relative py-24 md:py-36 bg-[#0A0A0A] overflow-hidden select-none border-t border-gold/5">
+    <section
+      id="gallery"
+      className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5"
+      aria-labelledby="gallery-heading"
+    >
       <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
@@ -67,7 +91,7 @@ export default function Gallery() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
+            <span id="gallery-heading" className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
               The Showcase
             </span>
             <h2 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight mt-2">
@@ -86,7 +110,7 @@ export default function Gallery() {
         </div>
 
         {/* Masonry Layout Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12" role="region" aria-label="Visual Chronicles Gallery">
           {GALLERY_IMAGES.map((img, i) => (
             <motion.div
               key={i}
@@ -95,11 +119,20 @@ export default function Gallery() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: i * 0.15 }}
               onClick={() => setActiveImageIndex(i)}
-              className={`group relative overflow-hidden border border-gold/15 cursor-pointer ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setActiveImageIndex(i);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Open photo lightbox: ${img.title}`}
+              className={`group relative overflow-hidden border border-gold/15 cursor-pointer focus-visible:ring-2 focus-visible:ring-gold ${
                 i % 2 === 0 ? "aspect-[3/4]" : "aspect-[4/3] md:translate-y-8"
               }`}
             >
-              {/* Overlay Overlay */}
+              {/* Overlay on Hover */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex flex-col justify-end p-8">
                 <div className="flex justify-between items-end">
                   <div>
@@ -116,13 +149,14 @@ export default function Gallery() {
                 </div>
               </div>
 
-              {/* Parallax Image Scale */}
+              {/* Responsive Image with loading optimizations */}
               <Image
                 src={img.src}
                 alt={img.title}
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
               />
             </motion.div>
           ))}
@@ -136,6 +170,9 @@ export default function Gallery() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveImageIndex(null)}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Fullscreen image view: ${GALLERY_IMAGES[activeImageIndex].title}`}
               className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-6 md:p-12 cursor-zoom-out"
             >
               {/* Top Bar HUD */}
@@ -145,7 +182,8 @@ export default function Gallery() {
                 </div>
                 <button
                   onClick={() => setActiveImageIndex(null)}
-                  className="w-10 h-10 border border-white/10 hover:border-gold hover:text-gold rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md cursor-pointer pointer-events-auto transition-colors"
+                  aria-label="Close fullscreen view"
+                  className="w-10 h-10 border border-white/10 hover:border-gold hover:text-gold rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md cursor-pointer pointer-events-auto transition-colors focus-visible:ring-2 focus-visible:ring-gold"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -154,7 +192,8 @@ export default function Gallery() {
               {/* Prev Button */}
               <button
                 onClick={handlePrev}
-                className="absolute left-6 md:left-12 w-12 h-12 rounded-full border border-white/10 hover:border-gold hover:text-gold flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors"
+                aria-label="Previous photo"
+                className="absolute left-6 md:left-12 w-12 h-12 rounded-full border border-white/10 hover:border-gold hover:text-gold flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -173,13 +212,15 @@ export default function Gallery() {
                   fill
                   sizes="100vw"
                   className="object-contain"
+                  priority
                 />
               </motion.div>
 
               {/* Next Button */}
               <button
                 onClick={handleNext}
-                className="absolute right-6 md:right-12 w-12 h-12 rounded-full border border-white/10 hover:border-gold hover:text-gold flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors"
+                aria-label="Next photo"
+                className="absolute right-6 md:right-12 w-12 h-12 rounded-full border border-white/10 hover:border-gold hover:text-gold flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>

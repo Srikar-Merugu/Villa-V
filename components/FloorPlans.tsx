@@ -109,7 +109,7 @@ export default function FloorPlans() {
   const plan = FLOOR_PLANS[selectedPlanIndex];
 
   return (
-    <section id="floor-plans" className="relative py-24 md:py-36 bg-[#0E0E0E] overflow-hidden select-none border-t border-gold/5">
+    <section id="floor-plans" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
       <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
