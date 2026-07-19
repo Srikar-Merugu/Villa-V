@@ -130,6 +130,16 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+
+  // Fade out the scroll mouse indicator on initial scroll down
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollIndicator(window.scrollY < 80);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Refs for tracking values inside the rAF loop without triggering React renders
   const progressRef = useRef(0);
@@ -465,6 +475,39 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
 
           </div>
         </div>
+
+        {/* Floating Scroll Indicator (bottom center) */}
+        <AnimatePresence>
+          {showScrollIndicator && isInitialized && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none z-15"
+            >
+              {/* Computer Mouse Outline Container */}
+              <div className="w-[22px] h-[36px] rounded-full border border-[#F6F3EB]/35 flex justify-center p-1.5">
+                {/* Moving Scroll Wheel Dot */}
+                <motion.div
+                  animate={{
+                    y: [0, 10, 0],
+                    opacity: [1, 0, 1]
+                  }}
+                  transition={{
+                    duration: 1.8,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="w-[3px] h-[3px] rounded-full bg-[#F6F3EB]"
+                />
+              </div>
+              <span className="text-[9px] font-mono tracking-[0.25em] text-[#F6F3EB]/50 uppercase mt-1">
+                Scroll
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </div>

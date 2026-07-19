@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -26,16 +28,30 @@ export default function Navbar() {
     { name: "Contact", id: "contact" }
   ];
 
-  // Track page scroll to set transparent base or dark glass backing
+  // Track page scroll to set transparent base or dark glass backing, and scroll direction
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY >= 80);
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY >= 80);
+
+      if (currentScrollY < 80) {
+        setVisible(true);
+      } else {
+        if (currentScrollY > lastScrollY) {
+          // Scroll down -> show navbar (comes back)
+          setVisible(true);
+        } else {
+          // Scroll up -> hide navbar (disappears)
+          setVisible(false);
+        }
+      }
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // IntersectionObserver scroll spy active section highlights
   useEffect(() => {
@@ -125,16 +141,16 @@ export default function Navbar() {
       <nav
         role="navigation"
         aria-label="Main Directory"
-        className={`fixed top-0 left-0 w-full z-45 transition-all duration-400 ease-in-out select-none h-[72px] md:h-[76px] flex items-center ${
+        className={`fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] lg:w-[calc(100%-96px)] max-w-[1400px] z-45 transition-all duration-500 ease-in-out select-none h-[72px] md:h-[76px] flex items-center rounded-full px-6 sm:px-10 lg:px-12 border ${
           isScrolled 
-            ? "bg-[#0a0a0a]/72 backdrop-blur-[16px] border-b border-white/5 shadow-md" 
+            ? "bg-[#0a0a0a]/72 backdrop-blur-[16px] border-white/10 shadow-md" 
             : "bg-transparent border-transparent"
-        }`}
+        } ${visible ? "translate-y-0 opacity-100" : "-translate-y-28 opacity-0"}`}
         style={!isScrolled ? {
           background: "linear-gradient(180deg, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)",
         } : undefined}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between h-full">
+        <div className="w-full flex items-center justify-between h-full">
           
           {/* COLUMN 1: Logo (Left Aligned, Max Height: Mobile 34px, Tablet 40px, Desktop 44-52px) */}
           <div
@@ -210,10 +226,10 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Custom Morphing Hamburger Icon (3 thin lines, 22px size) */}
+            {/* Custom Morphing Hamburger Icon (3 thin lines, 22px size - HIDDEN ON DESKTOP) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="w-11 h-11 flex flex-col justify-center items-center gap-[5px] text-[#F6F3EB] hover:text-[#C8A96A] transition-colors cursor-pointer focus-visible:outline-none z-50 relative"
+              className="lg:hidden w-11 h-11 flex flex-col justify-center items-center gap-[5px] text-[#F6F3EB] hover:text-[#C8A96A] transition-colors cursor-pointer focus-visible:outline-none z-50 relative"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
             >
