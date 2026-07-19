@@ -2,94 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Play, Pause } from "lucide-react";
 
 interface ScrollVideoScrubProps {
   videoUrl: string;
 }
 
-interface SceneContent {
-  label: string;
-  serifTitle: string;
-  scriptTitle: string;
-  subtitle: string;
-  indicator: string;
-  theme: string;
-}
-
-const SCENES: SceneContent[] = [
-  {
-    label: "LUXURY REAL ESTATE",
-    serifTitle: "VILLA V",
-    scriptTitle: "Elegance",
-    subtitle: "Crafted for extraordinary living. Experience the complete construction journey.",
-    indicator: "00 / VISION",
-    theme: "hero"
-  },
-  {
-    label: "FOUNDATION",
-    serifTitle: "EVERY MASTERPIECE",
-    scriptTitle: "Begins",
-    subtitle: "Luxury starts long before the first stone is placed.",
-    indicator: "01 / LAND",
-    theme: "grid"
-  },
-  {
-    label: "CRAFTSMANSHIP",
-    serifTitle: "PRECISION",
-    scriptTitle: "Matters",
-    subtitle: "Exceptional homes are built through craftsmanship, precision, and uncompromising standards.",
-    indicator: "02 / STRUCTURE",
-    theme: "blueprint"
-  },
-  {
-    label: "ARCHITECTURE",
-    serifTitle: "TIMELESS",
-    scriptTitle: "Luxury",
-    subtitle: "A timeless design crafted to inspire for generations.",
-    indicator: "03 / COMPLETED",
-    theme: "elevation"
-  },
-  {
-    label: "INTERIORS",
-    serifTitle: "DESIGNED FOR",
-    scriptTitle: "Living",
-    subtitle: "Every room balances elegance, comfort, and intelligent design.",
-    indicator: "04 / INTERIOR",
-    theme: "interior"
-  },
-  {
-    label: "OUTDOOR EXPERIENCE",
-    serifTitle: "PRIVATE",
-    scriptTitle: "Retreat",
-    subtitle: "Experience infinity pools, panoramic views, and luxurious outdoor living.",
-    indicator: "05 / OASIS",
-    theme: "water"
-  },
-  {
-    label: "WELCOME",
-    serifTitle: "HOME",
-    scriptTitle: "Luxury",
-    subtitle: "Your future begins here.",
-    indicator: "06 / HOME",
-    theme: "final"
-  }
-];
-
 export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
   
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
-  const [isAutoplayActive, setIsAutoplayActive] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   // Refs for tracking values inside the rAF loop without triggering React renders
   const progressRef = useRef(0);
   const currentTimeRef = useRef(0);
   const activeSceneIndexRef = useRef(0);
-  const isAutoplayActiveRef = useRef(false);
 
   // Media Query listener for system-reduced motion compatibility (WCAG compliance)
   useEffect(() => {
@@ -111,7 +39,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     }
 
     const handleScroll = () => {
-      if (!containerRef.current || isAutoplayActiveRef.current) return;
+      if (!containerRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       const scrollHeight = rect.height - window.innerHeight;
@@ -122,12 +50,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       
       progressRef.current = pct;
 
-      // Update the progress bar style directly in the DOM (bypasses React render bottleneck)
-      if (progressBarRef.current) {
-        progressBarRef.current.style.height = `${pct * 100}%`;
-      }
-
-      // Determine active scene based on progress
+      // Determine active scene based on progress to control visual overlays
       let sceneIndex = 0;
       if (pct < 0.05) {
         sceneIndex = 0;
@@ -145,7 +68,6 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
         sceneIndex = 6;
       }
 
-      // Only set state (triggering a React re-render) when transitioning between scenes
       if (sceneIndex !== activeSceneIndexRef.current) {
         activeSceneIndexRef.current = sceneIndex;
         setActiveSceneIndex(sceneIndex);
@@ -160,39 +82,6 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     const smoothScrub = () => {
       const video = videoRef.current;
       if (video && video.readyState >= 2) {
-        // If autoplay is active, direct updates of DOM scroll line and scene highlights
-        if (isAutoplayActiveRef.current) {
-          const pct = video.currentTime / (video.duration || 53);
-          if (progressBarRef.current) {
-            progressBarRef.current.style.height = `${pct * 100}%`;
-          }
-
-          let sceneIndex = 0;
-          if (pct < 0.05) {
-            sceneIndex = 0;
-          } else if (pct >= 0.05 && pct < 0.22) {
-            sceneIndex = 1;
-          } else if (pct >= 0.22 && pct < 0.40) {
-            sceneIndex = 2;
-          } else if (pct >= 0.40 && pct < 0.60) {
-            sceneIndex = 3;
-          } else if (pct >= 0.60 && pct < 0.78) {
-            sceneIndex = 4;
-          } else if (pct >= 0.78 && pct < 0.93) {
-            sceneIndex = 5;
-          } else {
-            sceneIndex = 6;
-          }
-
-          if (sceneIndex !== activeSceneIndexRef.current) {
-            activeSceneIndexRef.current = sceneIndex;
-            setActiveSceneIndex(sceneIndex);
-          }
-
-          rAFId = requestAnimationFrame(smoothScrub);
-          return;
-        }
-
         // Enforce pause state to prevent auto-play conflicts during scroll scrubbing
         if (!video.paused) {
           video.pause();
@@ -254,48 +143,6 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     };
   }, [videoUrl]);
 
-  // Handle Autoplay film toggle
-  const toggleAutoplay = () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (isAutoplayActive) {
-      video.pause();
-      setIsAutoplayActive(false);
-      isAutoplayActiveRef.current = false;
-    } else {
-      video.play()
-        .then(() => {
-          setIsAutoplayActive(true);
-          isAutoplayActiveRef.current = true;
-        })
-        .catch((err) => {
-          console.warn("Autoplay playback failed:", err);
-        });
-    }
-  };
-
-  // Handle CTA Smooth Scroll to contact form
-  const handleScrollToContact = () => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // Handle Scroll down trigger from hero
-  const handleScrollDown = () => {
-    if (containerRef.current) {
-      const step = containerRef.current.offsetHeight / (SCENES.length - 1);
-      window.scrollTo({
-        top: step * 0.6,
-        behavior: "smooth"
-      });
-    }
-  };
-
-  const currentScene = SCENES[activeSceneIndex];
-
   return (
     <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
       {/* Sticky Video Canvas Wrapper */}
@@ -313,7 +160,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           style={{ willChange: "transform" }}
         />
         
-        {/* Very subtle dark overlay for high text legibility, maintaining original colors (Fix 1) */}
+        {/* Very subtle dark overlay for high text legibility, maintaining original colors */}
         <div className="absolute inset-0 bg-black/15 pointer-events-none" />
 
         {/* Ambient Grid Overlay for Scene 1 & 2 */}
@@ -345,15 +192,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                 <line x1="50%" y1="5%" x2="50%" y2="95%" strokeDasharray="2,2" />
                 <line x1="5%" y1="50%" x2="95%" y2="50%" strokeDasharray="2,2" />
                 <circle cx="50%" cy="50%" r="20%" strokeDasharray="4,4" />
-                <path d="M 10% 10% L 30% 10% L 30% 30% L 10% 30% Z" />
-                <path d="M 70% 70% L 90% 70% L 90% 90% L 70% 90% Z" />
               </svg>
-              {/* Engineering Metrics overlay */}
-              <div className="absolute top-28 left-8 text-[9px] font-mono tracking-widest text-gold-light/40 flex flex-col gap-1">
-                <div>SCALE: 1:50</div>
-                <div>PROJECT_ID: VLLA-V</div>
-                <div>SEC_02: GROUNDWORK_COMPLETED</div>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -384,171 +223,33 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           )}
         </AnimatePresence>
 
-        {/* Play/Pause Autoplay Controller Button (Accessibility and Control) */}
-        <button
-          onClick={toggleAutoplay}
-          aria-label={isAutoplayActive ? "Pause cinematic autoplay" : "Start cinematic autoplay"}
-          className="absolute bottom-10 left-6 md:left-12 z-20 flex items-center gap-3 px-4 py-2 border border-white/10 hover:border-gold hover:text-gold bg-black/40 backdrop-blur-md text-white font-sans text-[10px] font-semibold uppercase tracking-[0.25em] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-gold"
-        >
-          {isAutoplayActive ? (
-            <>
-              <Pause className="w-3 h-3 text-gold" />
-              <span>Pause Film</span>
-            </>
-          ) : (
-            <>
-              <Play className="w-3 h-3 text-gold" fill="currentColor" />
-              <span>Play Film</span>
-            </>
-          )}
-        </button>
-
-        {/* Sidebar Vertical Indicator */}
-        <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-20">
-          <div className="text-[10px] font-mono tracking-[0.2em] text-[#666] rotate-90 translate-y-[-20px] origin-center select-none uppercase">
-            Timeline
-          </div>
-          <div className="w-[2px] h-32 bg-white/10 relative flex flex-col justify-between">
-            <div
-              ref={progressBarRef}
-              className="absolute top-0 left-0 w-full bg-gold transition-all duration-75 ease-out"
-              style={{ height: "0%" }}
-            />
-            {SCENES.map((_, i) => (
-              <div
-                key={i}
-                className={`w-[6px] h-[6px] rounded-full border border-gold -translate-x-[2px] z-10 transition-colors duration-500 ${
-                  activeSceneIndex >= i ? "bg-gold" : "bg-[#0B0B0C]"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Text Storytelling Layout */}
+        {/* Text Storytelling Layout: Simplified to VILLA V and Elegance ONLY */}
         <div className="absolute inset-0 flex items-center justify-center p-6 md:p-24 z-10">
-          <div className="max-w-4xl w-full text-center flex flex-col items-center">
+          <div className="max-w-4xl w-full text-center flex flex-col items-center select-none">
             
-            {/* Animated Small Label */}
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={currentScene.label}
-                initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -10, filter: "blur(2px)" }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[10px] md:text-xs tracking-[0.25em] text-[#C8A96A] font-sans font-semibold uppercase mb-4 select-none"
-              >
-                {currentScene.label}
-              </motion.span>
-            </AnimatePresence>
-
             {/* Serif & Script Overlap Container */}
-            <div className="relative w-full flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] mb-6 overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentScene.serifTitle + currentScene.scriptTitle}
-                  initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
-                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative flex flex-col items-center justify-center"
-                >
-                  {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
-                  <h1 className="font-serif text-[#F6F3EB] text-[clamp(44px,7.5vw,130px)] leading-[1.0] uppercase tracking-[0.05em] font-light">
-                    {currentScene.serifTitle}
-                  </h1>
+            <div className="relative w-full flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="relative flex flex-col items-center justify-center"
+              >
+                {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
+                <h1 className="font-serif text-[#F6F3EB] text-[clamp(48px,10vw,220px)] leading-[1.0] uppercase tracking-[0.05em] font-light">
+                  VILLA V
+                </h1>
 
-                  {/* Luxury Script Overlay (Champagne Gold: #D6B15C) - proportional em-offset overlap */}
-                  <span className="font-script text-[#D6B15C] text-[clamp(56px,10vw,180px)] leading-[0.8] absolute bottom-[-32%] md:bottom-[-28%] left-1/2 -translate-x-1/2 block select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                    {currentScene.scriptTitle}
-                  </span>
-                </motion.div>
-              </AnimatePresence>
+                {/* Luxury Script Overlay (Champagne Gold: #D6B15C) - proportional em-offset overlap */}
+                <span className="font-script text-[#D6B15C] text-[clamp(56px,12vw,240px)] leading-[0.8] absolute bottom-[-32%] md:bottom-[-28%] left-1/2 -translate-x-1/2 block select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                  Elegance
+                </span>
+              </motion.div>
             </div>
 
-            {/* Description / Subtitle (Small Editorial Copy - #E9E8E5) */}
-            <div className="h-[48px] md:h-[60px] flex items-center justify-center mb-8 max-w-xl">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={currentScene.subtitle}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-xs md:text-sm text-[#E9E8E5]/70 tracking-wider font-light leading-relaxed"
-                >
-                  {currentScene.subtitle}
-                </motion.p>
-              </AnimatePresence>
-            </div>
-
-            {/* Interaction Layer (CTAs based on active scene) */}
-            <div className="h-[60px] flex items-center justify-center">
-              {activeSceneIndex === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-4"
-                >
-                  <button
-                    onClick={handleScrollDown}
-                    className="group flex items-center justify-center gap-3 bg-gold hover:bg-gold-light text-[#0B0B0C] font-sans font-medium text-xs uppercase tracking-[0.2em] px-8 py-4 transition-all duration-300 select-none cursor-pointer"
-                  >
-                    Explore Journey
-                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </button>
-                </motion.div>
-              )}
-
-              {activeSceneIndex === 6 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="flex flex-col sm:flex-row gap-4"
-                >
-                  <button
-                    onClick={handleScrollToContact}
-                    className="flex items-center justify-center gap-3 bg-gold hover:bg-gold-light text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 transition-all duration-300 cursor-pointer select-none"
-                  >
-                    Book a Private Tour
-                  </button>
-                  <a
-                    href="#floor-plans"
-                    className="flex items-center justify-center gap-3 border border-white/20 hover:border-gold/50 bg-black/40 text-white font-sans text-xs uppercase tracking-[0.2em] px-8 py-4 transition-all duration-300 select-none"
-                  >
-                    Explore Floor Plans
-                  </a>
-                </motion.div>
-              )}
-            </div>
           </div>
         </div>
 
-        {/* Scroll prompt at bottom of Hero */}
-        <AnimatePresence>
-          {activeSceneIndex === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer z-10"
-              onClick={handleScrollDown}
-            >
-              <span className="text-[9px] font-mono tracking-[0.3em] uppercase text-white/40">
-                Scroll to construct
-              </span>
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                className="w-1 h-3 rounded-full bg-gold/50"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
