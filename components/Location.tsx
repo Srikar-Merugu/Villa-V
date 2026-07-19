@@ -1,269 +1,215 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Navigation, Anchor, Compass, Flame } from "lucide-react";
-
-interface Landmark {
-  id: string;
-  name: string;
-  category: string;
-  time: string;
-  desc: string;
-  x: number; // SVG X coordinate
-  y: number; // SVG Y coordinate
-  icon: React.ComponentType<any>;
-}
-
-const LANDMARKS: Landmark[] = [
-  {
-    id: "villa",
-    name: "Villa V Residence",
-    category: "PROJECT LOCATION",
-    time: "0 MIN",
-    desc: "Your future architectural sanctuary nestled on the cliff edge.",
-    x: 250,
-    y: 175,
-    icon: Compass
-  },
-  {
-    id: "beach",
-    name: "Kašjuni Private Beach",
-    category: "LEISURE",
-    time: "3 MIN DRIVETIME",
-    desc: "A secluded beach club with crystal waters and premium beachside cabanas.",
-    x: 140,
-    y: 240,
-    icon: Flame
-  },
-  {
-    id: "marina",
-    name: "ACI Marina Split",
-    category: "TRANSIT",
-    time: "10 MIN DRIVETIME",
-    desc: "World-class deepwater marina offering full berthing facilities for megayachts.",
-    x: 360,
-    y: 90,
-    icon: Anchor
-  },
-  {
-    id: "dining",
-    name: "Zrno Soli Michelin Star Bistro",
-    category: "GASTRONOMY",
-    time: "6 MIN DRIVETIME",
-    desc: "Michelin-recommended culinary dining experience overlooking Split harbor.",
-    x: 110,
-    y: 90,
-    icon: MapPin
-  },
-  {
-    id: "heli",
-    name: "Split Airport Heliport",
-    category: "TRANSIT",
-    time: "8 MIN DRIVETIME",
-    desc: "Direct transfers to Split International Airport (5-minute flight time).",
-    x: 380,
-    y: 220,
-    icon: Navigation
-  }
-];
+import { useRef } from "react";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Location() {
-  const [selectedLandmarkId, setSelectedLandmarkId] = useState("villa");
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  const activeLandmark = LANDMARKS.find((l) => l.id === selectedLandmarkId) || LANDMARKS[0];
+  // Scroll parallax image scales and transform bindings
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const yParallax = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const scaleParallax = useTransform(scrollYProgress, [0, 1], [1.08, 1.00]);
+
+  const headingLines = ["Where Nature Meets", "Modern Elegance"];
+
+  const highlights = [
+    "Private Beach Access",
+    "Fine Dining Nearby",
+    "Marina & Yacht Club"
+  ];
+
+  const travelStats = [
+    {
+      label: "Private Beach",
+      time: "2 min",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+        </svg>
+      )
+    },
+    {
+      label: "Marina",
+      time: "5 min",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+      )
+    },
+    {
+      label: "Fine Dining",
+      time: "3 min",
+      icon: (
+        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      )
+    }
+  ];
+
+  const handleScrollToContact = () => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
-    <section id="location" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
-      <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+    <section 
+      ref={sectionRef}
+      id="location" 
+      className="relative py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-hidden select-none"
+    >
+      {/* Subtle Architectural Grid Texture (Almost invisible) */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
         
-        {/* Header */}
-        <div className="max-w-3xl mb-16 md:mb-24 flex flex-col gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
-              The Geography
-            </span>
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight mt-2">
-              Prime Shoreline Address
-            </h2>
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm text-white/55 tracking-wider font-light"
-          >
-            Positioned at the apex of oceanfront luxury, blending extreme privacy with instant connections.
-          </motion.p>
-        </div>
-
-        {/* Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* Split Screen Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center">
           
-          {/* Left Column: Landmark details */}
-          <div className="lg:col-span-5 flex flex-col gap-8">
-            <div className="flex flex-col gap-2">
-              {LANDMARKS.map((landmark) => (
-                <button
-                  key={landmark.id}
-                  onClick={() => setSelectedLandmarkId(landmark.id)}
-                  className={`text-left p-4 border transition-all duration-300 flex items-center justify-between cursor-pointer ${
-                    selectedLandmarkId === landmark.id
-                      ? "bg-gold text-[#0A0A0A] border-gold font-semibold"
-                      : "bg-transparent text-white/70 border-white/5 hover:border-gold/25"
-                  }`}
+          {/* COLUMN 1: Location Editorial Details (Responsive Order 2 on Mobile) */}
+          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
+            
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
+              DESTINATION
+            </span>
+
+            {/* Editorial Heading Line-by-Line */}
+            <h3 className="font-serif text-[#F6F3EB] font-light text-[38px] sm:text-[46px] lg:text-[60px] xl:text-[68px] leading-[1.05] tracking-tight mb-6">
+              {headingLines.map((line, i) => (
+                <span key={i} className="block overflow-hidden pb-1">
+                  <motion.span
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] as const }}
+                    className="block"
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+            </h3>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[480px] mb-8"
+            >
+              Wake up to uninterrupted sea views, world-class dining, and complete privacy in one of the coast's most exclusive destinations.
+            </motion.p>
+
+            {/* Checklist Highlights */}
+            <ul className="flex flex-col gap-3.5 mb-6">
+              {highlights.map((item, idx) => (
+                <motion.li
+                  key={item}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.4 + idx * 0.1 }}
+                  className="text-[#F6F3EB] text-[15px] sm:text-[16px] flex items-center gap-3.5 font-medium select-none"
                 >
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-mono tracking-widest text-[#666] group-hover:text-[#aaa]">
-                      {landmark.category}
+                  <span className="text-[#C8A96A] text-[18px] font-bold">✓</span>
+                  <span>{item}</span>
+                </motion.li>
+              ))}
+            </ul>
+
+            {/* Horizontal Mini Stats (Mobile stacks to 1 column) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 border-t border-white/10 pt-8 mt-8 w-full">
+              {travelStats.map((stat, idx) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.5 + idx * 0.1 }}
+                  className="flex flex-col items-start gap-1 select-none"
+                >
+                  <div className="flex items-center gap-2">
+                    {stat.icon}
+                    <span className="font-serif text-[#C8A96A] text-[16px] sm:text-[18px] font-light">
+                      {stat.time}
                     </span>
-                    <span className="text-sm tracking-wide font-serif">{landmark.name}</span>
                   </div>
-                  <span className="text-[10px] font-mono tracking-widest font-medium">
-                    {landmark.time}
+                  <span className="font-sans text-[10px] tracking-[0.15em] text-[#F6F3EB]/60 font-medium uppercase mt-1">
+                    {stat.label}
                   </span>
-                </button>
+                </motion.div>
               ))}
             </div>
 
-            {/* Selected Landmark HUD info */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeLandmark.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.4 }}
-                className="glass p-6 md:p-8 flex flex-col gap-4 border-l-2 border-l-gold"
-              >
-                <div className="text-[10px] font-mono tracking-widest text-gold font-semibold uppercase">
-                  {activeLandmark.category}
-                </div>
-                <h3 className="text-xl font-serif text-white font-light tracking-wide">
-                  {activeLandmark.name}
-                </h3>
-                <p className="text-xs md:text-sm text-white/50 tracking-wider font-light leading-relaxed">
-                  {activeLandmark.desc}
-                </p>
-                <div className="text-[9px] font-mono tracking-widest text-[#444] border-t border-white/5 pt-3">
-                  DISTANCE: {activeLandmark.time.replace("DRIVETIME", "")}
-                </div>
-              </motion.div>
-            </AnimatePresence>
+            {/* Action CTA Explore Button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              onClick={handleScrollToContact}
+              className="group/cta relative self-start flex items-center gap-2 text-[#C8A96A] font-sans font-semibold text-[13px] uppercase tracking-[0.15em] hover:text-[#F6F3EB] transition-colors duration-300 min-h-[44px] mt-10 focus-visible:outline-none"
+            >
+              <span>Explore the Location</span>
+              <span className="group-hover/cta:translate-x-1.5 transition-transform duration-300 select-none">
+                →
+              </span>
+              <span className="absolute bottom-1 left-0 w-0 group-hover/cta:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
+            </motion.button>
+
           </div>
 
-          {/* Right Column: High-End Vector SVG Map */}
-          <div className="lg:col-span-7">
-            <div className="relative aspect-[16/11] w-full border border-gold/15 glass-light p-6">
-              
-              {/* Radar Grid background */}
-              <div className="absolute inset-0 grid-overlay opacity-30 pointer-events-none" />
+          {/* COLUMN 2: Large Visual Showcase (Responsive Order 1 on Mobile) */}
+          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 flex flex-col">
+            
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] as const }}
+              className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[5/4] w-full overflow-hidden rounded-[28px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/40 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40 group cursor-pointer"
+            >
+              {/* Internal Bezel Decoration */}
+              <div className="absolute inset-0 border border-white/5 rounded-[28px] z-10 pointer-events-none" />
 
-              {/* Map Canvas */}
-              <svg viewBox="0 0 500 350" className="w-full h-full text-gold stroke-current fill-none">
-                {/* Coastal silhouette outlines */}
-                <path
-                  d="M 50 80 Q 150 120, 250 170 T 450 200"
-                  stroke="rgba(197, 168, 128, 0.15)"
-                  strokeWidth="3"
-                  strokeDasharray="6,4"
+              {/* Ambient Dark Overlay (15% coverage) */}
+              <div className="absolute inset-0 bg-black/15 z-10 pointer-events-none transition-opacity duration-300 group-hover:bg-black/10" />
+
+              {/* Parallax Image Render */}
+              <motion.div 
+                style={{ y: yParallax, scale: scaleParallax }}
+                className="w-full h-full relative"
+              >
+                <Image
+                  src="/images/terrace.webp"
+                  alt="Exclusive Oceanfront Coastal Horizon View"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-103 filter brightness-95"
+                  loading="lazy"
                 />
-                <path
-                  d="M 50 100 Q 150 140, 250 185 T 450 215"
-                  stroke="rgba(197, 168, 128, 0.08)"
-                  strokeWidth="1.5"
-                />
-                
-                {/* Waves pattern under coastal path */}
-                <path d="M 100 240 Q 110 238, 120 240 T 140 240" stroke="rgba(197, 168, 128, 0.05)" strokeWidth="1" />
-                <path d="M 280 270 Q 290 268, 300 270 T 320 270" stroke="rgba(197, 168, 128, 0.05)" strokeWidth="1" />
+              </motion.div>
 
-                {/* Draw roads / connections */}
-                <path
-                  d="M 110 90 L 250 175 M 140 240 L 250 175 M 360 90 L 250 175 M 380 220 L 250 175"
-                  stroke="rgba(197, 168, 128, 0.12)"
-                  strokeWidth="1"
-                  strokeDasharray="4,4"
-                />
-
-                {/* Plot Landmarks */}
-                {LANDMARKS.map((landmark) => {
-                  const isVilla = landmark.id === "villa";
-                  const isSelected = landmark.id === selectedLandmarkId;
-                  
-                  return (
-                    <g
-                      key={landmark.id}
-                      onClick={() => setSelectedLandmarkId(landmark.id)}
-                      className="cursor-pointer group/map"
-                    >
-                      {/* Active glowing ring */}
-                      <circle
-                        cx={landmark.x}
-                        cy={landmark.y}
-                        r={isVilla ? 16 : 8}
-                        fill="transparent"
-                        stroke={isVilla ? "#C5A880" : "rgba(197, 168, 128, 0.4)"}
-                        strokeWidth={isSelected ? 2 : 1}
-                        className={isVilla || isSelected ? "animate-pulse" : ""}
-                        style={{ transformOrigin: `${landmark.x}px ${landmark.y}px` }}
-                      />
-                      {isVilla && (
-                        <circle
-                          cx={landmark.x}
-                          cy={landmark.y}
-                          r={28}
-                          fill="transparent"
-                          stroke="rgba(197, 168, 128, 0.06)"
-                          strokeWidth="1"
-                          className="animate-ping"
-                          style={{ transformOrigin: `${landmark.x}px ${landmark.y}px`, animationDuration: "3s" }}
-                        />
-                      )}
-                      
-                      {/* Inner dot pin */}
-                      <circle
-                        cx={landmark.x}
-                        cy={landmark.y}
-                        r={isVilla ? 6 : 4}
-                        fill={isVilla ? "#C5A880" : isSelected ? "#C5A880" : "rgba(197, 168, 128, 0.4)"}
-                      />
-
-                      {/* Floating Text Labels */}
-                      <text
-                        x={landmark.x}
-                        y={landmark.y - (isVilla ? 24 : 14)}
-                        textAnchor="middle"
-                        fill={isSelected ? "#FFF" : "rgba(255,255,255,0.4)"}
-                        fontSize={isVilla ? "10" : "8"}
-                        fontFamily="monospace"
-                        letterSpacing="1"
-                        className="transition-colors duration-300"
-                      >
-                        {landmark.name.toUpperCase()}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
-
-              {/* HUD Coordinates info */}
-              <div className="absolute bottom-6 left-6 font-mono text-[9px] text-[#444] border-t border-white/5 pt-4 w-[90%] flex justify-between">
-                <div>GRID REFERENCE: MAP_ZONE_A</div>
-                <div>SCALE: 1:200,000</div>
+              {/* Staggered bottom-left label badge overlay */}
+              <div className="absolute bottom-8 left-8 z-20 font-sans text-[10px] sm:text-xs tracking-[0.25em] text-[#F6F3EB] uppercase font-semibold bg-black/45 backdrop-blur-md px-4 py-2 border border-white/10 rounded">
+                Exclusive Coastal Residence
               </div>
-            </div>
+
+            </motion.div>
+
           </div>
 
         </div>
+
       </div>
     </section>
   );
