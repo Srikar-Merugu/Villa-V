@@ -12,7 +12,6 @@ const About = dynamic(() => import("../components/About"));
 const Amenities = dynamic(() => import("../components/Amenities"));
 const Gallery = dynamic(() => import("../components/Gallery"));
 const FloorPlans = dynamic(() => import("../components/FloorPlans"));
-const Location = dynamic(() => import("../components/Location"));
 const Testimonials = dynamic(() => import("../components/Testimonials"));
 const FAQ = dynamic(() => import("../components/FAQ"));
 const Contact = dynamic(() => import("../components/Contact"));
@@ -84,8 +83,6 @@ export default function Home() {
         <Gallery />
 
         <FloorPlans />
-
-        <Location />
 
         <Testimonials />
 
