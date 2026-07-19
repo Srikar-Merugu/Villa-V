@@ -77,7 +77,7 @@ export default function About() {
     <section 
       ref={sectionRef}
       id="about" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
     >
       {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
@@ -96,7 +96,7 @@ export default function About() {
             </span>
 
             {/* Editorial Heading (Line by Line reveal) */}
-            <h3 className="font-serif text-[#F6F3EB] font-light text-[32px] sm:text-[38px] md:text-[42px] lg:text-[72px] xl:text-[84px] leading-[1.05] tracking-tight mb-5 lg:mb-8">
+            <h3 className="font-serif text-[#F6F3EB] font-light text-[clamp(32px,6.5vw,42px)] lg:text-[clamp(48px,6vw,84px)] leading-[1.05] tracking-tight mb-5 lg:mb-8">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span

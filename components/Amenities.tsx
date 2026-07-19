@@ -98,7 +98,7 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
           {category}
         </span>
         
-        <h4 className="font-serif text-[#F6F3EB] text-[28px] sm:text-[34px] lg:text-[38px] font-light leading-tight tracking-wide mb-3 transition-transform duration-300 group-hover:-translate-y-0.5">
+        <h4 className="font-serif text-[#F6F3EB] text-[clamp(24px,5.5vw,28px)] lg:text-[clamp(28px,3vw,38px)] font-light leading-tight tracking-wide mb-3 transition-transform duration-300 group-hover:-translate-y-0.5">
           {title}
         </h4>
         
@@ -151,7 +151,7 @@ export default function Amenities() {
   return (
     <section 
       id="amenities" 
-      className="relative py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />

@@ -72,12 +72,12 @@ export default function Footer() {
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={containerVariants}
-      className="bg-[#0D0D0D] text-[#F6F3EB] pt-[100px] pb-[60px] relative overflow-hidden select-none"
+      className="bg-[#0D0D0D] text-[#F6F3EB] pt-[100px] pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-[60px] relative overflow-hidden select-none"
     >
       {/* Subtle luxury dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-[80px] relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-[80px] relative z-10">
         
         {/* Responsive Grid Columns (Collapses to 1 column on mobile) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16">

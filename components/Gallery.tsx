@@ -49,7 +49,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
           onClick={onOpenLightbox}
-          className="relative w-full h-[380px] sm:h-[500px] lg:h-[650px] xl:h-[720px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_20px_45px_rgba(0,0,0,0.5)] hover:shadow-[0_24px_50px_rgba(200,169,106,0.08)] bg-black/40 cursor-pointer group"
+          className="relative w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-none lg:h-[650px] xl:h-[720px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_20px_45px_rgba(0,0,0,0.5)] hover:shadow-[0_24px_50px_rgba(200,169,106,0.08)] bg-black/40 cursor-pointer group"
         >
           {/* Inner bezel decoration */}
           <div className="absolute inset-0 border border-white/5 rounded-[24px] z-10 pointer-events-none" />
@@ -84,7 +84,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
         </span>
 
         {/* Header Reveal Line-by-Line */}
-        <h3 className="font-serif text-[#F6F3EB] font-light text-[32px] sm:text-[36px] md:text-[42px] lg:text-[54px] xl:text-[62px] leading-[1.05] tracking-tight mb-5 lg:mb-6">
+        <h3 className="font-serif text-[#F6F3EB] font-light text-[clamp(28px,6vw,38px)] lg:text-[clamp(38px,4vw,62px)] leading-[1.05] tracking-tight mb-5 lg:mb-6">
           {titleLines.map((line, i) => (
             <span key={i} className="block overflow-hidden pb-1">
               <motion.span
@@ -195,7 +195,7 @@ export default function Gallery() {
   return (
     <section
       id="gallery"
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
       aria-labelledby="gallery-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
@@ -214,7 +214,7 @@ export default function Gallery() {
             <span id="gallery-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               THE SHOWCASE
             </span>
-            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
+            <h2 className="text-[clamp(32px,6.5vw,42px)] lg:text-[clamp(48px,5.5vw,72px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
               Visual Chronicles
             </h2>
           </motion.div>

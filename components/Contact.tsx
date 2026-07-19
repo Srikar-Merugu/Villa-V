@@ -130,7 +130,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none" 
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20" 
       aria-labelledby="contact-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
@@ -150,7 +150,7 @@ export default function Contact() {
             </span>
 
             {/* Editorial Heading Line-by-Line */}
-            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[64px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
+            <h2 className="text-[clamp(32px,6.5vw,48px)] lg:text-[clamp(48px,5.5vw,72px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span
@@ -253,7 +253,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
-              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-8 sm:p-10 lg:p-12 w-full"
+              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[24px] sm:rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-5 sm:p-10 lg:p-12 w-full"
             >
               <AnimatePresence mode="wait">
                 {status === "success" ? (
@@ -417,7 +417,7 @@ export default function Contact() {
                       disabled={status === "submitting" || !consentChecked}
                       whileHover={status === "idle" && consentChecked ? { y: -2 } : {}}
                       whileTap={{ scale: 0.97 }}
-                      className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
+                      className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-[11px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] px-4 flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
                     >
                       {status === "submitting" ? (
                         <>

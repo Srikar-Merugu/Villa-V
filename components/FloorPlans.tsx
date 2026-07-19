@@ -99,7 +99,7 @@ export default function FloorPlans() {
   return (
     <section 
       id="floor-plans" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
@@ -134,20 +134,20 @@ export default function FloorPlans() {
         </div>
 
         {/* Two-Column Tour Layout (Left 40%, Right 60%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 xl:gap-24 items-center">
           
           {/* COLUMN 1: Editorial Navigation & Highlight Bullets */}
           <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
             
-            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-6 block">
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-4 lg:mb-6 block">
               LEVELS
             </span>
 
-            {/* Horizontal scroll chips on Mobile, Vertical tab list on Desktop */}
+            {/* Full-width segmented grid on Mobile, Vertical tab list on Desktop */}
             <div 
               role="tablist"
               aria-label="Residence levels tour selector"
-              className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-4 lg:pb-0 gap-4 lg:gap-0 border-b lg:border-b-0 border-white/5 whitespace-nowrap lg:whitespace-normal scrollbar-none"
+              className="grid grid-cols-3 lg:flex lg:flex-col gap-2 lg:gap-0 border border-[#C8A96A]/20 lg:border-none bg-[#121214] lg:bg-transparent p-1 lg:p-0 rounded-full lg:rounded-none w-full"
             >
               {levels.map((item, idx) => {
                 const isActive = activeIndex === idx;
@@ -158,23 +158,19 @@ export default function FloorPlans() {
                     aria-selected={isActive}
                     tabIndex={0}
                     onClick={() => handleSelectLevel(idx)}
-                    className="text-left py-3 lg:py-5 cursor-pointer relative focus-visible:outline-none flex flex-col w-full shrink-0 max-w-[200px] lg:max-w-none group"
+                    className="cursor-pointer relative focus-visible:outline-none flex flex-col items-center lg:items-start text-center lg:text-left py-2.5 lg:py-5 w-full group"
                   >
-                    <div className="flex justify-between items-center w-full">
-                      <span className={`text-[13px] sm:text-[14px] tracking-[0.14em] font-medium uppercase transition-colors duration-300 ${
-                        isActive ? "text-[#C8A96A]" : "text-[#F6F3EB]/60 group-hover:text-[#C8A96A]/80"
-                      }`}>
+                    <div className="flex items-center justify-center lg:justify-between w-full">
+                      <span className="text-[11px] sm:text-[13px] md:text-[14px] tracking-[0.14em] font-medium uppercase transition-colors duration-300">
                         {item.name}
                       </span>
-                      <span className={`hidden lg:inline text-xs transition-colors duration-300 ${
-                        isActive ? "text-[#C8A96A]" : "text-transparent"
-                      }`}>
+                      <span className="hidden lg:inline text-xs transition-colors duration-300">
                         ←
                       </span>
                     </div>
 
                     {/* Progress Indicator Underline */}
-                    <div className="relative w-full h-[1.5px] bg-white/10 mt-3">
+                    <div className="relative w-full h-[1.5px] bg-white/5 lg:bg-white/10 mt-2 lg:mt-3">
                       {/* Active autofilling progress bar */}
                       {isActive && !isPaused && !reduceMotion && (
                         <motion.div
@@ -196,7 +192,7 @@ export default function FloorPlans() {
             </div>
 
             {/* Level details & list layout */}
-            <div className="min-h-[220px] flex flex-col">
+            <div className="min-h-[160px] lg:min-h-[220px] flex flex-col">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
@@ -204,9 +200,9 @@ export default function FloorPlans() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
-                  className="flex flex-col gap-6 mt-8"
+                  className="flex flex-col gap-6 mt-6 lg:mt-8"
                 >
-                  <h4 className="font-serif text-[#F6F3EB] text-[22px] sm:text-[26px] font-light leading-tight">
+                  <h4 className="font-serif text-[#F6F3EB] text-[20px] sm:text-[26px] font-light leading-tight">
                     {currentLevel.desc}
                   </h4>
                   

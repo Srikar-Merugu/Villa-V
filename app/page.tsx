@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import ScrollVideoScrub from "../components/ScrollVideoScrub";
@@ -19,15 +19,21 @@ const Footer = dynamic(() => import("../components/Footer"));
 // Sticky Mobile Bottom CTA Bar (visible on viewports < 768px past Hero)
 function StickyMobileCTA() {
   const [visible, setVisible] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Appear after user scrolls past the main viewport fold
-      if (window.scrollY > window.innerHeight * 0.95) {
+      const currentScrollY = window.scrollY;
+      const pastHero = currentScrollY > window.innerHeight * 0.9;
+      const scrollingUp = currentScrollY < lastScrollY.current;
+
+      // Visible only after hero AND when scrolling up (with a small scroll tolerance)
+      if (pastHero && (scrollingUp || currentScrollY <= lastScrollY.current - 5)) {
         setVisible(true);
       } else {
         setVisible(false);
       }
+      lastScrollY.current = currentScrollY;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
