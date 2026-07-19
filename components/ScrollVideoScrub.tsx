@@ -127,6 +127,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   
+  const [isInitialized, setIsInitialized] = useState(false);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -144,13 +145,87 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
+  // Frame initialization and browser paint detection sequence (WCAG & UX flash prevention)
   useEffect(() => {
-    // If reduced motion is requested, do not bind scroll events or animate frame offsets
-    if (reducedMotion) {
-      const video = videoRef.current;
-      if (video) {
-        video.currentTime = 0;
+    const video = videoRef.current;
+    if (!video) return;
+
+    let completed = false;
+
+    const handleInitialization = () => {
+      if (completed) return;
+      
+      const duration = video.duration || 53;
+      
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const scrollHeight = rect.height - window.innerHeight;
+        let pct = -rect.top / scrollHeight;
+        pct = Math.max(0, Math.min(1, pct));
+        
+        progressRef.current = pct;
+        const initialTime = pct * duration;
+        currentTimeRef.current = initialTime;
+        
+        // Seek directly to scroll-based time frame
+        video.currentTime = initialTime;
       }
+    };
+
+    const handleSeeked = () => {
+      if (completed) return;
+      completed = true;
+      
+      // Delay slightly to confirm browser finishes rendering paint buffer
+      setTimeout(() => {
+        setIsInitialized(true);
+      }, 150);
+    };
+
+    // Unlock video playback capabilities for mobile browsers
+    const unlockMobile = () => {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            video.pause();
+            handleInitialization();
+          })
+          .catch((err) => {
+            console.warn("Mobile video decoder unlock deferred:", err);
+            handleInitialization();
+          });
+      } else {
+        handleInitialization();
+      }
+    };
+
+    video.addEventListener("loadedmetadata", unlockMobile);
+    video.addEventListener("seeked", handleSeeked);
+
+    // If metadata is already cached / pre-loaded
+    if (video.readyState >= 1) {
+      unlockMobile();
+    }
+
+    // Safety timeout fallback (3.5 seconds) to prevent infinite loaders on slow connections
+    const safetyTimeout = setTimeout(() => {
+      if (!completed) {
+        completed = true;
+        setIsInitialized(true);
+      }
+    }, 3500);
+
+    return () => {
+      video.removeEventListener("loadedmetadata", unlockMobile);
+      video.removeEventListener("seeked", handleSeeked);
+      clearTimeout(safetyTimeout);
+    };
+  }, [reducedMotion, videoUrl]);
+
+  useEffect(() => {
+    // If reduced motion is requested or page hasn't finished initial rendering, ignore scroll loop
+    if (reducedMotion || !isInitialized) {
       return;
     }
 
@@ -198,7 +273,6 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     const smoothScrub = () => {
       const video = videoRef.current;
       if (video && video.readyState >= 2) {
-        // Enforce pause state to prevent auto-play conflicts during scroll scrubbing
         if (!video.paused) {
           video.pause();
         }
@@ -206,15 +280,13 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
         const duration = video.duration || 53;
         const targetTime = progressRef.current * duration;
 
-        // Apply easing. If delta is very large (e.g. section jump click), skip easing to seek instantly
         const diff = targetTime - currentTimeRef.current;
         if (Math.abs(diff) > 1.5) {
           currentTimeRef.current = targetTime;
         } else {
-          currentTimeRef.current += diff * 0.08; // Butter smooth LERP easing
+          currentTimeRef.current += diff * 0.08; // LERP easing LERP
         }
 
-        // Prevent redundant seeks when values are nearly equal to reduce CPU/GPU decode loads
         if (Math.abs(diff) > 0.002 && !video.seeking) {
           video.currentTime = currentTimeRef.current;
         }
@@ -228,43 +300,47 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rAFId);
     };
-  }, [reducedMotion]);
-
-  // Unlock video playback on mobile devices (iOS / Android) by triggering a temporary play/pause
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const unlockVideo = () => {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            video.pause();
-            video.currentTime = 0;
-          })
-          .catch((err) => {
-            console.warn("Mobile video decoder unlock prevented:", err);
-          });
-      }
-    };
-
-    video.addEventListener("loadedmetadata", unlockVideo);
-    if (video.readyState >= 1) {
-      unlockVideo();
-    }
-
-    return () => {
-      video.removeEventListener("loadedmetadata", unlockVideo);
-    };
-  }, [videoUrl]);
+  }, [isInitialized, reducedMotion]);
 
   const currentScene = SCENES[activeSceneIndex];
 
   return (
     <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
+      {/* Premium Luxury Loading Screen */}
+      <AnimatePresence>
+        {!isInitialized && (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="fixed inset-0 bg-[#0B0B0C] z-50 flex flex-col items-center justify-center select-none"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="flex flex-col items-center text-center"
+            >
+              <span className="text-[10px] tracking-[0.45em] uppercase text-gold font-sans font-semibold mb-2">
+                Architectural Vision
+              </span>
+              <span className="text-3xl md:text-4xl font-serif tracking-[0.25em] text-[#F6F3EB] font-light leading-none">
+                VILLA V
+              </span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Sticky Video Canvas Wrapper */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden z-0">
+      <div 
+        className="sticky top-0 left-0 w-full h-screen overflow-hidden z-0 transition-opacity duration-1000 ease-in-out"
+        style={{
+          opacity: isInitialized ? 1 : 0,
+          visibility: isInitialized ? "visible" : "hidden"
+        }}
+      >
         <video
           ref={videoRef}
           src={videoUrl}

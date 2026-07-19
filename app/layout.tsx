@@ -132,6 +132,9 @@ export default function RootLayout({
       className={`${cormorantGaramond.variable} ${inter.variable} ${pinyonScript.variable} h-full antialiased`}
     >
       <head>
+        {/* Aggressive preloading of critical cinematic hero video */}
+        <link rel="preload" href="/videos/hero.mp4?v=3" as="video" type="video/mp4" />
+        
         {/* Inject JSON-LD Schema scripts */}
         <script
           type="application/ld+json"
