@@ -329,19 +329,25 @@ export default function Contact() {
         </div>
 
         {/* Centered Footer Logo */}
-        <div className="w-full flex justify-center mb-10 select-none">
+        <div className="w-full flex flex-col items-center justify-center mb-10 select-none opacity-60 hover:opacity-100 transition-opacity duration-500">
           <img
-            src="/logo_transparent.png"
-            alt="VILLA V"
-            className="h-[36px] md:h-[42px] w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-500"
+            src="/shield_icon.png"
+            alt=""
+            className="h-10 md:h-12 w-auto object-contain mb-3 select-none pointer-events-none"
           />
+          <span className="text-[9px] tracking-[0.25em] uppercase text-[#C8A96A] font-sans font-medium mb-1">
+            timeless, calm luxury
+          </span>
+          <span className="text-lg md:text-xl font-serif tracking-[0.1em] text-[#F6F3EB] leading-none font-normal">
+            Villa Sérénité
+          </span>
         </div>
 
         {/* Global Footer (Trust pages & copyrights) */}
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-mono tracking-[0.2em] text-[#444] select-none">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            VILLA V CONCIERGE SECURE CHANNEL ENABLED
+            VILLA SÉRÉNITÉ CONCIERGE SECURE CHANNEL ENABLED
           </div>
           
           {/* Trust Policies Links */}
@@ -360,7 +366,7 @@ export default function Contact() {
             </Link>
           </div>
 
-          <div>© 2026 VILLA V RESIDENCES. ALL RIGHTS RESERVED.</div>
+          <div>© 2026 VILLA SÉRÉNITÉ RESIDENCES. ALL RIGHTS RESERVED.</div>
         </div>
       </div>
     </section>

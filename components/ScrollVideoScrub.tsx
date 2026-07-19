@@ -14,7 +14,7 @@ interface SceneContent {
 
 const SCENES: SceneContent[] = [
   {
-    serifTitle: "VISION",
+    serifTitle: "SÉRÉNITÉ",
     scriptTitle: "Elegance"
   },
   {
@@ -346,13 +346,19 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, ease: "easeInOut" }}
-              className="flex flex-col items-center text-center p-6"
+              className="flex flex-col items-center text-center p-6 select-none"
             >
               <img
-                src="/logo_transparent.png"
-                alt="VILLA V"
-                className="w-[200px] sm:w-[260px] md:w-[320px] h-auto object-contain select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                src="/shield_icon.png"
+                alt=""
+                className="w-16 sm:w-20 md:w-24 h-auto object-contain select-none pointer-events-none mb-6 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
               />
+              <span className="text-[10px] sm:text-[11px] md:text-[12px] tracking-[0.3em] uppercase text-[#C8A96A] font-sans font-medium mb-2.5">
+                timeless, calm luxury
+              </span>
+              <span className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-[0.1em] text-[#F6F3EB] font-light leading-none">
+                Villa Sérénité
+              </span>
             </motion.div>
           </motion.div>
         )}

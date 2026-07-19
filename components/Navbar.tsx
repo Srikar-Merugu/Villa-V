@@ -130,7 +130,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between h-full">
           
-          {/* Logo image replacing the text logo */}
+          {/* Rebranded Villa Sérénité Logo */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -141,14 +141,22 @@ export default function Navbar() {
             }}
             role="link"
             tabIndex={0}
-            aria-label="VILLA V logo. Go back to top."
-            className="flex items-center cursor-pointer focus-visible:outline-none shrink-0 py-1"
+            aria-label="Villa Sérénité logo. Go back to top."
+            className="flex items-center gap-3 cursor-pointer focus-visible:outline-none shrink-0 py-1"
           >
             <img
-              src="/logo_transparent.png"
-              alt="VILLA V"
-              className="h-[40px] sm:h-[48px] md:h-[52px] lg:h-[58px] w-auto object-contain select-none pointer-events-none"
+              src="/shield_icon.png"
+              alt=""
+              className="h-[38px] sm:h-[48px] md:h-[50px] lg:h-[54px] w-auto object-contain select-none pointer-events-none"
             />
+            <div className="flex flex-col text-left select-none leading-none">
+              <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.2em] sm:tracking-[0.26em] md:tracking-[0.3em] uppercase text-[#C8A96A] font-sans font-medium mb-1.5 whitespace-nowrap">
+                timeless, calm luxury
+              </span>
+              <span className="text-[18px] sm:text-[22px] md:text-[25px] lg:text-[28px] font-serif tracking-[0.08em] sm:tracking-[0.1em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 group-hover:tracking-[0.12em] whitespace-nowrap">
+                Villa Sérénité
+              </span>
+            </div>
           </div>
 
           {/* Desktop Navigation Links (Warm Ivory #F6F3EB, Weight 500, tracking 0.12em, 2px active underline) */}

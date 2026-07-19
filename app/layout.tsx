@@ -23,24 +23,24 @@ const pinyonScript = Pinyon_Script({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://villa-v.vercel.app"),
-  title: "VILLA V | A Cinematic Real Estate Masterpiece",
-  description: "Witness the construction journey of Villa V—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
-  keywords: ["Luxury Real Estate", "Luxury Villa", "Architecture", "Infinity Pool", "Modern Home", "Cinematic Villa"],
+  title: "Villa Sérénité | A Cinematic Real Estate Masterpiece",
+  description: "Witness the construction journey of Villa Sérénité—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
+  keywords: ["Luxury Real Estate", "Luxury Villa", "Villa Sérénité", "Architecture", "Infinity Pool", "Modern Home", "Cinematic Villa"],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "VILLA V | A Cinematic Real Estate Masterpiece",
-    description: "Witness the construction journey of Villa V—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
+    title: "Villa Sérénité | A Cinematic Real Estate Masterpiece",
+    description: "Witness the construction journey of Villa Sérénité—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
     url: "/",
-    siteName: "VILLA V",
+    siteName: "Villa Sérénité",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "VILLA V | A Cinematic Real Estate Masterpiece",
-    description: "Witness the construction journey of Villa V—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
+    title: "Villa Sérénité | A Cinematic Real Estate Masterpiece",
+    description: "Witness the construction journey of Villa Sérénité—a custom, state-of-the-art luxury residence engineered with uncompromising precision and premium materials.",
   },
   robots: {
     index: true,
@@ -57,7 +57,7 @@ export default function RootLayout({
   const structuralSchema = {
     "@context": "https://schema.org",
     "@type": "SingleFamilyResidence",
-    "name": "Villa V",
+    "name": "Villa Sérénité",
     "description": "An architectural marvel overlooking the Adriatic Sea, crafted with marine-grade concrete, Schuco structural glazing, and KNX home automation.",
     "address": {
       "@type": "PostalAddress",
@@ -101,7 +101,7 @@ export default function RootLayout({
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What is the timeline for the completion of Villa V?",
+        "name": "What is the timeline for the completion of Villa Sérénité?",
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Foundation groundwork has finished. Concrete structure shell phase completes Q4 2026. Handover is scheduled for Q4 2027."
