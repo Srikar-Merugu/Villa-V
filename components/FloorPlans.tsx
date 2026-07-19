@@ -185,69 +185,6 @@ export default function FloorPlans() {
 
         </div>
 
-        {/* BOTTOM AREA: Redesigned Centered Metrics with Dividers */}
-        <div className="border-t border-white/10 mt-20 lg:mt-28 pt-20 pb-20 max-w-[1200px] mx-auto w-full">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-center justify-items-center gap-8 md:gap-0">
-            
-            {/* Column 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] as const }}
-              className="group flex flex-col items-center text-center select-none cursor-default w-full py-2"
-            >
-              <span className="font-serif text-[#C8A96A] hover:text-[#D6B15C] text-[30px] sm:text-[36px] lg:text-[40px] font-light leading-none tracking-wide transition-colors duration-300">
-                12,400 SQ FT
-              </span>
-              <span className="font-sans text-[15px] sm:text-[16px] tracking-[0.2em] text-white/75 group-hover:text-white uppercase mt-2.5 leading-none transition-colors duration-300">
-                CRAFTED INTERIOR
-              </span>
-            </motion.div>
-
-            {/* Divider 1 */}
-            <div className="hidden md:block w-[1px] h-[80px] bg-white/[0.08]" />
-            <div className="md:hidden w-full h-[1px] bg-white/[0.08] my-4" />
-
-            {/* Column 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.30, ease: [0.16, 1, 0.3, 1] as const }}
-              className="group flex flex-col items-center text-center select-none cursor-default w-full py-2"
-            >
-              <span className="font-serif text-[#C8A96A] hover:text-[#D6B15C] text-[30px] sm:text-[36px] lg:text-[40px] font-light leading-none tracking-wide transition-colors duration-300">
-                Panoramic Views
-              </span>
-              <span className="font-sans text-[15px] sm:text-[16px] tracking-[0.2em] text-white/75 group-hover:text-white uppercase mt-2.5 leading-none transition-colors duration-300">
-                EVERY ROOM
-              </span>
-            </motion.div>
-
-            {/* Divider 2 */}
-            <div className="hidden md:block w-[1px] h-[80px] bg-white/[0.08]" />
-            <div className="md:hidden w-full h-[1px] bg-white/[0.08] my-4" />
-
-            {/* Column 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] as const }}
-              className="group flex flex-col items-center text-center select-none cursor-default w-full py-2"
-            >
-              <span className="font-serif text-[#C8A96A] hover:text-[#D6B15C] text-[30px] sm:text-[36px] lg:text-[40px] font-light leading-none tracking-wide transition-colors duration-300">
-                Private Living
-              </span>
-              <span className="font-sans text-[15px] sm:text-[16px] tracking-[0.2em] text-white/75 group-hover:text-white uppercase mt-2.5 leading-none transition-colors duration-300">
-                ABSOLUTE COMFORT
-              </span>
-            </motion.div>
-
-          </div>
-        </div>
-
       </div>
     </section>
   );

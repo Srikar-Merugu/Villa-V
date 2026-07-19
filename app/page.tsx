@@ -11,6 +11,10 @@ import dynamic from "next/dynamic";
 const About = dynamic(() => import("../components/About"));
 const Amenities = dynamic(() => import("../components/Amenities"));
 const Gallery = dynamic(() => import("../components/Gallery"));
+const FloorPlans = dynamic(() => import("../components/FloorPlans"));
+const Location = dynamic(() => import("../components/Location"));
+const Testimonials = dynamic(() => import("../components/Testimonials"));
+const FAQ = dynamic(() => import("../components/FAQ"));
 const Contact = dynamic(() => import("../components/Contact"));
 const Footer = dynamic(() => import("../components/Footer"));
 
@@ -78,6 +82,14 @@ export default function Home() {
         <Amenities />
 
         <Gallery />
+
+        <FloorPlans />
+
+        <Location />
+
+        <Testimonials />
+
+        <FAQ />
 
         <Contact />
         <Footer />
