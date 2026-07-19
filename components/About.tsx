@@ -77,12 +77,12 @@ export default function About() {
     <section 
       ref={sectionRef}
       id="about" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-visible select-none scroll-mt-24 lg:scroll-mt-20 box-border"
     >
       {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
 
-      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Two-Column Responsive Grid Layout (Desktop Left 45%, Right 55%) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-24 xl:gap-32 items-center w-full">

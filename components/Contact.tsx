@@ -136,7 +136,7 @@ export default function Contact() {
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10 box-border">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full max-w-full">
           
           {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}

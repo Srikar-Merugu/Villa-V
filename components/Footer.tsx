@@ -77,7 +77,7 @@ export default function Footer() {
       {/* Subtle luxury dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-[80px] relative z-10">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-[80px] relative z-10 box-border">
         
         {/* Responsive Grid Columns (Collapses to 1 column on mobile) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16">
