@@ -130,7 +130,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between h-full">
           
-          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A, Size: 34-36px - Locked to 1 line) */}
+          {/* Logo image replacing the text logo */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -142,14 +142,13 @@ export default function Navbar() {
             role="link"
             tabIndex={0}
             aria-label="VILLA V logo. Go back to top."
-            className="flex flex-col cursor-pointer group focus-visible:outline-none py-1 text-shadow-subtle shrink-0 text-left"
+            className="flex items-center cursor-pointer focus-visible:outline-none shrink-0 py-1"
           >
-            <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] md:tracking-[0.35em] uppercase text-[#C8A96A] font-sans font-medium mb-0.5 whitespace-nowrap">
-              Architectural Vision
-            </span>
-            <span className="text-[24px] sm:text-[28px] md:text-[34px] lg:text-[36px] font-serif tracking-[0.15em] sm:tracking-[0.18em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 group-hover:tracking-[0.20em] select-none whitespace-nowrap">
-              VILLA V
-            </span>
+            <img
+              src="/logo_transparent.png"
+              alt="VILLA V"
+              className="h-[40px] sm:h-[48px] md:h-[52px] lg:h-[58px] w-auto object-contain select-none pointer-events-none"
+            />
           </div>
 
           {/* Desktop Navigation Links (Warm Ivory #F6F3EB, Weight 500, tracking 0.12em, 2px active underline) */}

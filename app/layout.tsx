@@ -134,6 +134,12 @@ export default function RootLayout({
       <head>
         {/* Aggressive preloading of critical cinematic hero video */}
         <link rel="preload" href="/videos/hero.mp4?v=3" as="video" type="video/mp4" />
+
+        {/* Standard Favicons and Touch Icons mapping */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         
         {/* Inject JSON-LD Schema scripts */}
         <script

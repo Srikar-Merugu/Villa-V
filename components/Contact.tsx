@@ -328,8 +328,17 @@ export default function Contact() {
 
         </div>
 
+        {/* Centered Footer Logo */}
+        <div className="w-full flex justify-center mb-10 select-none">
+          <img
+            src="/logo_transparent.png"
+            alt="VILLA V"
+            className="h-[36px] md:h-[42px] w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-500"
+          />
+        </div>
+
         {/* Global Footer (Trust pages & copyrights) */}
-        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-mono tracking-[0.2em] text-[#444] select-none">
+        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-mono tracking-[0.2em] text-[#444] select-none">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             VILLA V CONCIERGE SECURE CHANNEL ENABLED
