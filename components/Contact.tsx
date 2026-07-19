@@ -49,7 +49,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-24 md:py-36 bg-[#0E0E0E] overflow-hidden select-none border-t border-gold/5" aria-labelledby="contact-heading">
+    <section id="contact" className="relative pt-24 md:pt-36 pb-8 md:pb-12 bg-[#0E0E0E] overflow-hidden select-none border-t border-gold/5" aria-labelledby="contact-heading">
       <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">

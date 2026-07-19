@@ -18,38 +18,6 @@ const FAQ = dynamic(() => import("../components/FAQ"));
 const Contact = dynamic(() => import("../components/Contact"));
 const Footer = dynamic(() => import("../components/Footer"));
 
-// Reusable luxury inline Call-to-Action block (Conversion Optimization)
-function CallToActionBlock() {
-  const handleScrollToContact = () => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  return (
-    <div className="py-16 md:py-24 bg-[#0B0B0C] border-t border-b border-gold/5 flex flex-col items-center justify-center text-center px-6 select-none relative overflow-hidden">
-      {/* Decorative grid lines */}
-      <div className="absolute inset-0 grid-overlay opacity-5 pointer-events-none" />
-      
-      <div className="max-w-2xl flex flex-col items-center gap-6 relative z-10">
-        <h3 className="font-serif text-2xl md:text-3xl text-[#F6F3EB] font-light tracking-wide leading-tight">
-          Experience the Pinnacle of Horizon Living
-        </h3>
-        <button
-          onClick={handleScrollToContact}
-          className="group flex items-center justify-center gap-3 bg-gold hover:bg-gold-light text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 transition-all duration-300 select-none cursor-pointer focus-visible:ring-2 focus-visible:ring-gold"
-        >
-          Book a Private Tour
-        </button>
-        <p className="text-[9px] font-mono tracking-widest text-white/40 uppercase">
-          Private Consultation &bull; No Obligation &bull; Response within 24 Hours
-        </p>
-      </div>
-    </div>
-  );
-}
-
 // Sticky Mobile Bottom CTA Bar (visible on viewports < 768px past Hero)
 function StickyMobileCTA() {
   const [visible, setVisible] = useState(false);
@@ -86,9 +54,9 @@ function StickyMobileCTA() {
         >
           <button
             onClick={handleScrollToContact}
-            className="w-full bg-gold hover:bg-gold-light text-[#0B0B0C] font-sans font-semibold text-[10px] uppercase tracking-[0.2em] py-3.5 flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-gold"
+            className="w-full bg-[#C8A96A] hover:bg-[#D6B15C] text-[#0B0B0C] font-sans font-semibold text-[10px] uppercase tracking-[0.2em] py-3.5 flex items-center justify-center transition-colors focus-visible:ring-1 focus-visible:ring-[#C8A96A]"
           >
-            Book a Private Tour
+            Book Consultation
           </button>
           <span className="text-[8px] font-mono tracking-wider text-white/35 uppercase text-center mt-1">
             Private Consultation &bull; Response within 24h
@@ -112,18 +80,14 @@ export default function Home() {
         <About />
         
         <Amenities />
-        <CallToActionBlock />
 
         <Gallery />
-        <CallToActionBlock />
 
         <FloorPlans />
-        <CallToActionBlock />
 
         <Location />
 
         <Testimonials />
-        <CallToActionBlock />
 
         <FAQ />
         <Contact />
