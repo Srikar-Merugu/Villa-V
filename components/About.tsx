@@ -187,7 +187,7 @@ export default function About() {
 
             {/* Staggered Premium Glass Metric Cards */}
             {/* Desktop: Absolute Positioned Floaters | Mobile/Tablet: 2x2 Grid Layout below container */}
-            <div className="grid grid-cols-2 gap-5 mt-8 xl:mt-0 xl:block w-full max-w-full">
+            <div className="grid grid-cols-2 gap-4 mt-8 xl:mt-0 xl:block w-full max-w-full">
               {metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}
@@ -195,7 +195,7 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: i * 0.15 + 0.2, ease: "easeOut" }}
-                  className={`p-4 sm:p-5 flex flex-col items-center justify-center text-center rounded-[16px] border border-white/10 bg-[#0A0A0A]/60 backdrop-blur-md shadow-xl select-none w-full ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
+                  className={`p-4 sm:p-5 flex flex-col items-center justify-center text-center rounded-[18px] border border-[#C8A96A]/15 bg-[#121214] backdrop-blur-md shadow-xl select-none w-full min-w-0 max-w-full box-border ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
                 >
                   <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
                     {metric.val}

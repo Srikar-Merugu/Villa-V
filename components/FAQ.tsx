@@ -47,13 +47,13 @@ export default function FAQ() {
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Two-Column Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start w-full max-w-full">
           
           {/* COLUMN 1: Editorial Description (Left 35%) */}
-          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative">
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border">
             
             {/* Faint gold lighting glow behind heading */}
             <div className="absolute -left-[10%] -top-[10%] w-[250px] h-[250px] rounded-full bg-[#C8A96A]/3 blur-[90px] pointer-events-none z-0" />
@@ -75,7 +75,7 @@ export default function FAQ() {
           </div>
 
           {/* COLUMN 2: Luxury Accordion Cards (Right 65%) */}
-          <div className="col-span-12 lg:col-span-7 flex flex-col gap-6 w-full">
+          <div className="col-span-12 lg:col-span-7 flex flex-col gap-6 w-full min-w-0 max-w-full box-border">
             {faqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
               return (

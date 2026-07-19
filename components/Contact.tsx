@@ -136,11 +136,11 @@ export default function Contact() {
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10 box-border">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full max-w-full">
           
           {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}
-          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative">
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border">
             
             {/* Ambient gold glow behind heading */}
             <div className="absolute -left-[10%] -top-[10%] w-[300px] h-[300px] rounded-full bg-[#C8A96A]/3 blur-[100px] pointer-events-none z-0" />
@@ -228,7 +228,7 @@ export default function Contact() {
           </div>
 
           {/* COLUMN 2: Private Booking Form Card (Right 60%) */}
-          <div className="col-span-12 lg:col-span-7 flex flex-col w-full relative z-10">
+          <div className="col-span-12 lg:col-span-7 flex flex-col w-full min-w-0 max-w-full box-border relative z-10">
             
             {/* Form Badges Row */}
             <div className="flex flex-wrap items-center gap-3 mb-6 select-none">
@@ -311,13 +311,13 @@ export default function Contact() {
                         onChange={handleInputChange}
                         placeholder="e.g., Alexander Mercer"
                         disabled={status === "submitting"}
-                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
                       />
                     </div>
 
                     {/* Email and Phone Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full">
+                      <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                         <label htmlFor="form-email" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
                           Email Address *
                         </label>
@@ -331,10 +331,10 @@ export default function Contact() {
                           onChange={handleInputChange}
                           placeholder="e.g., alexander@mercer.com"
                           disabled={status === "submitting"}
-                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
                         />
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                         <label htmlFor="form-phone" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
                           Phone Number
                         </label>
@@ -347,7 +347,7 @@ export default function Contact() {
                           onChange={handleInputChange}
                           placeholder="e.g., +385 21 555 0199"
                           disabled={status === "submitting"}
-                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
                         />
                       </div>
                     </div>
@@ -364,7 +364,7 @@ export default function Contact() {
                         value={formData.date}
                         onChange={handleInputChange}
                         disabled={status === "submitting"}
-                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer"
+                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer max-w-full box-border"
                       />
                     </div>
 
@@ -380,7 +380,7 @@ export default function Contact() {
                         onChange={handleInputChange}
                         placeholder="Specify yacht berthing requirements or private helicopter arrival parameters if needed..."
                         disabled={status === "submitting"}
-                        className="w-full h-[140px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none"
+                        className="w-full h-[140px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none max-w-full box-border"
                       />
                     </div>
 
@@ -417,7 +417,7 @@ export default function Contact() {
                       disabled={status === "submitting" || !consentChecked}
                       whileHover={status === "idle" && consentChecked ? { y: -2 } : {}}
                       whileTap={{ scale: 0.97 }}
-                      className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-[11px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] px-4 flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
+                      className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-[11px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] px-4 flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none max-w-full box-border"
                     >
                       {status === "submitting" ? (
                         <>

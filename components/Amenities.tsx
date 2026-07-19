@@ -50,7 +50,7 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1.0, delay: (index % 2) * 0.15, ease: [0.16, 1, 0.3, 1] as const }}
-      className={`w-full flex flex-col gap-6 ${staggerClass} transition-all duration-300 ease-out`}
+      className={`w-full min-w-0 max-w-full box-border flex flex-col gap-6 ${staggerClass} transition-all duration-300 ease-out`}
     >
       {/* 3D Perspective Card Wrapper */}
       <div
@@ -62,7 +62,7 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
           transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
           transition: isHovered ? "none" : "transform 0.5s ease-out, shadow 0.5s ease-out",
         }}
-        className="group relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_16px_36px_rgba(0,0,0,0.5)] hover:shadow-[0_24px_50px_rgba(200,169,106,0.08)] bg-black/40 cursor-pointer"
+        className="group relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_16px_36px_rgba(0,0,0,0.5)] hover:shadow-[0_24px_50px_rgba(200,169,106,0.08)] bg-black/40 cursor-pointer max-w-full box-border"
       >
         {/* Sub-pixel luxury outline overlay */}
         <div className="absolute inset-0 border border-white/5 rounded-[24px] z-10 pointer-events-none" />
@@ -156,7 +156,7 @@ export default function Amenities() {
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Section Header */}
         <div className="max-w-3xl mb-8 lg:mb-16 flex flex-col">
@@ -185,7 +185,7 @@ export default function Amenities() {
         </div>
 
         {/* Staggered Alternating Grid of Editorial Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-5 lg:gap-y-36 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-5 lg:gap-y-36 pb-24 w-full max-w-full">
           {cards.map((card, idx) => (
             <AmenityCard
               key={card.title}

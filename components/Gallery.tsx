@@ -35,13 +35,13 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
   return (
     <div
       ref={panelRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center w-full"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center w-full max-w-full"
     >
       {/* COLUMN 1: Image container (Responsive Order 1 on Mobile/Tablet) */}
       <div 
         className={`col-span-12 lg:col-span-7 order-1 ${
           isImageLeft ? "lg:order-1" : "lg:order-2"
-        }`}
+        } w-full min-w-0 max-w-full box-border`}
       >
         <motion.div
           initial={{ opacity: 0, y: 80 }}
@@ -77,7 +77,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
       <div 
         className={`col-span-12 lg:col-span-5 order-2 ${
           isImageLeft ? "lg:order-2" : "lg:order-1"
-        } flex flex-col justify-center`}
+        } flex flex-col justify-center w-full min-w-0 max-w-full box-border`}
       >
         <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.25em] uppercase mb-4 block">
           {label}
@@ -201,7 +201,7 @@ export default function Gallery() {
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Section Header */}
         <div className="max-w-3xl mb-8 lg:mb-24 flex flex-col">
