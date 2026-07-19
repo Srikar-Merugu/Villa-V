@@ -9,8 +9,9 @@ interface ScrollVideoScrubProps {
 }
 
 interface SceneContent {
+  label: string;
+  serifTitle: string;
   scriptTitle: string;
-  serifTitle?: string;
   subtitle: string;
   indicator: string;
   theme: string;
@@ -18,46 +19,57 @@ interface SceneContent {
 
 const SCENES: SceneContent[] = [
   {
-    scriptTitle: "Luxury",
-    serifTitle: "Built Before Your Eyes.",
-    subtitle: "Experience the complete journey of your future home—from vision to reality.",
+    label: "LUXURY REAL ESTATE",
+    serifTitle: "VILLA V",
+    scriptTitle: "Elegance",
+    subtitle: "Crafted for extraordinary living. Experience the complete construction journey.",
     indicator: "00 / VISION",
     theme: "hero"
   },
   {
-    scriptTitle: "Every masterpiece begins with a vision.",
+    label: "FOUNDATION",
+    serifTitle: "EVERY MASTERPIECE",
+    scriptTitle: "Begins",
     subtitle: "Luxury starts long before the first stone is placed.",
     indicator: "01 / LAND",
     theme: "grid"
   },
   {
-    scriptTitle: "Precision engineering.",
-    serifTitle: "Every detail matters.",
+    label: "CRAFTSMANSHIP",
+    serifTitle: "PRECISION",
+    scriptTitle: "Matters",
     subtitle: "Exceptional homes are built through craftsmanship, precision, and uncompromising standards.",
     indicator: "02 / STRUCTURE",
     theme: "blueprint"
   },
   {
-    scriptTitle: "Architecture without compromise.",
+    label: "ARCHITECTURE",
+    serifTitle: "TIMELESS",
+    scriptTitle: "Luxury",
     subtitle: "A timeless design crafted to inspire for generations.",
     indicator: "03 / COMPLETED",
     theme: "elevation"
   },
   {
-    scriptTitle: "Designed for extraordinary living.",
+    label: "INTERIORS",
+    serifTitle: "DESIGNED FOR",
+    scriptTitle: "Living",
     subtitle: "Every room balances elegance, comfort, and intelligent design.",
     indicator: "04 / INTERIOR",
     theme: "interior"
   },
   {
-    scriptTitle: "Resort-inspired private spaces.",
+    label: "OUTDOOR EXPERIENCE",
+    serifTitle: "PRIVATE",
+    scriptTitle: "Retreat",
     subtitle: "Experience infinity pools, panoramic views, and luxurious outdoor living.",
     indicator: "05 / OASIS",
     theme: "water"
   },
   {
+    label: "WELCOME",
+    serifTitle: "HOME",
     scriptTitle: "Luxury",
-    serifTitle: "Welcome Home.",
     subtitle: "Your future begins here.",
     indicator: "06 / HOME",
     theme: "final"
@@ -324,46 +336,62 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
               </motion.div>
             </AnimatePresence>
 
-            {/* Title / Header */}
-            <div className="h-[220px] md:h-[300px] flex items-center justify-center mb-6 overflow-visible select-none filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+            {/* Title / Header Layered Layout */}
+            <div className="flex flex-col items-center justify-center text-center w-full select-none mb-4">
+              
+              {/* Animated Small Label */}
               <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentScene.scriptTitle + (currentScene.serifTitle || "")}
-                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                <motion.span
+                  key={currentScene.label}
+                  initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -30, filter: "blur(8px)" }}
-                  transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-col items-center justify-center text-center w-full"
+                  exit={{ opacity: 0, y: -10, filter: "blur(2px)" }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-[10px] md:text-xs tracking-[0.25em] text-[#C8A96A] font-sans font-semibold uppercase mb-4"
                 >
-                  {/* Primary Champagne Gold Script Line */}
-                  <span className="font-script text-[#E6D2A2] text-[clamp(44px,11vw,210px)] leading-[0.85] block mb-2 select-none tracking-normal font-normal">
-                    {currentScene.scriptTitle}
-                  </span>
+                  {currentScene.label}
+                </motion.span>
+              </AnimatePresence>
 
-                  {/* Secondary Warm White Serif Line */}
-                  {currentScene.serifTitle && (
-                    <span className="font-serif text-[#F5F5F2] text-2xl md:text-[clamp(28px,4vw,56px)] leading-[1.1] font-light tracking-[0.08em] block mt-1 select-none">
+              {/* Serif & Script Overlap Container */}
+              <div className="relative w-full flex flex-col items-center justify-center min-h-[140px] md:min-h-[220px] mb-8 overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentScene.serifTitle + currentScene.scriptTitle}
+                    initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative flex flex-col items-center justify-center"
+                  >
+                    {/* Large Serif Title (#F6F3EB) */}
+                    <h1 className="font-serif text-[#F6F3EB] text-[clamp(44px,7.5vw,130px)] leading-[1.0] uppercase tracking-[0.05em] font-light">
                       {currentScene.serifTitle}
-                    </span>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                    </h1>
 
-            {/* Description / Subtitle */}
-            <div className="h-[60px] md:h-[80px] flex items-center justify-center mb-10 max-w-2xl">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={currentScene.subtitle}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-sm md:text-base text-white/60 tracking-wider font-light leading-relaxed"
-                >
-                  {currentScene.subtitle}
-                </motion.p>
-              </AnimatePresence>
+                    {/* Luxury Script Overlay (#D6B15C) - overlapping slightly */}
+                    <span className="font-script text-[#D6B15C] text-[clamp(56px,10vw,180px)] leading-[0.8] absolute bottom-[-32%] md:bottom-[-28%] left-1/2 -translate-x-1/2 block select-none pointer-events-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                      {currentScene.scriptTitle}
+                    </span>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Description / Subtitle (Small Editorial Copy) */}
+              <div className="h-[48px] md:h-[60px] flex items-center justify-center mb-8 max-w-xl">
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={currentScene.subtitle}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-xs md:text-sm text-[#E9E8E5]/70 tracking-wider font-light leading-relaxed"
+                  >
+                    {currentScene.subtitle}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Interaction Layer (CTAs based on active scene) */}

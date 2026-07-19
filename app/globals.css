@@ -55,9 +55,9 @@
 }
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #F5F5F5;
-  --gold-rgba: 197, 168, 128;
+  --background: #0B0B0C;
+  --foreground: #E9E8E5;
+  --gold-rgba: 214, 177, 92;
 }
 
 /* Custom Scrollbar */
