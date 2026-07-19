@@ -3,9 +3,11 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Bind scroll-linked parallax adjustments directly to the GPU rendering timeline
   const { scrollYProgress } = useScroll({
@@ -17,12 +19,12 @@ export default function About() {
   const yParallax = useTransform(scrollYProgress, [0, 1], [40, -40]);
   const scaleParallax = useTransform(scrollYProgress, [0, 1], [1.08, 1.00]);
 
-  const headingLines = ["Sculpting", "Light,", "Space &", "Stone"];
+  const headingLines = t("about.headings") as string[];
 
   const features = [
     {
-      title: "Architecture",
-      desc: "Minimal contemporary design.",
+      title: t("about.features.0.title"),
+      desc: t("about.features.0.desc"),
       icon: (
         <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.176v10.764a1 1 0 01-.553.894L15 18l-6 3z" />
@@ -31,8 +33,8 @@ export default function About() {
       )
     },
     {
-      title: "Craftsmanship",
-      desc: "Every detail carefully finished.",
+      title: t("about.features.1.title"),
+      desc: t("about.features.1.desc"),
       icon: (
         <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
@@ -40,8 +42,8 @@ export default function About() {
       )
     },
     {
-      title: "Panoramic Living",
-      desc: "Uninterrupted mountain views.",
+      title: t("about.features.2.title"),
+      desc: t("about.features.2.desc"),
       icon: (
         <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
@@ -50,12 +52,19 @@ export default function About() {
     }
   ];
 
-  const metrics = [
-    { val: "12,400", label: "SQ FT", posClass: "xl:top-[8%] xl:-left-12" },
-    { val: "5", label: "Bedrooms", posClass: "xl:top-[38%] xl:-right-12" },
-    { val: "Infinity", label: "Views", posClass: "xl:bottom-[38%] xl:-left-12" },
-    { val: "Private", label: "Residence", posClass: "xl:bottom-[8%] xl:-right-12" }
+  const metricsData = t("about.metrics") as { val: string; label: string }[];
+  const posClasses = [
+    "xl:top-[8%] xl:-left-12",
+    "xl:top-[38%] xl:-right-12",
+    "xl:bottom-[38%] xl:-left-12",
+    "xl:bottom-[8%] xl:-right-12"
   ];
+  
+  const metrics = metricsData.map((m, idx) => ({
+    val: m.val,
+    label: m.label,
+    posClass: posClasses[idx]
+  }));
 
   const containerVariants = {
     hidden: {},
@@ -92,7 +101,7 @@ export default function About() {
             
             {/* Small Luxury Label */}
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
-              THE CONCEPTION
+              {t("about.label")}
             </span>
 
             {/* Editorial Heading (Line by Line reveal) */}
@@ -120,7 +129,7 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-[#F6F3EB] text-[16px] sm:text-[18px] font-normal leading-[1.6] text-shadow-subtle text-opacity-95 max-w-[520px] mb-8 lg:mb-12"
             >
-              Designed to blur the boundary between architecture and nature.
+              {t("about.tagline")}
             </motion.p>
 
             {/* Feature Cards Vertical Block */}
@@ -131,7 +140,7 @@ export default function About() {
               viewport={{ once: true, margin: "-100px" }}
               className="flex flex-col w-full"
             >
-              {features.map((feature, idx) => (
+              {features.map((feature) => (
                 <motion.div
                   key={feature.title}
                   variants={itemVariants}
@@ -181,7 +190,7 @@ export default function About() {
 
               {/* Decorative HUD Coordinates */}
               <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] tracking-widest text-[#F6F3EB]/50 bg-[#0A0A0A]/40 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded uppercase">
-                LAT: 43.7225° N | ALT: 114M
+                {t("about.hud")}
               </div>
             </motion.div>
 
@@ -198,16 +207,16 @@ export default function About() {
                     transition={{ duration: 0.8, delay: i * 0.15 + 0.2, ease: "easeOut" }}
                     className={`p-4 sm:p-5 flex flex-col items-center justify-center text-center rounded-[18px] border border-[#C8A96A]/15 bg-[#121214] backdrop-blur-md shadow-xl select-none w-full min-w-0 max-w-full box-border ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
                   >
-                  <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
-                    {metric.val}
-                  </span>
-                  <span className="font-sans text-[10px] tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
-                    {metric.label}
-                  </span>
-                </motion.div>
-              ))}
+                    <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
+                      {metric.val}
+                    </span>
+                    <span className="font-sans text-[10px] tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
+                      {metric.label}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
 
           </div>
           

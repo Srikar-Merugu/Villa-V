@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 interface AmenityCardProps {
   category: string;
@@ -67,33 +68,29 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
         {/* Sub-pixel luxury outline overlay */}
         <div className="absolute inset-0 border border-white/5 rounded-[24px] z-10 pointer-events-none" />
 
-        {/* Ambient Dark Gradient Backdrop Shield */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-10 pointer-events-none opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-
-        {/* Spotlight Follower Overlay (Hardware accelerated radial mask) */}
+        {/* Dynamic Interactive Spotlight Glow */}
         <div
-          className="absolute inset-0 z-15 pointer-events-none transition-opacity duration-300"
+          className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
           style={{
-            opacity: isHovered ? 1 : 0,
-            background: `radial-gradient(350px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(200,169,106,0.08), transparent 80%)`
+            background: `radial-gradient(400px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(200, 169, 106, 0.05), transparent 80%)`,
           }}
         />
 
-        {/* Cinematic Imagery */}
-        <div className="w-full h-full relative overflow-hidden">
-          <Image
-            src={imageSrc}
-            alt={title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 45vw"
-            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105 filter brightness-95"
-            loading="lazy"
-          />
-        </div>
+        {/* Image layer */}
+        <Image
+          src={imageSrc}
+          alt={title}
+          fill
+          sizes="(max-width: 1024px) 100vw, 45vw"
+          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.03] filter brightness-90 group-hover:brightness-95"
+        />
+
+        {/* Dark Editorial Overlay (Increases text readability) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent z-10 pointer-events-none" />
       </div>
 
-      {/* Card Content & Interactive Hooks */}
-      <div className="flex flex-col px-1 select-none">
+      {/* Card Details Block */}
+      <div className="flex flex-col select-none">
         <span className="text-[#C8A96A] text-[12px] sm:text-[13px] font-sans font-bold tracking-[0.2em] uppercase mb-2">
           {category}
         </span>
@@ -106,11 +103,15 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
           {desc}
         </p>
 
-        <button
-          className="group/btn flex items-center gap-2 self-start text-[#C8A96A] font-sans font-semibold text-[13px] uppercase tracking-[0.15em] hover:text-[#F6F3EB] transition-colors duration-300 min-h-[44px] focus-visible:outline-none"
+        {/* Arrow pointer link */}
+        <button 
+          className="group/btn flex items-center gap-2 text-xs font-sans font-semibold tracking-[0.15em] uppercase text-[#F6F3EB] hover:text-[#C8A96A] transition-colors duration-300 self-start py-1 focus-visible:outline-none"
           aria-label={`Explore details for ${title}`}
         >
-          Explore
+          <span className="relative">
+            {category}
+            <span className="absolute bottom-[-2px] left-0 w-0 group-hover/btn:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
+          </span>
           <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300 select-none">
             →
           </span>
@@ -121,32 +122,22 @@ function AmenityCard({ category, title, desc, imageSrc, index }: AmenityCardProp
 }
 
 export default function Amenities() {
-  const cards = [
-    {
-      category: "Infinity Pool",
-      title: "Endless Horizon",
-      desc: "Where water meets the sky in complete serenity.",
-      imageSrc: "/images/pool.webp"
-    },
-    {
-      category: "Private Wellness",
-      title: "Wellness Sanctuary",
-      desc: "Spa-inspired spaces crafted for complete relaxation.",
-      imageSrc: "/images/terrace.webp"
-    },
-    {
-      category: "Private Cinema",
-      title: "Immersive Entertainment",
-      desc: "A cinematic experience reserved exclusively for residents.",
-      imageSrc: "/images/about.webp"
-    },
-    {
-      category: "Wine Lounge",
-      title: "Curated Collection",
-      desc: "A private cellar designed for unforgettable evenings.",
-      imageSrc: "/images/bedroom.webp"
-    }
+  const { t } = useLanguage();
+
+  const cardsData = t("amenities.cards") as { category: string; title: string; desc: string }[];
+  const imageSources = [
+    "/images/pool.webp",
+    "/images/terrace.webp",
+    "/images/about.webp",
+    "/images/bedroom.webp"
   ];
+
+  const cards = cardsData.map((c, idx) => ({
+    category: c.category,
+    title: c.title,
+    desc: c.desc,
+    imageSrc: imageSources[idx]
+  }));
 
   return (
     <section 
@@ -167,10 +158,10 @@ export default function Amenities() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
-              AMENITIES
+              {t("amenities.label")}
             </span>
             <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 whitespace-pre-line">
-              Experience{"\n"}World-Class Living
+              {t("amenities.title")}
             </h2>
           </motion.div>
           <motion.p
@@ -180,7 +171,7 @@ export default function Amenities() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[420px]"
           >
-            Every detail has been curated to redefine extraordinary living.
+            {t("amenities.desc")}
           </motion.p>
         </div>
 

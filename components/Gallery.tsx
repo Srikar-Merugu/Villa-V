@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 interface GalleryPanelProps {
   label: string;
@@ -16,6 +17,7 @@ interface GalleryPanelProps {
 
 function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: GalleryPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Scroll tracking metrics for slow parallax and scale transformations
   const { scrollYProgress } = useScroll({
@@ -29,7 +31,6 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
   // Split title string by newline for line-by-line reveal
   const titleLines = title.split("\n");
 
-  // Determine left/right side columns alignment
   const isImageLeft = index % 2 === 0;
 
   return (
@@ -118,7 +119,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
           onClick={onOpenLightbox}
           className="group/btn relative self-start flex items-center gap-2 text-[#C8A96A] font-sans font-semibold text-[13px] uppercase tracking-[0.15em] hover:text-[#F6F3EB] transition-colors duration-300 min-h-[44px] focus-visible:outline-none"
         >
-          <span>Explore</span>
+          <span>{t("gallery.cta")}</span>
           <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300 select-none">
             →
           </span>
@@ -132,33 +133,22 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
 
 export default function Gallery() {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
 
-  const panels = [
-    {
-      label: "EXTERIOR",
-      title: "Architecture\nin Harmony",
-      desc: "Every line is designed to embrace the surrounding landscape.",
-      imageSrc: "/images/about.webp"
-    },
-    {
-      label: "LIVING",
-      title: "Designed\nfor Gathering",
-      desc: "Open spaces where architecture meets comfort.",
-      imageSrc: "/images/terrace.webp"
-    },
-    {
-      label: "MASTER SUITE",
-      title: "Private\nRetreat",
-      desc: "A sanctuary of calm with uninterrupted views.",
-      imageSrc: "/images/bedroom.webp"
-    },
-    {
-      label: "POOL",
-      title: "Infinity\nExperience",
-      desc: "Where water, sky and architecture become one.",
-      imageSrc: "/images/pool.webp"
-    }
+  const panelsData = t("gallery.panels") as { label: string; title: string; desc: string }[];
+  const imageSources = [
+    "/images/about.webp",
+    "/images/terrace.webp",
+    "/images/bedroom.webp",
+    "/images/pool.webp"
   ];
+
+  const panels = panelsData.map((p, idx) => ({
+    label: p.label,
+    title: p.title,
+    desc: p.desc,
+    imageSrc: imageSources[idx]
+  }));
 
   const handleNext = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -193,7 +183,7 @@ export default function Gallery() {
   }, [activeImageIndex]);
 
   return (
-    <section
+    <section 
       id="gallery"
       className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
       aria-labelledby="gallery-heading"
@@ -212,10 +202,10 @@ export default function Gallery() {
             transition={{ duration: 0.8 }}
           >
             <span id="gallery-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
-              THE SHOWCASE
+              {t("gallery.label")}
             </span>
             <h2 className="text-[clamp(32px,6.5vw,42px)] lg:text-[clamp(48px,5.5vw,72px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
-              Visual Chronicles
+              {t("gallery.title")}
             </h2>
           </motion.div>
           <motion.p
@@ -225,12 +215,12 @@ export default function Gallery() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[460px]"
           >
-            A photographic capture of architectural geometry, light, and natural textures.
+            {t("gallery.desc")}
           </motion.p>
         </div>
 
-        {/* Alternating Panels Grid (Desktop spacing: 140px vertical gaps) */}
-        <div className="flex flex-col gap-20 lg:gap-[140px]" role="region" aria-label="Cinematic Visual Chronology">
+        {/* Dynamic Panels List */}
+        <div className="flex flex-col gap-20 lg:gap-36 relative z-10">
           {panels.map((panel, idx) => (
             <GalleryPanel
               key={panel.title}
@@ -244,83 +234,92 @@ export default function Gallery() {
           ))}
         </div>
 
-        {/* Full-screen Lightbox viewer (A11y compatible dialogues) */}
-        <AnimatePresence>
-          {activeImageIndex !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveImageIndex(null)}
-              role="dialog"
-              aria-modal="true"
-              aria-label={`Fullscreen viewer: ${panels[activeImageIndex].title.replace("\n", " ")}`}
-              className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-6 md:p-12 cursor-zoom-out"
-            >
-              {/* Top HUD Row */}
-              <div className="absolute top-6 left-6 right-6 flex items-center justify-between text-[#F6F3EB]/60 select-none pointer-events-none font-mono text-xs tracking-widest z-50">
-                <div>
-                  {activeImageIndex + 1} / {panels.length}
-                </div>
-                <button
-                  onClick={() => setActiveImageIndex(null)}
-                  aria-label="Close fullscreen view"
-                  className="w-10 h-10 border border-white/10 hover:border-[#C8A96A] hover:text-[#C8A96A] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-md cursor-pointer pointer-events-auto transition-colors focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Prev Arrow */}
-              <button
-                onClick={handlePrev}
-                aria-label="Previous photo"
-                className="absolute left-6 md:left-12 w-12 h-12 rounded-full border border-white/10 hover:border-[#C8A96A] hover:text-[#C8A96A] flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              {/* Central Expanded Visual */}
-              <motion.div
-                initial={{ scale: 0.95 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.95 }}
-                transition={{ duration: 0.4 }}
-                className="relative max-w-5xl max-h-[80vh] w-full h-full pointer-events-none select-none"
-              >
-                <Image
-                  src={panels[activeImageIndex].imageSrc}
-                  alt={panels[activeImageIndex].title.replace("\n", " ")}
-                  fill
-                  sizes="100vw"
-                  className="object-contain"
-                  priority
-                />
-              </motion.div>
-
-              {/* Next Arrow */}
-              <button
-                onClick={handleNext}
-                aria-label="Next photo"
-                className="absolute right-6 md:right-12 w-12 h-12 rounded-full border border-white/10 hover:border-[#C8A96A] hover:text-[#C8A96A] flex items-center justify-center text-white bg-black/50 backdrop-blur-md cursor-pointer pointer-events-auto z-40 transition-colors focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-
-              {/* Bottom HUD row */}
-              <div className="absolute bottom-6 left-6 right-6 text-center select-none pointer-events-none z-40">
-                <span className="text-[10px] font-mono tracking-widest text-[#C8A96A] uppercase mb-1 block">
-                  {panels[activeImageIndex].label}
-                </span>
-                <h4 className="text-lg md:text-xl font-serif text-[#F6F3EB] font-light tracking-wide">
-                  {panels[activeImageIndex].title.replace("\n", " ")}
-                </h4>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
       </div>
+
+      {/* High-Contrast Glassmorphic Lightbox Overlay */}
+      <AnimatePresence>
+        {activeImageIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center select-none"
+            onClick={() => setActiveImageIndex(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image Lightbox zoom view"
+          >
+            <div className="absolute top-5 right-5 z-55 flex gap-3">
+              {/* Close Button */}
+              <button
+                onClick={() => setActiveImageIndex(null)}
+                className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-[#F6F3EB] hover:text-[#C8A96A] flex items-center justify-center transition-all duration-300 pointer-events-auto border border-white/5 focus-visible:outline-none"
+                aria-label="Close Lightbox"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Left Nav Arrow */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-[#F6F3EB] hover:text-[#C8A96A] flex items-center justify-center transition-all duration-300 pointer-events-auto border border-white/5 focus-visible:outline-none"
+              aria-label="Previous Image"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Main Lightbox Frame */}
+            <div 
+              className="relative w-[90%] md:w-[80%] h-[75vh] flex items-center justify-center pointer-events-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeImageIndex}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="relative w-full h-full rounded-[20px] overflow-hidden border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.8)]"
+                >
+                  <Image
+                    src={panels[activeImageIndex].imageSrc}
+                    alt={panels[activeImageIndex].title.replace("\n", " ")}
+                    fill
+                    sizes="100vw"
+                    className="object-cover pointer-events-none"
+                    priority
+                  />
+                  
+                  {/* Subtle caption drawer card */}
+                  <div className="absolute bottom-6 left-6 right-6 z-20 bg-black/60 backdrop-blur-md border border-white/10 rounded-[16px] p-5 md:p-6 text-left max-w-md filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+                    <span className="text-[#C8A96A] text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-1.5 block">
+                      {panels[activeImageIndex].label}
+                    </span>
+                    <h4 className="font-serif text-[#F6F3EB] text-xl md:text-2xl font-light mb-2 leading-tight">
+                      {panels[activeImageIndex].title.replace("\n", " ")}
+                    </h4>
+                    <p className="text-[#B8B8B8] text-xs sm:text-sm font-normal leading-relaxed">
+                      {panels[activeImageIndex].desc}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Right Nav Arrow */}
+            <button
+              onClick={handleNext}
+              className="absolute right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-[#F6F3EB] hover:text-[#C8A96A] flex items-center justify-center transition-all duration-300 pointer-events-auto border border-white/5 focus-visible:outline-none"
+              aria-label="Next Image"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

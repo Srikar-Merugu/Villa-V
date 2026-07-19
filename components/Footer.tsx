@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Footer() {
+  const { language, t } = useLanguage();
+
   const containerVariants = {
     hidden: {},
     visible: {
@@ -23,10 +26,10 @@ export default function Footer() {
   };
 
   const legalLinks = [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms & Conditions", href: "/terms" },
-    { name: "Cookie Policy", href: "/cookies" },
-    { name: "Disclaimer", href: "/disclaimer" }
+    { name: language === "hr" ? "Pravila o privatnosti" : "Privacy Policy", href: "/privacy" },
+    { name: language === "hr" ? "Uvjeti i odredbe" : "Terms & Conditions", href: "/terms" },
+    { name: language === "hr" ? "Pravila o kolačićima" : "Cookie Policy", href: "/cookies" },
+    { name: language === "hr" ? "Izjava o odricanju odgovornosti" : "Disclaimer", href: "/disclaimer" }
   ];
 
   // Raw inline outline SVG nodes for bulletproof asset compiling
@@ -95,19 +98,19 @@ export default function Footer() {
                 className="h-8 w-auto object-contain select-none pointer-events-none"
               />
               <span className="text-[15px] font-sans font-bold tracking-[0.08em] uppercase text-[#F6F3EB]">
-                Villa Sérénité
+                {t("hero.brand")}
               </span>
             </div>
 
             {/* Tagline & Description */}
             <h4 className="font-serif text-[#F6F3EB] text-[16px] font-normal tracking-wide mb-3 leading-snug">
-              Timeless Luxury, Redefined.
+              {t("footer.tagline")}
             </h4>
             <p className="text-[#B8B8B8] text-[15px] font-normal leading-[1.8] mb-6 max-w-sm">
-              Experience refined architecture, exceptional craftsmanship, and timeless residences designed for extraordinary living.
+              {t("footer.desc")}
             </p>
-            <div className="text-[#B8B8B8]/60 text-[13px] font-mono tracking-wider uppercase mt-auto">
-              Developed by Kyro Studio d.o.o., Zagreb
+            <div className="text-[#B8B8B8]/60 text-[13px] font-mono tracking-wider uppercase mt-auto hidden md:block">
+              {t("footer.credit")}
             </div>
           </motion.div>
 
@@ -117,7 +120,7 @@ export default function Footer() {
             className="flex flex-col items-center md:items-start text-center md:text-left"
           >
             <h3 className="text-[#C8A96A] text-[13px] font-bold tracking-[0.20em] uppercase mb-8 leading-none">
-              Legal
+              {t("footer.legal")}
             </h3>
             <nav className="flex flex-col gap-2 w-full" aria-label="Legal documents directory">
               {legalLinks.map((link) => (
@@ -142,7 +145,7 @@ export default function Footer() {
             className="flex flex-col items-center md:items-start text-center md:text-left"
           >
             <h3 className="text-[#C8A96A] text-[13px] font-bold tracking-[0.20em] uppercase mb-8 leading-none">
-              Contact
+              {t("footer.contact")}
             </h3>
             <address className="not-italic flex flex-col gap-4 text-[#F6F3EB] text-[15px] font-normal leading-[1.8] w-full">
               <a
@@ -152,13 +155,13 @@ export default function Footer() {
                 concierge@villaserenite.com
               </a>
               <a
-                href="tel:+38521543210"
+                href="tel:+385215550190"
                 className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-center md:self-start"
               >
-                +385 (21) 543 210
+                +385 (0) 21 555 0190
               </a>
               <span className="py-1.5">
-                Put Lokvice 42, 21000 Split, Croatia
+                {t("footer.address").replace("Address: ", "").replace("Adresa: ", "")}
               </span>
             </address>
 
@@ -188,12 +191,12 @@ export default function Footer() {
           
           {/* Left copyright (Exact requested wording) */}
           <div className="text-[#B8B8B8] text-[13px] md:text-[14px] tracking-wide font-normal">
-            © 2026 Villa Sérénité. All Rights Reserved.
+            {language === "hr" ? "© 2026 Villa Sérénité. Sva prava pridržana." : "© 2026 Villa Sérénité. All Rights Reserved."}
           </div>
 
           {/* Right developer credit (Exact requested wording) */}
           <div className="text-[#B8B8B8] text-[13px] md:text-[14px] tracking-wide font-normal">
-            Developed by Kyro Studio d.o.o., Zagreb
+            {t("footer.credit")}
           </div>
         </div>
 

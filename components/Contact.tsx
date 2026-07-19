@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Contact() {
+  const { language, t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,12 +18,14 @@ export default function Contact() {
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [consentChecked, setConsentChecked] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; email?: string; consent?: string }>({});
 
-  const headingLines = ["Arrange", "Your", "Private", "Visit"];
+  const headingLines = (t("contact.title") as string).split(" ");
 
+  const badgesText = t("contact.badges") as string[];
   const badges = [
     {
-      label: "Private Concierge",
+      label: badgesText[0] || "PRIVATE RESIDENCE",
       icon: (
         <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -29,7 +33,7 @@ export default function Contact() {
       )
     },
     {
-      label: "Response within 24h",
+      label: badgesText[1] || "BY APPOINTMENT ONLY",
       icon: (
         <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -37,7 +41,7 @@ export default function Contact() {
       )
     },
     {
-      label: "Completely Confidential",
+      label: badgesText[2] || "SECURE PORTAL",
       icon: (
         <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -48,8 +52,8 @@ export default function Contact() {
 
   const contactItems = [
     {
-      label: "Location",
-      value: "Split, Croatia",
+      label: language === "hr" ? "Lokacija" : "Location",
+      value: language === "hr" ? "Split, Hrvatska" : "Split, Croatia",
       icon: (
         <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -59,8 +63,8 @@ export default function Contact() {
     },
     {
       label: "Email",
-      value: "info@villaserenite.com",
-      href: "mailto:info@villaserenite.com",
+      value: "concierge@villaserenite.com",
+      href: "mailto:concierge@villaserenite.com",
       icon: (
         <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -68,9 +72,9 @@ export default function Contact() {
       )
     },
     {
-      label: "Private Concierge",
-      value: "+385 21 555 0199",
-      href: "tel:+385215550199",
+      label: language === "hr" ? "Privatni vratar" : "Private Concierge",
+      value: "+385 (0) 21 555 0190",
+      href: "tel:+385215550190",
       icon: (
         <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -79,9 +83,29 @@ export default function Contact() {
     }
   ];
 
+  const validate = () => {
+    const tempErrors: typeof errors = {};
+    if (!formData.name.trim()) {
+      tempErrors.name = t("contact.form.validationName");
+    }
+    if (!formData.email.trim()) {
+      tempErrors.email = t("contact.form.validationEmail");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        tempErrors.email = t("contact.form.validationEmailInvalid");
+      }
+    }
+    if (!consentChecked) {
+      tempErrors.consent = t("contact.form.validationConsent");
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !consentChecked) return;
+    if (!validate()) return;
 
     // Honeypot spam blocker
     if (honeypot !== "") {
@@ -101,28 +125,37 @@ export default function Contact() {
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", date: "", message: "" });
       setConsentChecked(false);
-    }, 2000);
+      setErrors({});
+    }, 2200);
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+    // Live validation clean
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
   const containerVariants = {
     hidden: {},
     visible: {
-      transition: { staggerChildren: 0.15 }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, x: -15 },
     visible: {
       opacity: 1,
-      y: 0,
+      x: 0,
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
     }
   };
@@ -130,7 +163,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20" 
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
       aria-labelledby="contact-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
@@ -146,7 +179,7 @@ export default function Contact() {
             <div className="absolute -left-[10%] -top-[10%] w-[300px] h-[300px] rounded-full bg-[#C8A96A]/3 blur-[100px] pointer-events-none z-0" />
 
             <span id="contact-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
-              PRIVATE CONSULTATION
+              {t("contact.label")}
             </span>
 
             {/* Editorial Heading Line-by-Line */}
@@ -173,10 +206,9 @@ export default function Contact() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-8 lg:mb-10 relative z-10"
             >
-              Our concierge team will personally assist you in arranging an exclusive viewing tailored to your schedule.
+              {t("contact.desc")}
             </motion.p>
 
-            {/* Premium Contact Details List */}
             <motion.div 
               variants={containerVariants}
               initial="hidden"
@@ -222,7 +254,7 @@ export default function Contact() {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="border border-[#C8A96A]/30 text-[#C8A96A] text-[11px] font-sans font-semibold px-6 py-2.5 rounded-full uppercase tracking-[0.2em] self-start mt-10 relative z-10"
             >
-              By Appointment Only
+              {badgesText[1] || "By Appointment Only"}
             </motion.div>
 
           </div>
@@ -268,21 +300,23 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="text-[24px] sm:text-[28px] font-serif text-[#F6F3EB] font-light tracking-wide mb-2">
-                        Inquiry Logged
+                        {t("contact.form.success")}
                       </h3>
                       <p className="text-sm text-[#B8B8B8] tracking-wider max-w-sm font-light leading-relaxed">
-                        An architectural relations director will contact you via verified channels within 24 hours.
+                        {language === "hr" 
+                          ? "Predstavnik za odnose s klijentima kontaktirat će vas u roku od 24 sata." 
+                          : "A client representative will contact you within 24 hours."}
                       </p>
                     </div>
                     <button
                       onClick={() => setStatus("idle")}
                       className="mt-4 text-xs font-mono tracking-widest text-[#C8A96A] hover:text-[#D6B15C] underline cursor-pointer focus-visible:outline-none"
                     >
-                      SUBMIT ANOTHER REQUEST
+                      {language === "hr" ? "POŠALJITE NOVI UPIT" : "SUBMIT ANOTHER REQUEST"}
                     </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
                     {/* Honeypot Spam Field */}
                     <div className="hidden" aria-hidden="true">
                       <input
@@ -299,7 +333,7 @@ export default function Contact() {
                     {/* Name input */}
                     <div className="flex flex-col gap-2">
                       <label htmlFor="form-name" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
-                        Full Name *
+                        {t("contact.form.name")}
                       </label>
                       <input
                         type="text"
@@ -309,17 +343,24 @@ export default function Contact() {
                         autoComplete="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="e.g., Alexander Mercer"
+                        placeholder={t("contact.form.namePlaceholder")}
                         disabled={status === "submitting"}
-                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
+                        className={`w-full h-[56px] lg:h-[60px] bg-[#18181A] border focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border ${
+                          errors.name ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-[#C8A96A]/60"
+                        }`}
                       />
+                      {errors.name && (
+                        <span className="text-red-500 text-xs font-sans mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" /> {errors.name}
+                        </span>
+                      )}
                     </div>
 
                     {/* Email and Phone Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full">
                       <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                         <label htmlFor="form-email" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
-                          Email Address *
+                          {t("contact.form.email")}
                         </label>
                         <input
                           type="email"
@@ -329,23 +370,30 @@ export default function Contact() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          placeholder="e.g., alexander@mercer.com"
+                          placeholder={t("contact.form.emailPlaceholder")}
                           disabled={status === "submitting"}
-                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
+                          className={`w-full h-[56px] lg:h-[60px] bg-[#18181A] border focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border ${
+                            errors.email ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-[#C8A96A]/60"
+                          }`}
                         />
+                        {errors.email && (
+                          <span className="text-red-500 text-xs font-sans mt-1 flex items-center gap-1">
+                            <AlertCircle className="w-3.5 h-3.5" /> {errors.email}
+                          </span>
+                        )}
                       </div>
                       <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                         <label htmlFor="form-phone" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
-                          Phone Number
+                          {t("contact.form.phone")}
                         </label>
                         <input
-                          type="tel"
+                          type="text"
                           id="form-phone"
                           name="phone"
                           autoComplete="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder="e.g., +385 21 555 0199"
+                          placeholder={t("contact.form.phonePlaceholder")}
                           disabled={status === "submitting"}
                           className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 max-w-full box-border"
                         />
@@ -355,7 +403,7 @@ export default function Contact() {
                     {/* Preferred Date */}
                     <div className="flex flex-col gap-2">
                       <label htmlFor="form-date" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
-                        Preferred Tour Date
+                        {t("contact.form.date")}
                       </label>
                       <input
                         type="date"
@@ -371,62 +419,74 @@ export default function Contact() {
                     {/* Message input */}
                     <div className="flex flex-col gap-2">
                       <label htmlFor="form-message" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
-                        Private Inquiry Details
+                        {t("contact.form.message")}
                       </label>
                       <textarea
                         id="form-message"
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
-                        placeholder="Specify yacht berthing requirements or private helicopter arrival parameters if needed..."
+                        placeholder={t("contact.form.messagePlaceholder")}
                         disabled={status === "submitting"}
                         className="w-full h-[140px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none max-w-full box-border"
                       />
                     </div>
 
                     {/* GDPR Consent Checkbox */}
-                    <div className="flex items-start gap-3 mt-2">
-                      <input
-                        type="checkbox"
-                        id="consent"
-                        required
-                        checked={consentChecked}
-                        onChange={(e) => setConsentChecked(e.target.checked)}
-                        disabled={status === "submitting"}
-                        className="mt-1 w-4 h-4 border border-white/10 rounded bg-[#18181A] checked:bg-[#C8A96A] checked:border-[#C8A96A] accent-[#C8A96A] text-[#C8A96A] cursor-pointer focus-visible:outline-none"
-                      />
-                      <label
-                        htmlFor="consent"
-                        className="text-[10px] sm:text-[11px] text-white/40 leading-relaxed font-sans cursor-pointer hover:text-white/60 transition-colors select-none"
-                      >
-                        I consent to my contact details being processed in accordance with the{" "}
-                        <Link href="/privacy" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
-                          Privacy Policy
-                        </Link>{" "}
-                        and{" "}
-                        <Link href="/terms" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
-                          Terms of Service
-                        </Link>
-                        .
-                      </label>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-start gap-3 mt-2">
+                        <input
+                          type="checkbox"
+                          id="consent"
+                          required
+                          checked={consentChecked}
+                          onChange={(e) => {
+                            setConsentChecked(e.target.checked);
+                            if (e.target.checked && errors.consent) {
+                              setErrors((prev) => ({ ...prev, consent: undefined }));
+                            }
+                          }}
+                          disabled={status === "submitting"}
+                          className="mt-1 w-4 h-4 border border-white/10 rounded bg-[#18181A] checked:bg-[#C8A96A] checked:border-[#C8A96A] accent-[#C8A96A] text-[#C8A96A] cursor-pointer focus-visible:outline-none"
+                        />
+                        <label
+                          htmlFor="consent"
+                          className="text-[10px] sm:text-[11px] text-white/40 leading-relaxed font-sans cursor-pointer hover:text-white/60 transition-colors select-none"
+                        >
+                          {t("contact.form.consent")}{" "}
+                          <Link href="/privacy" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
+                            {language === "hr" ? "Pravilima o privatnosti" : "Privacy Policy"}
+                          </Link>{" "}
+                          {language === "hr" ? "i" : "and"}{" "}
+                          <Link href="/terms" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
+                            {language === "hr" ? "Uvjetima pružanja usluge" : "Terms of Service"}
+                          </Link>
+                          .
+                        </label>
+                      </div>
+                      {errors.consent && (
+                        <span className="text-red-500 text-xs font-sans mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" /> {errors.consent}
+                        </span>
+                      )}
                     </div>
 
                     {/* Pill-Shaped Action Button */}
                     <motion.button
                       type="submit"
-                      disabled={status === "submitting" || !consentChecked}
-                      whileHover={status === "idle" && consentChecked ? { y: -2 } : {}}
+                      disabled={status === "submitting"}
+                      whileHover={status === "idle" ? { y: -2 } : {}}
                       whileTap={{ scale: 0.97 }}
                       className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-[11px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] px-4 flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none max-w-full box-border"
                     >
                       {status === "submitting" ? (
                         <>
-                          <span>Verifying Credentials</span>
+                          <span>{t("contact.form.submitting")}</span>
                           <Loader2 className="w-4 h-4 animate-spin" />
                         </>
                       ) : (
                         <>
-                          <span>Request Private Consultation</span>
+                          <span>{t("contact.form.submit")}</span>
                           <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300 select-none">
                             →
                           </span>

@@ -2,28 +2,13 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
 
-  const faqs = [
-    {
-      q: "When will the residence be completed?",
-      a: "Villa Sérénité is scheduled for completion in Q4 2026. The construction schedule is strictly audited to guarantee museum-grade finishes and zero compromises on architectural integrity."
-    },
-    {
-      q: "Can the interiors be personalized?",
-      a: "Yes. Future residents can collaborate directly with our design atelier to customize wall finishes, select slab configurations of natural marble, and integrate customized storage systems."
-    },
-    {
-      q: "What amenities are included?",
-      a: "The estate features a 25-meter lava stone heated infinity pool, private wellness thermal spa suite, custom acoustic Dolby screening room, climate sommelier cellar, and smart home automation."
-    },
-    {
-      q: "How do I arrange a private consultation?",
-      a: "Private tours and detail reviews can be scheduled by submitting an inquiry via our contact form below or calling our private registrar office directly."
-    }
-  ];
+  const faqs = t("faq.questions") as { q: string; a: string }[];
 
   const handleToggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -59,15 +44,15 @@ export default function FAQ() {
             <div className="absolute -left-[10%] -top-[10%] w-[250px] h-[250px] rounded-full bg-[#C8A96A]/3 blur-[90px] pointer-events-none z-0" />
 
             <span id="faq-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
-              THE DETAILS
+              {t("faq.label")}
             </span>
 
             <h2 className="text-[clamp(32px,6.5vw,45px)] lg:text-[clamp(45px,5vw,62px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
-              Frequently{"\n"}Asked{"\n"}Questions
+              {t("faq.title")}
             </h2>
 
             <p className="text-[#B8B8B8] text-[15px] lg:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-5 lg:mb-6 relative z-10">
-              Everything prospective owners need to know before arranging a private consultation.
+              {t("faq.desc")}
             </p>
 
             <div className="w-12 h-[1.5px] bg-[#C8A96A] mt-2 relative z-10" />

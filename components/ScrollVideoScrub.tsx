@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 interface ScrollVideoScrubProps {
   videoUrl: string;
@@ -126,6 +127,7 @@ function LuxuryTitle({ serifTitle, scriptTitle }: SceneContent) {
 export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { t } = useLanguage();
   
   const [isInitialized, setIsInitialized] = useState(false);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
@@ -338,7 +340,8 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     };
   }, [isInitialized, reducedMotion]);
 
-  const currentScene = SCENES[activeSceneIndex];
+  const scenes = t("hero.scenes") as { serif: string; script: string }[];
+  const currentScene = scenes[activeSceneIndex] || { serif: "", script: "" };
 
   return (
     <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
@@ -364,10 +367,10 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                 className="w-16 sm:w-20 md:w-24 h-auto object-contain select-none pointer-events-none mb-6 filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
               />
               <span className="text-[10px] sm:text-[11px] md:text-[12px] tracking-[0.3em] uppercase text-[#C8A96A] font-sans font-medium mb-2.5">
-                timeless, calm luxury
+                {t("hero.tagline")}
               </span>
               <span className="text-3xl sm:text-4xl md:text-5xl font-serif tracking-[0.1em] text-[#F6F3EB] font-light leading-none">
-                Villa Sérénité
+                {t("hero.brand")}
               </span>
             </motion.div>
           </motion.div>
@@ -466,9 +469,9 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
             <div className="relative inline-block overflow-visible min-h-[140px] md:min-h-[200px] filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               <AnimatePresence mode="wait">
                 <LuxuryTitle
-                  key={currentScene.serifTitle}
-                  serifTitle={currentScene.serifTitle}
-                  scriptTitle={currentScene.scriptTitle}
+                  key={currentScene.serif}
+                  serifTitle={currentScene.serif}
+                  scriptTitle={currentScene.script}
                 />
               </AnimatePresence>
             </div>
@@ -503,7 +506,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                 />
               </div>
               <span className="text-[9.5px] font-mono tracking-[0.3em] text-[#F6F3EB] font-bold uppercase mt-1 text-shadow-subtle">
-                Scroll
+                {t("hero.scroll")}
               </span>
             </motion.div>
           )}

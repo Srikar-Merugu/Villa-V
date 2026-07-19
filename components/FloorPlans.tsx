@@ -3,37 +3,30 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function FloorPlans() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const { t } = useLanguage();
 
-  const levels = [
-    {
-      id: "ground",
-      name: "Ground Level",
-      desc: "Open spaces designed for effortless entertaining.",
-      highlights: ["Infinity Pool", "Chef's Kitchen", "Grand Living Area"],
-      imageSrc: "/images/pool.webp"
-    },
-    {
-      id: "first",
-      name: "First Floor",
-      desc: "Private retreats crafted with ultimate comfort.",
-      highlights: ["Master Suite", "Walk-in Closet", "Private Lounge"],
-      imageSrc: "/images/bedroom.webp"
-    },
-    {
-      id: "sky",
-      name: "Sky Terrace",
-      desc: "Elevated outdoor living above the clouds.",
-      highlights: ["Rooftop Lounge", "Fire Pit", "Sky Pool"],
-      imageSrc: "/images/terrace.webp"
-    }
+  const levelsData = t("floorPlans.levels") as { id: string; name: string; desc: string; highlights: string[] }[];
+  const imageSources = [
+    "/images/pool.webp",
+    "/images/bedroom.webp",
+    "/images/terrace.webp"
   ];
 
-  const currentLevel = levels[activeIndex];
+  const levels = levelsData.map((l, idx) => ({
+    id: l.id,
+    name: l.name,
+    desc: l.desc,
+    highlights: l.highlights,
+    imageSrc: imageSources[idx]
+  }));
+
+  const currentLevel = levels[activeIndex] || levels[0];
   const inactivityTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Detect accessibility system setting for reduced motion
@@ -54,10 +47,10 @@ export default function FloorPlans() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isPaused, reduceMotion, levels.length]);
+  }, [reduceMotion, isPaused, levels.length]);
 
-  // Tab interaction selector
-  const handleSelectLevel = (idx: number) => {
+  // Handle user tap interaction (pauses autoplay for 10 seconds to allow reading detail specs)
+  const handleUserSelect = (idx: number) => {
     setActiveIndex(idx);
     setIsPaused(true);
 
@@ -65,33 +58,29 @@ export default function FloorPlans() {
       clearTimeout(inactivityTimeout.current);
     }
 
-    // Resume automated cycle after 8 seconds of inactivity
     inactivityTimeout.current = setTimeout(() => {
       setIsPaused(false);
-    }, 8000);
+    }, 10000); // Resume autoplay cycle after 10s inactivity
   };
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (inactivityTimeout.current) {
-        clearTimeout(inactivityTimeout.current);
-      }
+      if (inactivityTimeout.current) clearTimeout(inactivityTimeout.current);
     };
   }, []);
 
-  const listContainerVariants = {
+  const tabContainerVariants = {
     hidden: {},
     visible: {
-      transition: { staggerChildren: 0.12 }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
-  const listItemVariants = {
-    hidden: { opacity: 0, y: 12 },
+  const highlightVariants = {
+    hidden: { opacity: 0, x: -10 },
     visible: {
       opacity: 1,
-      y: 0,
+      x: 0,
       transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }
     }
   };
@@ -115,10 +104,10 @@ export default function FloorPlans() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
-              THE RESIDENCE
+              {t("floorPlans.label")}
             </span>
             <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
-              Explore{"\n"}Every Level
+              {t("floorPlans.title")}
             </h2>
           </motion.div>
           
@@ -129,7 +118,7 @@ export default function FloorPlans() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[520px]"
           >
-            Experience thoughtfully crafted spaces designed for extraordinary living.
+            {t("floorPlans.desc")}
           </motion.p>
         </div>
 
@@ -140,7 +129,7 @@ export default function FloorPlans() {
           <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-4 lg:mb-6 block">
-              LEVELS
+              {t("floorPlans.label")}
             </span>
 
             {/* Full-width segmented grid on Mobile, Vertical tab list on Desktop */}
@@ -156,73 +145,73 @@ export default function FloorPlans() {
                     key={item.id}
                     role="tab"
                     aria-selected={isActive}
-                    tabIndex={0}
-                    onClick={() => handleSelectLevel(idx)}
-                    className="cursor-pointer relative focus-visible:outline-none flex flex-col items-center lg:items-start text-center lg:text-left py-2.5 lg:py-5 w-full group"
+                    aria-controls={`panel-${item.id}`}
+                    onClick={() => handleUserSelect(idx)}
+                    className="relative text-left h-[38px] sm:h-[44px] lg:h-auto lg:py-6 lg:border-b lg:border-white/10 flex items-center justify-center lg:justify-start px-2 sm:px-4 lg:px-0 text-[10px] sm:text-xs lg:text-[15px] font-sans font-medium lg:font-light tracking-[0.1em] lg:tracking-[0.15em] uppercase transition-all duration-500 ease-out cursor-pointer focus-visible:outline-none rounded-full lg:rounded-none"
                   >
-                    <div className="flex items-center justify-center lg:justify-between w-full">
-                      <span className="text-[11px] sm:text-[13px] md:text-[14px] tracking-[0.14em] font-medium uppercase transition-colors duration-300">
-                        {item.name}
-                      </span>
-                      <span className="hidden lg:inline text-xs transition-colors duration-300">
-                        ←
-                      </span>
-                    </div>
+                    {/* Sliding Pill Indicator on Mobile */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeMobileTab"
+                        className="absolute inset-0 bg-[#C8A96A]/10 border border-[#C8A96A]/30 rounded-full lg:hidden z-0 w-full h-full"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
 
-                    {/* Progress Indicator Underline */}
-                    <div className="relative w-full h-[1.5px] bg-white/5 lg:bg-white/10 mt-2 lg:mt-3">
-                      {/* Active autofilling progress bar */}
-                      {isActive && !isPaused && !reduceMotion && (
-                        <motion.div
-                          key={activeIndex} // Reset progress line timeline on index changes
-                          initial={{ width: "0%" }}
-                          animate={{ width: "100%" }}
-                          transition={{ duration: 5, ease: "linear" }}
-                          className="absolute top-0 left-0 h-full bg-[#C8A96A]"
-                        />
-                      )}
-                      {/* Static full-color state when paused or reduced motion query matches */}
-                      {isActive && (isPaused || reduceMotion) && (
-                        <div className="absolute top-0 left-0 h-full w-full bg-[#C8A96A]" />
-                      )}
+                    <span className={`relative z-10 transition-colors duration-500 whitespace-nowrap ${isActive ? "text-[#C8A96A]" : "text-[#F6F3EB]/40 hover:text-[#F6F3EB]/80"}`}>
+                      {item.name}
+                    </span>
+                    
+                    {/* Sleek Line Indicator on Desktop */}
+                    <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden hidden lg:block">
+                      <motion.div
+                        initial={{ x: "-100%" }}
+                        animate={{ x: isActive ? "0%" : "-100%" }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="w-full h-full bg-[#C8A96A]"
+                      />
                     </div>
                   </button>
                 );
               })}
             </div>
 
-            {/* Level details & list layout */}
-            <div className="min-h-[160px] lg:min-h-[220px] flex flex-col">
+            {/* Dynamic narrative description and bullet highlights */}
+            <div className="min-h-[160px] lg:min-h-[220px] mt-6 lg:mt-8 flex flex-col justify-start select-none">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
-                  className="flex flex-col gap-6 mt-6 lg:mt-8"
+                  transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col"
+                  id={`panel-${currentLevel.id}`}
+                  role="tabpanel"
                 >
-                  <h4 className="font-serif text-[#F6F3EB] text-[20px] sm:text-[26px] font-light leading-tight">
+                  <p className="text-[#B8B8B8] text-[15px] sm:text-[16px] font-normal leading-[1.8] mb-6 sm:mb-8">
                     {currentLevel.desc}
-                  </h4>
-                  
-                  <motion.ul
-                    variants={listContainerVariants}
+                  </p>
+
+                  <motion.div 
+                    variants={tabContainerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="flex flex-col gap-3"
+                    className="flex flex-col gap-3.5"
                   >
                     {currentLevel.highlights.map((highlight) => (
-                      <motion.li 
-                        key={highlight} 
-                        variants={listItemVariants}
-                        className="text-[#B8B8B8] text-[15px] sm:text-[16px] flex items-center gap-3 font-normal"
+                      <motion.div
+                        key={highlight}
+                        variants={highlightVariants}
+                        className="flex items-center gap-3.5"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C8A96A]" />
-                        <span>{highlight}</span>
-                      </motion.li>
+                        <div className="w-[5px] h-[5px] rounded-full bg-[#C8A96A]" />
+                        <span className="text-[12px] sm:text-[13px] font-sans font-bold tracking-[0.2em] text-[#F6F3EB] uppercase">
+                          {highlight}
+                        </span>
+                      </motion.div>
                     ))}
-                  </motion.ul>
+                  </motion.div>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -243,33 +232,39 @@ export default function FloorPlans() {
                 return (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, scale: 1.03 }}
-                    animate={{ 
-                      opacity: isActive ? 1 : 0, 
-                      scale: isActive ? 1 : 1.03,
-                      zIndex: isActive ? 10 : 0
-                    }}
-                    transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1.0] as const }}
                     className="absolute inset-0 w-full h-full"
+                    style={{ zIndex: isActive ? 10 : 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                      opacity: isActive ? 1 : 0,
+                      scale: isActive ? 1.0 : 1.05
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.8, ease: "easeInOut" },
+                      scale: { duration: 1.2, ease: "easeOut" }
+                    }}
                   >
                     <Image
                       src={item.imageSrc}
                       alt={item.name}
                       fill
                       sizes="(max-width: 1024px) 100vw, 55vw"
-                      className="object-cover filter brightness-95"
+                      className="object-cover filter brightness-[0.85] transition-all duration-[2000ms]"
                       priority={idx === 0}
                     />
                   </motion.div>
                 );
               })}
 
+              {/* Dynamic bottom left specs coordinates badge */}
+              <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] tracking-widest text-[#F6F3EB]/50 bg-[#0A0A0A]/40 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded uppercase">
+                V-S // LVL {activeIndex + 1}
+              </div>
             </div>
 
           </div>
-
+          
         </div>
-
       </div>
     </section>
   );

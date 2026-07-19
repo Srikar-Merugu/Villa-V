@@ -3,26 +3,28 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const { language, setLanguage, t } = useLanguage();
 
   const primaryLinks = [
-    { name: "Amenities", id: "amenities" },
-    { name: "Gallery", id: "gallery" },
-    { name: "Contact", id: "contact" }
+    { name: t("navbar.amenities"), id: "amenities" },
+    { name: t("navbar.gallery"), id: "gallery" },
+    { name: t("navbar.contact"), id: "contact" }
   ];
 
   const drawerLinks = [
-    { name: "Home", action: () => window.scrollTo({ top: 0, behavior: "smooth" }) },
-    { name: "About", id: "about" },
-    { name: "Amenities", id: "amenities" },
-    { name: "Gallery", id: "gallery" },
-    { name: "Floor Plans", id: "floor-plans" },
-    { name: "FAQ", id: "faq" },
-    { name: "Contact", id: "contact" }
+    { name: t("navbar.home"), action: () => window.scrollTo({ top: 0, behavior: "smooth" }) },
+    { name: t("navbar.about"), id: "about" },
+    { name: t("navbar.amenities"), id: "amenities" },
+    { name: t("navbar.gallery"), id: "gallery" },
+    { name: t("navbar.floorPlans"), id: "floor-plans" },
+    { name: t("navbar.faq"), id: "faq" },
+    { name: t("navbar.contact"), id: "contact" }
   ];
 
   // Track page scroll to set transparent base or dark glass backing
@@ -69,7 +71,7 @@ export default function Navbar() {
         }
       });
     };
-  }, []);
+  }, [language]); // Depend on language since labels regenerate and update DOM IDs
 
   const handleScrollTo = (id: string) => {
     setMobileMenuOpen(false);
@@ -153,7 +155,7 @@ export default function Navbar() {
               className="h-[26px] lg:h-[30px] w-auto object-contain select-none pointer-events-none"
             />
             <span className="text-[12px] sm:text-[14px] md:text-[15px] font-sans font-bold tracking-[0.08em] uppercase text-[#F6F3EB] leading-none select-none whitespace-nowrap">
-              Villa Sérénité
+              {t("hero.brand")}
             </span>
           </div>
 
@@ -163,7 +165,7 @@ export default function Navbar() {
               const isActive = activeSection === link.id;
               return (
                 <button
-                  key={link.name}
+                  key={link.id}
                   onClick={() => handleScrollTo(link.id)}
                   className={`relative text-[13px] uppercase tracking-[0.12em] font-medium leading-none pb-1 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[1.5px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
                     isActive
@@ -177,8 +179,27 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* COLUMN 3: CTA & Hamburger Menu (Right Aligned, Compact & Flat) */}
+          {/* COLUMN 3: CTA, Language Toggle & Hamburger Menu (Right Aligned, Compact & Flat) */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+            {/* Language Switcher (Desktop) */}
+            <div className="hidden lg:flex items-center gap-1.5 text-[11px] font-sans font-semibold uppercase tracking-[0.15em] text-[#F6F3EB]/65 select-none mr-2">
+              <button 
+                onClick={() => setLanguage("hr")}
+                className={`transition-colors duration-300 cursor-pointer focus:outline-none ${language === "hr" ? "text-[#C8A96A]" : "hover:text-[#F6F3EB]"}`}
+                aria-label="Switch to Croatian"
+              >
+                HR
+              </button>
+              <span className="text-[#F6F3EB]/25">|</span>
+              <button 
+                onClick={() => setLanguage("en")}
+                className={`transition-colors duration-300 cursor-pointer focus:outline-none ${language === "en" ? "text-[#C8A96A]" : "hover:text-[#F6F3EB]"}`}
+                aria-label="Switch to English"
+              >
+                EN
+              </button>
+            </div>
+
             {/* Book Consultation CTA Button (Slick, Flat, Small Size) */}
             <div className="hidden sm:block">
               <button
@@ -186,7 +207,7 @@ export default function Navbar() {
                 className="group relative h-[32px] px-5 rounded-full border border-[#C8A96A]/60 hover:border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-[1.5px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
               >
                 <span className="relative z-10 text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.12em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
-                  Book Consultation
+                  {t("navbar.cta")}
                 </span>
               </button>
             </div>
@@ -226,9 +247,9 @@ export default function Navbar() {
               variants={listVariants}
               className="flex flex-col items-center gap-6 relative z-10"
             >
-              {drawerLinks.map((link) => (
+              {drawerLinks.map((link, idx) => (
                 <motion.button
-                  key={link.name}
+                  key={link.id || idx}
                   variants={linkVariants}
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -259,8 +280,38 @@ export default function Navbar() {
                   WebkitBackdropFilter: "blur(18px)"
                 }}
               >
-                Book Consultation
+                {t("navbar.cta")}
               </motion.button>
+
+              {/* Language Section in Mobile Menu */}
+              <motion.div 
+                variants={linkVariants}
+                className="flex flex-col items-center gap-3 mt-8 border-t border-white/10 pt-6 w-[200px]"
+              >
+                <span className="text-[10px] font-sans tracking-[0.2em] uppercase text-[#C8A96A] font-semibold">
+                  {t("navbar.languageTitle")}
+                </span>
+                <div className="flex flex-col gap-4 items-center">
+                  <button 
+                    onClick={() => {
+                      setLanguage("hr");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-2 text-sm font-sans tracking-wide transition-colors ${language === "hr" ? "text-[#C8A96A] font-medium" : "text-[#F6F3EB]/60"}`}
+                  >
+                    <span>🇭🇷</span> Hrvatski
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setLanguage("en");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-2 text-sm font-sans tracking-wide transition-colors ${language === "en" ? "text-[#C8A96A] font-medium" : "text-[#F6F3EB]/60"}`}
+                  >
+                    <span>🇬🇧</span> English
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}

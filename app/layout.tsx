@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter, Pinyon_Script } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "../context/LanguageContext";
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-serif-luxury",
@@ -47,6 +48,7 @@ export const metadata: Metadata = {
     follow: true,
   },
 };
+
 
 export default function RootLayout({
   children,
@@ -152,7 +154,9 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#0B0B0C] text-[#E9E8E5] min-h-full flex flex-col overflow-x-hidden">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

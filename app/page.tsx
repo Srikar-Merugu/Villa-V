@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import ScrollVideoScrub from "../components/ScrollVideoScrub";
 import SmoothScroll from "../components/SmoothScroll";
 import dynamic from "next/dynamic";
+import { useLanguage } from "../context/LanguageContext";
 
 // Code-split dynamic loading of offscreen sections to improve LCP & reduce initial JS bundle sizes
 const About = dynamic(() => import("../components/About"));
@@ -20,6 +21,7 @@ const Footer = dynamic(() => import("../components/Footer"));
 function StickyMobileCTA() {
   const [visible, setVisible] = useState(false);
   const lastScrollY = useRef(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,7 +62,7 @@ function StickyMobileCTA() {
             onClick={handleScrollToContact}
             className="w-full h-[46px] rounded-full bg-[#C8A96A] text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center transition-all duration-300"
           >
-            Book Consultation
+            {t("navbar.cta")}
           </button>
         </motion.div>
       )}
