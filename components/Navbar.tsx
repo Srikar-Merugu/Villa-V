@@ -75,7 +75,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80;
+      const offset = 76; // Match the height threshold of the navbar
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -88,14 +88,14 @@ export default function Navbar() {
     }
   };
 
-  // Determine dynamic styles based on scroll state transitions
+  // Determine dynamic styles based on scroll state transitions (Locked at 72px–76px)
   const getNavbarStyles = () => {
-    const base = "fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out select-none py-6";
+    const base = "fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out select-none h-[72px] md:h-[76px] flex items-center";
     
     if (scrollState === "solid") {
       // Post-hero: solid dark base, 10px blur, thin border
       return {
-        className: `${base} py-4 bg-[#121214]/82 backdrop-blur-[10px] border-b border-white/5 shadow-md`
+        className: `${base} bg-[#121214]/82 backdrop-blur-[10px] border-b border-white/5 shadow-md`
       };
     } else if (scrollState === "scrolling") {
       // Scrolled hero: increase gradient overlay slightly (~10%) to protect readability over bright video frames
@@ -133,7 +133,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between">
           
-          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A with text-shadow) */}
+          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A, Size: 34-36px) */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -147,15 +147,15 @@ export default function Navbar() {
             aria-label="VILLA V logo. Go back to top."
             className="flex flex-col cursor-pointer group focus-visible:outline-none py-1 text-shadow-subtle"
           >
-            <span className="text-[9px] tracking-[0.4em] uppercase text-[#C8A96A] font-sans font-semibold mb-1 transition-colors group-hover:text-[#E6D2A2]">
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[#C8A96A] font-sans font-medium mb-0.5 transition-colors group-hover:text-[#E6D2A2]">
               Architectural Vision
             </span>
-            <span className="text-xl md:text-2xl font-serif tracking-[0.2em] text-[#F6F3EB] leading-tight font-light transition-all duration-300 group-hover:tracking-[0.22em] select-none">
+            <span className="text-[34px] md:text-[36px] font-serif tracking-[0.18em] text-[#F6F3EB] leading-none font-normal transition-all duration-300 group-hover:tracking-[0.20em] select-none">
               VILLA V
             </span>
           </div>
 
-          {/* Desktop Navigation Links (Pure White #FFFFFF, Weight 600, tracking 0.08em, text shadow) */}
+          {/* Desktop Navigation Links (Warm Ivory #F6F3EB, Weight 500, tracking 0.12em, 2px active underline) */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
@@ -163,10 +163,10 @@ export default function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => handleScrollTo(link.id)}
-                  className={`relative text-[15px] lg:text-[16px] xl:text-[17px] uppercase tracking-[0.08em] font-semibold pb-1.5 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
+                  className={`relative text-[13px] md:text-[14px] lg:text-[15px] uppercase tracking-[0.12em] font-medium leading-none pb-1.5 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
                     isActive
-                      ? "text-[#C8A96A] after:w-full font-bold"
-                      : "text-[#FFFFFF] hover:text-[#C8A96A] after:w-0 hover:after:w-full"
+                      ? "text-[#C8A96A] after:w-full font-semibold"
+                      : "text-[#F6F3EB] hover:text-[#C8A96A] after:w-0 hover:after:w-full"
                   }`}
                 >
                   {link.name}
@@ -175,13 +175,13 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Book Tour CTA Button (Clean high contrast border, soft elevation and shadows) */}
+          {/* Book Tour CTA Button (Pill shaped, 48px height, Champagne Gold border, Warm Ivory text) */}
           <div className="hidden lg:block">
             <button
               onClick={() => handleScrollTo("contact")}
-              className="group relative inline-flex items-center justify-center overflow-hidden border-2 border-[#C8A96A]/60 hover:border-[#C8A96A] px-6 py-2.5 rounded-none bg-transparent hover:bg-[#C8A96A] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(200,169,106,0.3)] transition-all duration-500 cursor-pointer focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none text-shadow-subtle"
+              className="group relative h-12 px-8 rounded-full border-[1.2px] border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(200,169,106,0.3)] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none text-shadow-subtle"
             >
-              <span className="relative z-10 text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#FFFFFF] group-hover:text-[#0B0B0C] transition-colors duration-300">
+              <span className="relative z-10 text-[13px] font-sans font-semibold uppercase tracking-[0.18em] text-[#F6F3EB] group-hover:text-[#0B0B0C] transition-colors duration-300">
                 Book a Private Tour
               </span>
             </button>
@@ -190,7 +190,7 @@ export default function Navbar() {
           {/* Mobile Menu Icon Toggle (Tabbable, safe touch target dimensions > 44x44px) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden w-11 h-11 flex items-center justify-center text-white/90 hover:text-gold transition-colors cursor-pointer focus-visible:outline-none"
+            className="lg:hidden w-11 h-11 flex items-center justify-center text-[#F6F3EB] hover:text-gold transition-colors cursor-pointer focus-visible:outline-none"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -219,7 +219,7 @@ export default function Navbar() {
                 key={link.name}
                 onClick={() => handleScrollTo(link.id)}
                 className={`text-left text-2xl font-serif tracking-widest hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-pointer focus-visible:outline-none ${
-                  isActive ? "text-gold font-normal" : "text-[#FFFFFF]"
+                  isActive ? "text-gold font-normal" : "text-[#F6F3EB]"
                 }`}
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
@@ -229,7 +229,7 @@ export default function Navbar() {
           })}
           <button
             onClick={() => handleScrollTo("contact")}
-            className="mt-8 h-12 flex items-center justify-between bg-gold text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-6 hover:bg-gold-light transition-colors focus-visible:outline-none"
+            className="mt-8 h-12 flex items-center justify-between bg-gold text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-6 hover:bg-gold-light transition-colors focus-visible:outline-none rounded-full"
           >
             Book a Private Tour
             <ArrowRight className="w-4 h-4" />
