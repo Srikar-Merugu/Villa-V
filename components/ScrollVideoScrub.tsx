@@ -30,7 +30,7 @@ const SCENES: SceneContent[] = [
     scriptTitle: "Luxury"
   },
   {
-    serifTitle: "DESIGNED",
+    serifTitle: "DESIGNED FOR",
     scriptTitle: "Living"
   },
   {
@@ -38,8 +38,8 @@ const SCENES: SceneContent[] = [
     scriptTitle: "Retreat"
   },
   {
-    serifTitle: "WELCOME",
-    scriptTitle: "Home"
+    serifTitle: "WELCOME HOME",
+    scriptTitle: "Luxury"
   }
 ];
 
@@ -322,7 +322,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  className="relative inline-block text-left"
+                  className="relative inline-block"
                 >
                   {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
                   <motion.h1
@@ -332,13 +332,16 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
                     {currentScene.serifTitle}
                   </motion.h1>
 
-                  {/* Luxury Script Overlay (Champagne Gold: #D6B15C) - Starts at exactly 22% left, overlaps the lower third */}
-                  <motion.span
-                    variants={scriptVariants}
-                    className="font-script text-[#D6B15C] text-[clamp(32px,5.7vw,102px)] leading-none absolute left-[22%] bottom-[-5%] whitespace-nowrap pointer-events-none select-none filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-                  >
-                    {currentScene.scriptTitle}
-                  </motion.span>
+                  {/* Absolute positioning container to enforce horizontal centering under the serif title */}
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-[-18%] md:bottom-[-15%] whitespace-nowrap pointer-events-none select-none">
+                    {/* Luxury Script Overlay (Champagne Gold: #D6B15C) */}
+                    <motion.span
+                      variants={scriptVariants}
+                      className="font-script text-[#D6B15C] text-[clamp(32px,5.7vw,102px)] leading-none block filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                    >
+                      {currentScene.scriptTitle}
+                    </motion.span>
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
