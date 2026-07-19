@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import ScrollVideoScrub from "../components/ScrollVideoScrub";
-import About from "../components/About";
-import Amenities from "../components/Amenities";
-import Gallery from "../components/Gallery";
-import FloorPlans from "../components/FloorPlans";
-import Location from "../components/Location";
-import Testimonials from "../components/Testimonials";
-import FAQ from "../components/FAQ";
-import Contact from "../components/Contact";
 import SmoothScroll from "../components/SmoothScroll";
+import dynamic from "next/dynamic";
+
+// Code-split dynamic loading of offscreen sections to improve LCP & reduce initial JS bundle sizes
+const About = dynamic(() => import("../components/About"));
+const Amenities = dynamic(() => import("../components/Amenities"));
+const Gallery = dynamic(() => import("../components/Gallery"));
+const FloorPlans = dynamic(() => import("../components/FloorPlans"));
+const Location = dynamic(() => import("../components/Location"));
+const Testimonials = dynamic(() => import("../components/Testimonials"));
+const FAQ = dynamic(() => import("../components/FAQ"));
+const Contact = dynamic(() => import("../components/Contact"));
 
 // Reusable luxury inline Call-to-Action block (Conversion Optimization)
 function CallToActionBlock() {

@@ -135,6 +135,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const progressRef = useRef(0);
   const currentTimeRef = useRef(0);
   const activeSceneIndexRef = useRef(0);
+  const inViewRef = useRef(true);
 
   // Media Query listener for system-reduced motion compatibility (WCAG compliance)
   useEffect(() => {
@@ -143,6 +144,25 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
+  // IntersectionObserver to pause rendering and seeking calculations when component is off-screen (battery and CPU optimization)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inViewRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.01 } // Trigger as soon as at least 1% is visible
+    );
+
+    observer.observe(container);
+    return () => {
+      observer.unobserve(container);
+      observer.disconnect();
+    };
   }, []);
 
   // Frame initialization and browser paint detection sequence (WCAG & UX flash prevention)
@@ -230,7 +250,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     }
 
     const handleScroll = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !inViewRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       const scrollHeight = rect.height - window.innerHeight;
@@ -271,6 +291,12 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     // requestAnimationFrame interpolation loop for smooth scrubbing
     let rAFId: number;
     const smoothScrub = () => {
+      // Avoid running seeks if the component is out of the viewport
+      if (!inViewRef.current) {
+        rAFId = requestAnimationFrame(smoothScrub);
+        return;
+      }
+
       const video = videoRef.current;
       if (video && video.readyState >= 2) {
         if (!video.paused) {
