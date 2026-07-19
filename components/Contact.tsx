@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Loader2, Sparkles, MapPin, Phone, Mail } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -16,11 +17,73 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [consentChecked, setConsentChecked] = useState(false);
 
+  const headingLines = ["Arrange", "Your", "Private", "Visit"];
+
+  const badges = [
+    {
+      label: "Private Concierge",
+      icon: (
+        <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      )
+    },
+    {
+      label: "Response within 24h",
+      icon: (
+        <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      )
+    },
+    {
+      label: "Completely Confidential",
+      icon: (
+        <svg className="w-3.5 h-3.5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      )
+    }
+  ];
+
+  const contactItems = [
+    {
+      label: "Location",
+      value: "Split, Croatia",
+      icon: (
+        <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      )
+    },
+    {
+      label: "Email",
+      value: "info@villaserenite.com",
+      href: "mailto:info@villaserenite.com",
+      icon: (
+        <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      )
+    },
+    {
+      label: "Private Concierge",
+      value: "+385 21 555 0199",
+      href: "tel:+385215550199",
+      icon: (
+        <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      )
+    }
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !consentChecked) return;
 
-    // Honeypot spam check: if filled, silently swallow the request (looks like success to the bot)
+    // Honeypot spam blocker
     if (honeypot !== "") {
       setStatus("submitting");
       setTimeout(() => {
@@ -33,7 +96,7 @@ export default function Contact() {
 
     setStatus("submitting");
 
-    // Simulate luxury API submission and server-side validation delay
+    // Simulate luxury API submission delay
     setTimeout(() => {
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", date: "", message: "" });
@@ -48,282 +111,334 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: 0.15 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
+    }
+  };
+
   return (
-    <section id="contact" className="relative pt-24 md:pt-36 pb-8 md:pb-12 bg-[#0E0E0E] overflow-hidden select-none border-t border-gold/5" aria-labelledby="contact-heading">
-      <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+    <section 
+      id="contact" 
+      className="relative pt-[100px] lg:pt-[160px] pb-8 md:pb-12 bg-[#0B0B0C] overflow-hidden select-none" 
+      aria-labelledby="contact-heading"
+    >
+      {/* Subtle Architectural Grid Texture (Almost invisible) */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-start">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
-          {/* Left Column: Contact details and Vetting disclaimer */}
-          <div className="lg:col-span-5 flex flex-col gap-8 md:gap-10">
-            <div>
-              <span id="contact-heading" className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
-                The Connection
-              </span>
-              <h2 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight mt-2">
-                Initiate Your Journey
-              </h2>
-              <p className="text-xs md:text-sm text-white/50 tracking-wider font-light leading-relaxed mt-4">
-                Arrange a private consult or site walkthrough. Due to security protocols, entry
-                to the site is strictly reserved for pre-vetted clients.
-              </p>
-            </div>
+          {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative">
+            
+            {/* Ambient gold glow behind heading */}
+            <div className="absolute -left-[10%] -top-[10%] w-[300px] h-[300px] rounded-full bg-[#C8A96A]/3 blur-[100px] pointer-events-none z-0" />
 
-            {/* Address Details */}
-            <div className="flex flex-col gap-6 font-sans">
-              <div className="flex items-start gap-4">
-                <a
-                  href="https://maps.google.com/?q=Trg+Republike+1,+21000+Split,+Croatia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 border border-gold/15 bg-black/40 flex items-center justify-center text-gold shrink-0 focus-visible:ring-2 focus-visible:ring-gold"
-                  aria-label="View Split headquarters on Google Maps"
-                >
-                  <MapPin className="w-4 h-4 stroke-[1.25]" />
-                </a>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-mono tracking-widest text-[#555] uppercase">Headquarters</span>
-                  <a
-                    href="https://maps.google.com/?q=Trg+Republike+1,+21000+Split,+Croatia"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-white/80 font-light tracking-wide hover:text-gold transition-colors"
+            <span id="contact-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
+              PRIVATE CONSULTATION
+            </span>
+
+            {/* Editorial Heading Line-by-Line */}
+            <h2 className="text-[38px] sm:text-[46px] lg:text-[64px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6 relative z-10 whitespace-pre-line">
+              {headingLines.map((line, i) => (
+                <span key={i} className="block overflow-hidden pb-1">
+                  <motion.span
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] as const }}
+                    className="block"
                   >
-                    Trg Republike 1, 21000 Split, Croatia
-                  </a>
-                </div>
-              </div>
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
+            </h2>
 
-              <div className="flex items-start gap-4">
-                <a
-                  href="tel:+385215550199"
-                  className="w-10 h-10 border border-gold/15 bg-black/40 flex items-center justify-center text-gold shrink-0 focus-visible:ring-2 focus-visible:ring-gold"
-                  aria-label="Call Villa V Concierge Office"
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-10 relative z-10"
+            >
+              Our concierge team will personally assist you in arranging an exclusive viewing tailored to your schedule.
+            </motion.p>
+
+            {/* Premium Contact Details List */}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="flex flex-col gap-6 relative z-10"
+            >
+              {contactItems.map((item) => (
+                <motion.div 
+                  key={item.label}
+                  variants={itemVariants}
+                  className="flex items-start gap-4"
                 >
-                  <Phone className="w-4 h-4 stroke-[1.25]" />
-                </a>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-mono tracking-widest text-[#555] uppercase">Inquiries Desk</span>
-                  <a
-                    href="tel:+385215550199"
-                    className="text-sm text-white/80 font-light tracking-wide hover:text-gold transition-colors"
-                  >
-                    +385 (0) 21 555 0199
-                  </a>
-                </div>
-              </div>
+                  <div className="w-10 h-10 border border-white/10 bg-white/[0.02] rounded-full flex items-center justify-center shrink-0">
+                    {item.icon}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase">
+                      {item.label}
+                    </span>
+                    {item.href ? (
+                      <a 
+                        href={item.href} 
+                        className="text-sm sm:text-base text-[#F6F3EB] font-light tracking-wide hover:text-[#C8A96A] transition-colors mt-0.5"
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      <span className="text-sm sm:text-base text-[#F6F3EB] font-light tracking-wide mt-0.5">
+                        {item.value}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-              <div className="flex items-start gap-4">
-                <a
-                  href="mailto:inquiries@villa-v.com"
-                  className="w-10 h-10 border border-gold/15 bg-black/40 flex items-center justify-center text-gold shrink-0 focus-visible:ring-2 focus-visible:ring-gold"
-                  aria-label="Email Villa V Concierge Desk"
-                >
-                  <Mail className="w-4 h-4 stroke-[1.25]" />
-                </a>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[9px] font-mono tracking-widest text-[#555] uppercase">Direct Email</span>
-                  <a
-                    href="mailto:inquiries@villa-v.com"
-                    className="text-sm text-white/80 font-light tracking-wide hover:text-gold transition-colors"
-                  >
-                    inquiries@villa-v.com
-                  </a>
-                </div>
-              </div>
-            </div>
+            {/* Luxury gold outline Appointment Badge */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="border border-[#C8A96A]/30 text-[#C8A96A] text-[11px] font-sans font-semibold px-6 py-2.5 rounded-full uppercase tracking-[0.2em] self-start mt-10 relative z-10"
+            >
+              By Appointment Only
+            </motion.div>
 
-            {/* Reassurance Disclaimer */}
-            <div className="p-5 border border-gold/10 glass-light bg-black/35 flex gap-4">
-              <Sparkles className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-              <p className="text-[11px] text-white/40 tracking-wider font-light leading-relaxed">
-                By submitting this request, you consent to standard credential verification.
-                All information is securely encrypted under advanced key protocols.
-              </p>
-            </div>
           </div>
 
-          {/* Right Column: Interactive Booking Form */}
-          <div className="lg:col-span-7">
-            <div className="glass p-8 md:p-12 relative overflow-hidden bg-black/40">
-              
-              {/* Form border accent */}
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-
-              {status === "success" ? (
-                <div className="flex flex-col items-center justify-center text-center py-16 gap-6">
-                  <div className="w-16 h-16 rounded-full border border-gold/25 bg-gold/5 flex items-center justify-center text-gold animate-bounce">
-                    <CheckCircle2 className="w-8 h-8 stroke-[1.25]" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-serif text-white font-light tracking-wide mb-2">
-                      Inquiry Received
-                    </h3>
-                    <p className="text-xs text-white/50 tracking-wider max-w-sm font-light leading-relaxed">
-                      Your details have been securely logged. An architectural relations director
-                      will contact you via verified channels within 24 hours.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setStatus("idle")}
-                    className="mt-4 text-xs font-mono tracking-widest text-gold hover:text-gold-light underline cursor-pointer focus-visible:ring-1 focus-visible:ring-gold"
-                  >
-                    SUBMIT ANOTHER INQUIRY
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
-                  {/* Honeypot Spam Protection Field (WCAG Accessible hidden patterns) */}
-                  <div className="hidden" aria-hidden="true">
-                    <input
-                      type="text"
-                      name="website"
-                      tabIndex={-1}
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                      placeholder="Leave this blank"
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  {/* Name field */}
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="form-name" className="text-[9px] font-mono tracking-widest text-white/55 uppercase">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="form-name"
-                      name="name"
-                      required
-                      autoComplete="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Alexander Mercer"
-                      disabled={status === "submitting"}
-                      className="w-full bg-[#121212] border border-white/5 focus:border-gold/50 px-4 py-3.5 text-xs text-white placeholder-white/20 rounded-none transition-all outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                    />
-                  </div>
-
-                  {/* Contact Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="form-email" className="text-[9px] font-mono tracking-widest text-white/55 uppercase">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="form-email"
-                        name="email"
-                        required
-                        autoComplete="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="e.g., alexander@mercerholdings.com"
-                        disabled={status === "submitting"}
-                        className="w-full bg-[#121212] border border-white/5 focus:border-gold/50 px-4 py-3.5 text-xs text-white placeholder-white/20 rounded-none transition-all outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="form-phone" className="text-[9px] font-mono tracking-widest text-white/55 uppercase">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        id="form-phone"
-                        name="phone"
-                        autoComplete="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="e.g., +385 21 555 0199"
-                        disabled={status === "submitting"}
-                        className="w-full bg-[#121212] border border-white/5 focus:border-gold/50 px-4 py-3.5 text-xs text-white placeholder-white/20 rounded-none transition-all outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Preferred Date */}
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="form-date" className="text-[9px] font-mono tracking-widest text-white/55 uppercase">
-                      Preferred Tour Date
-                    </label>
-                    <input
-                      type="date"
-                      id="form-date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      disabled={status === "submitting"}
-                      className="w-full bg-[#121212] border border-white/5 focus:border-gold/50 px-4 py-3.5 text-xs text-white placeholder-white/20 rounded-none transition-all outline-none text-left focus-visible:ring-1 focus-visible:ring-gold"
-                    />
-                  </div>
-
-                  {/* Private message */}
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="form-message" className="text-[9px] font-mono tracking-widest text-white/55 uppercase">
-                      Private Inquiry Details
-                    </label>
-                    <textarea
-                      id="form-message"
-                      name="message"
-                      rows={4}
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      placeholder="Specify yacht berthing requirements or private helicopter arrival parameters if needed..."
-                      disabled={status === "submitting"}
-                      className="w-full bg-[#121212] border border-white/5 focus:border-gold/50 px-4 py-3.5 text-xs text-white placeholder-white/20 rounded-none transition-all outline-none resize-none focus-visible:ring-1 focus-visible:ring-gold"
-                    />
-                  </div>
-
-                  {/* GDPR Consent Checkbox (WCAG AA Compliance) */}
-                  <div className="flex items-start gap-3 mt-2">
-                    <input
-                      type="checkbox"
-                      id="consent"
-                      required
-                      checked={consentChecked}
-                      onChange={(e) => setConsentChecked(e.target.checked)}
-                      disabled={status === "submitting"}
-                      className="mt-1 w-4 h-4 border border-white/10 rounded-none bg-[#121212] checked:bg-gold checked:border-gold accent-gold text-gold cursor-pointer focus-visible:ring-1 focus-visible:ring-gold"
-                    />
-                    <label
-                      htmlFor="consent"
-                      className="text-[10px] text-white/40 leading-relaxed font-sans cursor-pointer hover:text-white/60 transition-colors select-none"
-                    >
-                      I consent to my contact details being processed in accordance with the{" "}
-                      <Link href="/privacy" className="text-gold underline hover:text-[#E6D2A2]" target="_blank">
-                        Privacy Policy
-                      </Link>{" "}
-                      and{" "}
-                      <Link href="/terms" className="text-gold underline hover:text-[#E6D2A2]" target="_blank">
-                        Terms of Service
-                      </Link>
-                      .
-                    </label>
-                  </div>
-
-                  {/* Submit Button (Standardized label: Book a Private Tour) */}
-                  <button
-                    type="submit"
-                    disabled={status === "submitting" || !consentChecked}
-                    className="group relative flex items-center justify-center gap-3 bg-gold hover:bg-gold-light disabled:bg-gold/40 disabled:text-[#0B0B0C]/40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 transition-all duration-300 select-none cursor-pointer focus-visible:ring-2 focus-visible:ring-gold"
-                  >
-                    {status === "submitting" ? (
-                      <>
-                        Verifying Credentials
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      </>
-                    ) : (
-                      <>
-                        Book a Private Tour
-                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
+          {/* COLUMN 2: Private Booking Form Card (Right 60%) */}
+          <div className="col-span-12 lg:col-span-7 flex flex-col w-full relative z-10">
+            
+            {/* Form Badges Row */}
+            <div className="flex flex-wrap items-center gap-3 mb-6 select-none">
+              {badges.map((badge, idx) => (
+                <motion.div
+                  key={badge.label}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/5 bg-white/[0.02] text-[9px] sm:text-[10px] tracking-wider text-[#F6F3EB]/60 uppercase"
+                >
+                  {badge.icon}
+                  <span>{badge.label}</span>
+                </motion.div>
+              ))}
             </div>
+
+            {/* Elevated glass card wrapper */}
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
+              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-8 sm:p-10 lg:p-12 w-full"
+            >
+              <AnimatePresence mode="wait">
+                {status === "success" ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center text-center py-16 gap-6"
+                  >
+                    <div className="w-16 h-16 rounded-full border border-[#C8A96A]/20 bg-[#C8A96A]/5 flex items-center justify-center text-[#C8A96A] animate-bounce">
+                      <CheckCircle2 className="w-8 h-8 stroke-[1.5]" />
+                    </div>
+                    <div>
+                      <h3 className="text-[24px] sm:text-[28px] font-serif text-[#F6F3EB] font-light tracking-wide mb-2">
+                        Inquiry Logged
+                      </h3>
+                      <p className="text-sm text-[#B8B8B8] tracking-wider max-w-sm font-light leading-relaxed">
+                        An architectural relations director will contact you via verified channels within 24 hours.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setStatus("idle")}
+                      className="mt-4 text-xs font-mono tracking-widest text-[#C8A96A] hover:text-[#D6B15C] underline cursor-pointer focus-visible:outline-none"
+                    >
+                      SUBMIT ANOTHER REQUEST
+                    </button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    {/* Honeypot Spam Field */}
+                    <div className="hidden" aria-hidden="true">
+                      <input
+                        type="text"
+                        name="website"
+                        tabIndex={-1}
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                        placeholder="Leave this blank"
+                        autoComplete="off"
+                      />
+                    </div>
+
+                    {/* Name input */}
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="form-name" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="form-name"
+                        name="name"
+                        required
+                        autoComplete="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="e.g., Alexander Mercer"
+                        disabled={status === "submitting"}
+                        className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                      />
+                    </div>
+
+                    {/* Email and Phone Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label htmlFor="form-email" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          id="form-email"
+                          name="email"
+                          required
+                          autoComplete="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="e.g., alexander@mercer.com"
+                          disabled={status === "submitting"}
+                          className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label htmlFor="form-phone" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="form-phone"
+                          name="phone"
+                          autoComplete="tel"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder="e.g., +385 21 555 0199"
+                          disabled={status === "submitting"}
+                          className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Preferred Date */}
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="form-date" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
+                        Preferred Tour Date
+                      </label>
+                      <input
+                        type="date"
+                        id="form-date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        disabled={status === "submitting"}
+                        className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Message input */}
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="form-message" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
+                        Private Inquiry Details
+                      </label>
+                      <textarea
+                        id="form-message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        placeholder="Specify yacht berthing requirements or private helicopter arrival parameters if needed..."
+                        disabled={status === "submitting"}
+                        className="w-full h-[120px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none"
+                      />
+                    </div>
+
+                    {/* GDPR Consent Checkbox */}
+                    <div className="flex items-start gap-3 mt-2">
+                      <input
+                        type="checkbox"
+                        id="consent"
+                        required
+                        checked={consentChecked}
+                        onChange={(e) => setConsentChecked(e.target.checked)}
+                        disabled={status === "submitting"}
+                        className="mt-1 w-4 h-4 border border-white/10 rounded bg-[#18181A] checked:bg-[#C8A96A] checked:border-[#C8A96A] accent-[#C8A96A] text-[#C8A96A] cursor-pointer focus-visible:outline-none"
+                      />
+                      <label
+                        htmlFor="consent"
+                        className="text-[10px] sm:text-[11px] text-white/40 leading-relaxed font-sans cursor-pointer hover:text-white/60 transition-colors select-none"
+                      >
+                        I consent to my contact details being processed in accordance with the{" "}
+                        <Link href="/privacy" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
+                          Privacy Policy
+                        </Link>{" "}
+                        and{" "}
+                        <Link href="/terms" className="text-[#C8A96A] underline hover:text-[#E6D2A2]" target="_blank">
+                          Terms of Service
+                        </Link>
+                        .
+                      </label>
+                    </div>
+
+                    {/* Pill-Shaped Action Button */}
+                    <motion.button
+                      type="submit"
+                      disabled={status === "submitting" || !consentChecked}
+                      whileHover={status === "idle" && consentChecked ? { y: -2 } : {}}
+                      whileTap={{ scale: 0.97 }}
+                      className="group/btn w-full h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
+                    >
+                      {status === "submitting" ? (
+                        <>
+                          <span>Verifying Credentials</span>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Request Private Consultation</span>
+                          <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300 select-none">
+                            →
+                          </span>
+                        </>
+                      )}
+                    </motion.button>
+
+                  </form>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
           </div>
 
         </div>
