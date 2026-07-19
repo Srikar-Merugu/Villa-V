@@ -30,7 +30,7 @@ const SCENES: SceneContent[] = [
     scriptTitle: "Luxury"
   },
   {
-    serifTitle: "DESIGNED FOR",
+    serifTitle: "DESIGNED",
     scriptTitle: "Living"
   },
   {
@@ -38,10 +38,90 @@ const SCENES: SceneContent[] = [
     scriptTitle: "Retreat"
   },
   {
-    serifTitle: "WELCOME HOME",
-    scriptTitle: "Luxury"
+    serifTitle: "WELCOME",
+    scriptTitle: "Home"
   }
 ];
+
+// Coordinated stagger animation variants
+const containerVariants = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.15 // 150ms delay before signature writing transition
+    }
+  },
+  exit: {
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const serifVariants = {
+  initial: { opacity: 0, y: 8, filter: "blur(4px)" },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } 
+  },
+  exit: { 
+    opacity: 0, 
+    y: -8, 
+    filter: "blur(4px)",
+    transition: { duration: 0.5 } 
+  }
+};
+
+const scriptVariants = {
+  initial: { opacity: 0, x: -12, filter: "blur(4px)", scale: 0.96 },
+  animate: { 
+    opacity: 1, 
+    x: 0, 
+    filter: "blur(0px)",
+    scale: 1,
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const } 
+  },
+  exit: { 
+    opacity: 0, 
+    x: 12, 
+    filter: "blur(4px)",
+    transition: { duration: 0.5 } 
+  }
+};
+
+// Reusable LuxuryTitle component ensuring absolute design consistency (WCAG & UX compliance)
+function LuxuryTitle({ serifTitle, scriptTitle }: SceneContent) {
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="relative inline-block"
+    >
+      {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
+      <motion.h1
+        variants={serifVariants}
+        className="font-serif text-[#F6F3EB] text-[clamp(44px,7.8vw,140px)] leading-none uppercase tracking-[0.05em] font-light text-shadow-subtle"
+      >
+        {serifTitle}
+      </motion.h1>
+
+      {/* Absolute positioning container to enforce horizontal centering under the serif title */}
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-[-18%] md:bottom-[-15%] whitespace-nowrap pointer-events-none select-none">
+        {/* Luxury Script Overlay (Champagne Gold: #D6B15C) */}
+        <motion.span
+          variants={scriptVariants}
+          className="font-script text-[#D6B15C] text-[clamp(32px,5.7vw,102px)] leading-none block filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+        >
+          {scriptTitle}
+        </motion.span>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -181,54 +261,6 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
 
   const currentScene = SCENES[activeSceneIndex];
 
-  // Motion variants for coordinated stagger animation
-  const containerVariants = {
-    initial: {},
-    animate: {
-      transition: {
-        staggerChildren: 0.15 // 150ms delay before signature writing transition
-      }
-    },
-    exit: {
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
-
-  const serifVariants = {
-    initial: { opacity: 0, y: 8, filter: "blur(4px)" },
-    animate: { 
-      opacity: 1, 
-      y: 0, 
-      filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } 
-    },
-    exit: { 
-      opacity: 0, 
-      y: -8, 
-      filter: "blur(4px)",
-      transition: { duration: 0.5 } 
-    }
-  };
-
-  const scriptVariants = {
-    initial: { opacity: 0, x: -12, filter: "blur(4px)", scale: 0.96 },
-    animate: { 
-      opacity: 1, 
-      x: 0, 
-      filter: "blur(0px)",
-      scale: 1,
-      transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const } 
-    },
-    exit: { 
-      opacity: 0, 
-      x: 12, 
-      filter: "blur(4px)",
-      transition: { duration: 0.5 } 
-    }
-  };
-
   return (
     <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
       {/* Sticky Video Canvas Wrapper */}
@@ -309,40 +341,18 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
           )}
         </AnimatePresence>
 
-        {/* Unified Storytelling Layout: Centered stacked text with elegant intersecting scripts */}
+        {/* Unified Storytelling Layout */}
         <div className="absolute inset-0 flex items-center justify-center p-6 md:p-24 z-10">
           <div className="max-w-4xl w-full text-center flex flex-col items-center select-none">
             
             {/* Serif & Script Overlap Container (Fixed inline bounds to map percentage alignment) */}
             <div className="relative inline-block overflow-visible min-h-[140px] md:min-h-[200px] filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               <AnimatePresence mode="wait">
-                <motion.div
+                <LuxuryTitle
                   key={currentScene.serifTitle}
-                  variants={containerVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="relative inline-block"
-                >
-                  {/* Large Serif Title (Warm Ivory: #F6F3EB) */}
-                  <motion.h1
-                    variants={serifVariants}
-                    className="font-serif text-[#F6F3EB] text-[clamp(44px,7.8vw,140px)] leading-none uppercase tracking-[0.05em] font-light text-shadow-subtle"
-                  >
-                    {currentScene.serifTitle}
-                  </motion.h1>
-
-                  {/* Absolute positioning container to enforce horizontal centering under the serif title */}
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-[-18%] md:bottom-[-15%] whitespace-nowrap pointer-events-none select-none">
-                    {/* Luxury Script Overlay (Champagne Gold: #D6B15C) */}
-                    <motion.span
-                      variants={scriptVariants}
-                      className="font-script text-[#D6B15C] text-[clamp(32px,5.7vw,102px)] leading-none block filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-                    >
-                      {currentScene.scriptTitle}
-                    </motion.span>
-                  </div>
-                </motion.div>
+                  serifTitle={currentScene.serifTitle}
+                  scriptTitle={currentScene.scriptTitle}
+                />
               </AnimatePresence>
             </div>
 
