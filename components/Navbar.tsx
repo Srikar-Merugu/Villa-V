@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Menu, X, ArrowRight } from "lucide-react";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [scrollState, setScrollState] = useState<"top" | "scrolling" | "solid">("top");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -18,16 +19,24 @@ export default function Navbar() {
     { name: "Contact", id: "contact" }
   ];
 
+  // Track page scroll to set transparent gradients or solid post-hero bases
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 60) {
-        setScrolled(true);
+      const scrollY = window.scrollY;
+      const heroHeight = window.innerHeight;
+      const totalScrubHeight = heroHeight * 4.2; // Total scroll height of video scrub container
+
+      if (scrollY < 80) {
+        setScrollState("top");
+      } else if (scrollY >= 80 && scrollY < totalScrubHeight) {
+        setScrollState("scrolling");
       } else {
-        setScrolled(false);
+        setScrollState("solid");
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -66,7 +75,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const offset = scrolled ? 70 : 90;
+      const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -79,6 +88,36 @@ export default function Navbar() {
     }
   };
 
+  // Determine dynamic styles based on scroll state transitions
+  const getNavbarStyles = () => {
+    const base = "fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out select-none py-6";
+    
+    if (scrollState === "solid") {
+      // Post-hero: solid dark base, 10px blur, thin border
+      return {
+        className: `${base} py-4 bg-[#121214]/82 backdrop-blur-[10px] border-b border-white/5 shadow-md`
+      };
+    } else if (scrollState === "scrolling") {
+      // Scrolled hero: increase gradient overlay slightly (~10%) to protect readability over bright video frames
+      return {
+        className: `${base} border-transparent`,
+        style: {
+          background: "linear-gradient(180deg, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0.14) 60%, transparent 100%)",
+        }
+      };
+    } else {
+      // Hero top: fully transparent minimal base with light visual gradient
+      return {
+        className: `${base} border-transparent`,
+        style: {
+          background: "linear-gradient(180deg, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)",
+        }
+      };
+    }
+  };
+
+  const navStyles = getNavbarStyles();
+
   return (
     <>
       {/* Skip to Main Content Link (WCAG Accessibility compliance) */}
@@ -89,20 +128,12 @@ export default function Navbar() {
       <nav
         role="navigation"
         aria-label="Main Directory"
-        className={`fixed top-0 left-0 w-full z-45 transition-all duration-[600ms] ease-in-out select-none ${
-          scrolled
-            ? "py-4 bg-[#0B0B0C]/85 backdrop-blur-[12px] border-b border-white/5 shadow-md"
-            : "py-6 bg-transparent border-transparent"
-        }`}
-        style={!scrolled ? {
-          background: "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 60%, transparent 100%)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)"
-        } : undefined}
+        className={navStyles.className}
+        style={navStyles.style}
       >
         <div className="max-w-7xl w-full mx-auto px-6 md:px-12 flex items-center justify-between">
           
-          {/* Logo (Warm Ivory: #F6F3EB with text shadow visibility boost) */}
+          {/* Logo (Warm Ivory: #F6F3EB, Small Label: #C8A96A with text-shadow) */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             onKeyDown={(e) => {
@@ -124,7 +155,7 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* Desktop Navigation Links (Warm White: #FAFAF8, Weight 500, letter-spacing 0.08em) */}
+          {/* Desktop Navigation Links (Pure White #FFFFFF, Weight 600, tracking 0.08em, text shadow) */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-10">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
@@ -132,10 +163,10 @@ export default function Navbar() {
                 <button
                   key={link.name}
                   onClick={() => handleScrollTo(link.id)}
-                  className={`relative text-xs uppercase tracking-[0.08em] font-medium pb-1.5 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle after:absolute after:bottom-0 after:left-1/2 after:h-[1.5px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
+                  className={`relative text-[15px] lg:text-[16px] xl:text-[17px] uppercase tracking-[0.08em] font-semibold pb-1.5 transition-colors duration-300 cursor-pointer focus-visible:outline-none text-shadow-subtle after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:bg-[#C8A96A] after:-translate-x-1/2 after:transition-all after:duration-300 ${
                     isActive
-                      ? "text-[#C8A96A] after:w-full font-semibold"
-                      : "text-[#FAFAF8] hover:text-[#C8A96A] after:w-0 hover:after:w-full"
+                      ? "text-[#C8A96A] after:w-full font-bold"
+                      : "text-[#FFFFFF] hover:text-[#C8A96A] after:w-0 hover:after:w-full"
                   }`}
                 >
                   {link.name}
@@ -144,13 +175,13 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Book Tour CTA Button (Bespoke border, Warm White text, gold hover background) */}
+          {/* Book Tour CTA Button (Clean high contrast border, soft elevation and shadows) */}
           <div className="hidden lg:block">
             <button
               onClick={() => handleScrollTo("contact")}
-              className="group relative inline-flex items-center justify-center overflow-hidden border border-[#C8A96A]/40 hover:border-[#C8A96A] px-6 py-2.5 bg-transparent hover:bg-[#C8A96A] transition-all duration-500 cursor-pointer focus-visible:ring-1 focus-visible:ring-gold focus-visible:outline-none"
+              className="group relative inline-flex items-center justify-center overflow-hidden border-2 border-[#C8A96A]/60 hover:border-[#C8A96A] px-6 py-2.5 rounded-none bg-transparent hover:bg-[#C8A96A] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(200,169,106,0.3)] transition-all duration-500 cursor-pointer focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none text-shadow-subtle"
             >
-              <span className="relative z-10 text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-[#FAFAF8] group-hover:text-[#0B0B0C] transition-colors duration-300">
+              <span className="relative z-10 text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[#FFFFFF] group-hover:text-[#0B0B0C] transition-colors duration-300">
                 Book a Private Tour
               </span>
             </button>
@@ -188,7 +219,7 @@ export default function Navbar() {
                 key={link.name}
                 onClick={() => handleScrollTo(link.id)}
                 className={`text-left text-2xl font-serif tracking-widest hover:text-gold hover:translate-x-2 transition-all duration-300 cursor-pointer focus-visible:outline-none ${
-                  isActive ? "text-gold font-normal" : "text-[#FAFAF8]"
+                  isActive ? "text-gold font-normal" : "text-[#FFFFFF]"
                 }`}
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
