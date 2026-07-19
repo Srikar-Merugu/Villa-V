@@ -20,9 +20,6 @@ export default function Navbar() {
     { name: "About", id: "about" },
     { name: "Amenities", id: "amenities" },
     { name: "Gallery", id: "gallery" },
-    { name: "Floor Plans", id: "floor-plans" },
-    { name: "Location", id: "location" },
-    { name: "FAQ", id: "faq" },
     { name: "Contact", id: "contact" }
   ];
 
