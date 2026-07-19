@@ -96,7 +96,7 @@ export default function About() {
               <div className="absolute inset-0 border border-white/5 z-10 pointer-events-none" />
 
               <Image
-                src="/images/about.png"
+                src="/images/about.webp"
                 alt="Villa V Dusk Exterior"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

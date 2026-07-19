@@ -13,22 +13,22 @@ interface GalleryImage {
 
 const GALLERY_IMAGES: GalleryImage[] = [
   {
-    src: "/images/about.png",
+    src: "/images/about.webp",
     title: "Dusk Silhouette Rendering",
     tag: "EXTERIOR"
   },
   {
-    src: "/images/pool.png",
+    src: "/images/pool.webp",
     title: "Living Lounge and Infinity Mirror",
     tag: "LIVING SPACE"
   },
   {
-    src: "/images/bedroom.png",
+    src: "/images/bedroom.webp",
     title: "Master Suite Ocean Panoramas",
     tag: "SUITE"
   },
   {
-    src: "/images/pool.png",
+    src: "/images/pool.webp",
     title: "Terrace Sunset Mirroring",
     tag: "OUTDOOR"
   }
