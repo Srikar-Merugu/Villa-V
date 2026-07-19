@@ -196,13 +196,13 @@ export default function Navbar() {
 
           {/* COLUMN 3: CTA & Hamburger Menu (Right Aligned, Compact & Flat) */}
           <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            {/* Book Consultation CTA Button (Slick, Flat, Compact) */}
+            {/* Book Consultation CTA Button (Slick, Flat, Small Size) */}
             <div className="hidden sm:block">
               <button
                 onClick={() => handleScrollTo("contact")}
-                className="group relative h-[36px] px-6 rounded-full border border-[#C8A96A]/60 hover:border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-[1.5px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
+                className="group relative h-[32px] px-5 rounded-full border border-[#C8A96A]/60 hover:border-[#C8A96A] bg-transparent hover:bg-[#C8A96A] hover:-translate-y-[1.5px] transition-all duration-300 ease-out cursor-pointer flex items-center justify-center focus-visible:ring-1 focus-visible:ring-[#C8A96A] focus-visible:outline-none"
               >
-                <span className="relative z-10 text-[11px] sm:text-[12px] font-sans font-semibold uppercase tracking-[0.14em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
+                <span className="relative z-10 text-[10px] sm:text-[11px] font-sans font-semibold uppercase tracking-[0.12em] text-[#F8F5EE] group-hover:text-[#111111] leading-none transition-colors duration-300 whitespace-nowrap">
                   Book Consultation
                 </span>
               </button>
@@ -270,7 +270,7 @@ export default function Navbar() {
                   setMobileMenuOpen(false);
                   handleScrollTo("contact");
                 }}
-                className="sm:hidden mt-8 h-[38px] px-6 rounded-full border border-[#C8A96A]/60 bg-transparent text-[#F8F5EE] font-sans font-semibold text-[12px] uppercase tracking-[0.14em] leading-none hover:bg-[#C8A96A] hover:text-[#111111] transition-all duration-300 focus-visible:outline-none"
+                className="sm:hidden mt-8 h-[32px] px-5 rounded-full border border-[#C8A96A]/60 bg-transparent text-[#F8F5EE] font-sans font-semibold text-[11px] uppercase tracking-[0.12em] leading-none hover:bg-[#C8A96A] hover:text-[#111111] transition-all duration-300 focus-visible:outline-none"
                 style={{
                   backdropFilter: "blur(18px)",
                   WebkitBackdropFilter: "blur(18px)"
