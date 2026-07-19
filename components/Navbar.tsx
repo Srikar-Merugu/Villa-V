@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -28,30 +26,16 @@ export default function Navbar() {
     { name: "Contact", id: "contact" }
   ];
 
-  // Track page scroll to set transparent base or dark glass backing, and scroll direction
+  // Track page scroll to set transparent base or dark glass backing
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY >= 80);
-
-      if (currentScrollY < 80) {
-        setVisible(true);
-      } else {
-        if (currentScrollY > lastScrollY) {
-          // Scroll down -> show navbar (comes back)
-          setVisible(true);
-        } else {
-          // Scroll up -> hide navbar (disappears)
-          setVisible(false);
-        }
-      }
-      setLastScrollY(currentScrollY);
+      setIsScrolled(window.scrollY >= 80);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // IntersectionObserver scroll spy active section highlights
   useEffect(() => {
@@ -138,7 +122,7 @@ export default function Navbar() {
         Skip to main content
       </a>
 
-      {/* Floating Slick Header - Compact & Flat */}
+      {/* Floating Slick Header - Compact & Flat, Stuck in Place */}
       <nav
         role="navigation"
         aria-label="Main Directory"
@@ -146,7 +130,7 @@ export default function Navbar() {
           isScrolled 
             ? "bg-[#0a0a0a]/80 backdrop-blur-[16px] border-white/10" 
             : "bg-black/30 backdrop-blur-[10px] border-white/5"
-        } ${visible ? "translate-y-0 opacity-100" : "-translate-y-24 opacity-0"}`}
+        }`}
       >
         <div className="w-full flex items-center justify-between h-full">
           
