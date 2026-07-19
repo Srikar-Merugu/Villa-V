@@ -44,21 +44,18 @@ function StickyMobileCTA() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
+          initial={{ y: 120, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-0 left-0 w-full z-40 md:hidden bg-[#0B0B0C]/90 backdrop-blur-md border-t border-gold/10 px-6 py-4 flex flex-col gap-1 items-center shadow-[0_-8px_30px_rgba(0,0,0,0.55)]"
+          exit={{ y: 120, opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-0 left-0 w-full z-40 md:hidden bg-[#0B0B0C]/95 backdrop-blur-md border-t border-[#C8A96A]/20 px-5 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] flex flex-col justify-center items-center shadow-[0_-8px_32px_rgba(0,0,0,0.7)] h-[calc(72px+env(safe-area-inset-bottom))]"
         >
           <button
             onClick={handleScrollToContact}
-            className="w-full bg-[#C8A96A] hover:bg-[#D6B15C] text-[#0B0B0C] font-sans font-semibold text-[10px] uppercase tracking-[0.2em] py-3.5 flex items-center justify-center transition-colors focus-visible:ring-1 focus-visible:ring-[#C8A96A]"
+            className="w-full h-[46px] rounded-full bg-[#C8A96A] text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center transition-all duration-300"
           >
             Book Consultation
           </button>
-          <span className="text-[8px] font-mono tracking-wider text-white/35 uppercase text-center mt-1">
-            Private Consultation &bull; Response within 24h
-          </span>
         </motion.div>
       )}
     </AnimatePresence>

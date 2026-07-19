@@ -125,9 +125,9 @@ export default function Navbar() {
       <nav
         role="navigation"
         aria-label="Main Directory"
-        className={`fixed top-3 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] md:w-[calc(100%-80px)] lg:w-[calc(100%-120px)] max-w-[1100px] z-45 transition-all duration-500 ease-in-out select-none h-[54px] md:h-[58px] flex items-center rounded-full px-5 sm:px-8 lg:px-10 border ${
+        className={`fixed top-0 lg:top-3 left-0 lg:left-1/2 lg:-translate-x-1/2 w-full lg:w-[calc(100%-40px)] max-w-[1100px] z-45 transition-all duration-500 ease-in-out select-none h-[72px] lg:h-[58px] flex items-center rounded-none lg:rounded-full px-5 lg:px-10 border-b lg:border ${
           isScrolled 
-            ? "bg-[#0a0a0a]/80 backdrop-blur-[16px] border-white/10" 
+            ? "bg-[#0a0a0a]/90 backdrop-blur-[16px] border-white/10" 
             : "bg-black/30 backdrop-blur-[10px] border-white/5"
         }`}
       >

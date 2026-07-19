@@ -77,15 +77,15 @@ export default function About() {
     <section 
       ref={sectionRef}
       id="about" 
-      className="relative py-[100px] lg:py-[140px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
     >
       {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         
         {/* Two-Column Responsive Grid Layout (Desktop Left 45%, Right 55%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 xl:gap-32 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-24 xl:gap-32 items-center">
           
           {/* COLUMN 1: Storytelling Details & Feature Cards (Responsive Order 2 on Mobile) */}
           <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
@@ -96,7 +96,7 @@ export default function About() {
             </span>
 
             {/* Editorial Heading (Line by Line reveal) */}
-            <h3 className="font-serif text-[#F6F3EB] font-light text-[38px] sm:text-[46px] lg:text-[72px] xl:text-[84px] leading-[1.05] tracking-tight mb-8">
+            <h3 className="font-serif text-[#F6F3EB] font-light text-[32px] sm:text-[38px] md:text-[42px] lg:text-[72px] xl:text-[84px] leading-[1.05] tracking-tight mb-5 lg:mb-8">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span
@@ -118,7 +118,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-[#F6F3EB] text-[16px] sm:text-[18px] font-normal leading-[1.6] text-shadow-subtle text-opacity-95 max-w-[520px] mb-12"
+              className="text-[#F6F3EB] text-[16px] sm:text-[18px] font-normal leading-[1.6] text-shadow-subtle text-opacity-95 max-w-[520px] mb-8 lg:mb-12"
             >
               Designed to blur the boundary between architecture and nature.
             </motion.p>
@@ -188,7 +188,7 @@ export default function About() {
 
             {/* Staggered Premium Glass Metric Cards */}
             {/* Desktop: Absolute Positioned Floaters | Mobile/Tablet: 2x2 Grid Layout below container */}
-            <div className="grid grid-cols-2 gap-4 mt-8 xl:mt-0 xl:block">
+            <div className="grid grid-cols-2 gap-5 mt-8 xl:mt-0 xl:block">
               {metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}

@@ -99,15 +99,15 @@ export default function FloorPlans() {
   return (
     <section 
       id="floor-plans" 
-      className="relative py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 lg:mb-24 flex flex-col">
+        <div className="max-w-3xl mb-8 lg:mb-24 flex flex-col">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -117,7 +117,7 @@ export default function FloorPlans() {
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               THE RESIDENCE
             </span>
-            <h2 className="text-[38px] sm:text-[46px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6">
+            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
               Explore{"\n"}Every Level
             </h2>
           </motion.div>
@@ -236,7 +236,7 @@ export default function FloorPlans() {
           {/* COLUMN 2: Large Cinematic Showcase (Crossfading Absolute Overlays) */}
           <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 flex flex-col">
             
-            <div className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[5/4] w-full overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
+            <div className="relative w-full h-[320px] sm:h-[400px] lg:h-[500px] xl:h-[580px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
               
               {/* Internal Bezel Decoration */}
               <div className="absolute inset-0 border border-white/5 rounded-[24px] z-15 pointer-events-none" />

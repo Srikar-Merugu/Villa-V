@@ -35,7 +35,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
   return (
     <div
       ref={panelRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center w-full"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center w-full"
     >
       {/* COLUMN 1: Image container (Responsive Order 1 on Mobile/Tablet) */}
       <div 
@@ -84,7 +84,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
         </span>
 
         {/* Header Reveal Line-by-Line */}
-        <h3 className="font-serif text-[#F6F3EB] font-light text-[36px] sm:text-[46px] lg:text-[54px] xl:text-[62px] leading-[1.05] tracking-tight mb-6">
+        <h3 className="font-serif text-[#F6F3EB] font-light text-[32px] sm:text-[36px] md:text-[42px] lg:text-[54px] xl:text-[62px] leading-[1.05] tracking-tight mb-5 lg:mb-6">
           {titleLines.map((line, i) => (
             <span key={i} className="block overflow-hidden pb-1">
               <motion.span
@@ -105,7 +105,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-8"
+          className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-6 lg:mb-8"
         >
           {desc}
         </motion.p>
@@ -195,16 +195,16 @@ export default function Gallery() {
   return (
     <section
       id="gallery"
-      className="relative py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
       aria-labelledby="gallery-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-24 lg:mb-32 flex flex-col">
+        <div className="max-w-3xl mb-8 lg:mb-24 flex flex-col">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -214,7 +214,7 @@ export default function Gallery() {
             <span id="gallery-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               THE SHOWCASE
             </span>
-            <h2 className="text-[38px] sm:text-[46px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6">
+            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
               Visual Chronicles
             </h2>
           </motion.div>
@@ -230,7 +230,7 @@ export default function Gallery() {
         </div>
 
         {/* Alternating Panels Grid (Desktop spacing: 140px vertical gaps) */}
-        <div className="flex flex-col gap-[100px] lg:gap-[140px]" role="region" aria-label="Cinematic Visual Chronology">
+        <div className="flex flex-col gap-20 lg:gap-[140px]" role="region" aria-label="Cinematic Visual Chronology">
           {panels.map((panel, idx) => (
             <GalleryPanel
               key={panel.title}

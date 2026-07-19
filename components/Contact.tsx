@@ -130,13 +130,13 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative pt-[100px] lg:pt-[160px] pb-8 md:pb-12 bg-[#0B0B0C] overflow-hidden select-none" 
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none" 
       aria-labelledby="contact-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
           {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}
@@ -150,7 +150,7 @@ export default function Contact() {
             </span>
 
             {/* Editorial Heading Line-by-Line */}
-            <h2 className="text-[38px] sm:text-[46px] lg:text-[64px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6 relative z-10 whitespace-pre-line">
+            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[64px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span
@@ -171,7 +171,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-10 relative z-10"
+              className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-8 lg:mb-10 relative z-10"
             >
               Our concierge team will personally assist you in arranging an exclusive viewing tailored to your schedule.
             </motion.p>
@@ -311,7 +311,7 @@ export default function Contact() {
                         onChange={handleInputChange}
                         placeholder="e.g., Alexander Mercer"
                         disabled={status === "submitting"}
-                        className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
                       />
                     </div>
 
@@ -331,7 +331,7 @@ export default function Contact() {
                           onChange={handleInputChange}
                           placeholder="e.g., alexander@mercer.com"
                           disabled={status === "submitting"}
-                          className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -347,7 +347,7 @@ export default function Contact() {
                           onChange={handleInputChange}
                           placeholder="e.g., +385 21 555 0199"
                           disabled={status === "submitting"}
-                          className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
+                          className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300"
                         />
                       </div>
                     </div>
@@ -364,7 +364,7 @@ export default function Contact() {
                         value={formData.date}
                         onChange={handleInputChange}
                         disabled={status === "submitting"}
-                        className="w-full h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer"
+                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer"
                       />
                     </div>
 
@@ -380,7 +380,7 @@ export default function Contact() {
                         onChange={handleInputChange}
                         placeholder="Specify yacht berthing requirements or private helicopter arrival parameters if needed..."
                         disabled={status === "submitting"}
-                        className="w-full h-[120px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none"
+                        className="w-full h-[140px] py-4 bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 resize-none"
                       />
                     </div>
 
@@ -417,7 +417,7 @@ export default function Contact() {
                       disabled={status === "submitting" || !consentChecked}
                       whileHover={status === "idle" && consentChecked ? { y: -2 } : {}}
                       whileTap={{ scale: 0.97 }}
-                      className="group/btn w-full h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
+                      className="group/btn w-full h-[56px] lg:h-[60px] rounded-full bg-gradient-to-r from-[#C8A96A] to-[#E3C68E] hover:from-[#D6B15C] hover:to-[#F1D7A1] disabled:opacity-40 disabled:cursor-not-allowed text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 focus-visible:outline-none"
                     >
                       {status === "submitting" ? (
                         <>

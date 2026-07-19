@@ -151,15 +151,15 @@ export default function Amenities() {
   return (
     <section 
       id="amenities" 
-      className="relative py-[100px] lg:py-[160px] bg-[#0E0E0E] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 lg:mb-24 flex flex-col">
+        <div className="max-w-3xl mb-8 lg:mb-16 flex flex-col">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -169,7 +169,7 @@ export default function Amenities() {
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               AMENITIES
             </span>
-            <h2 className="text-[38px] sm:text-[46px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6 whitespace-pre-line">
+            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[60px] xl:text-[72px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 whitespace-pre-line">
               Experience{"\n"}World-Class Living
             </h2>
           </motion.div>
@@ -185,7 +185,7 @@ export default function Amenities() {
         </div>
 
         {/* Staggered Alternating Grid of Editorial Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-20 lg:gap-y-36 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-5 lg:gap-y-36 pb-24">
           {cards.map((card, idx) => (
             <AmenityCard
               key={card.title}

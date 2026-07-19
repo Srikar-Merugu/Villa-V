@@ -41,13 +41,13 @@ export default function FAQ() {
   return (
     <section 
       id="faq" 
-      className="relative py-[100px] lg:py-[160px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none"
       aria-labelledby="faq-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12 lg:px-20 relative z-10">
         
         {/* Two-Column Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start">
@@ -62,11 +62,11 @@ export default function FAQ() {
               THE DETAILS
             </span>
 
-            <h2 className="text-[38px] sm:text-[46px] lg:text-[54px] xl:text-[62px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6 relative z-10 whitespace-pre-line">
+            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[54px] xl:text-[62px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
               Frequently{"\n"}Asked{"\n"}Questions
             </h2>
 
-            <p className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[420px] mb-6 relative z-10">
+            <p className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[420px] mb-5 lg:mb-6 relative z-10">
               Everything prospective owners need to know before arranging a private consultation.
             </p>
 
@@ -86,13 +86,13 @@ export default function FAQ() {
                   whileInView="visible"
                   viewport={{ once: true, margin: "-100px" }}
                   variants={cardVariants}
-                  className="bg-[#121214] border border-[#C8A96A]/15 hover:border-[#C8A96A]/45 hover:bg-[#151518] hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(200,169,106,0.04)] rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 lg:p-10 transition-all duration-300 select-none cursor-pointer group"
+                  className="bg-[#121214] border border-[#C8A96A]/15 hover:border-[#C8A96A]/45 hover:bg-[#151518] hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(200,169,106,0.04)] rounded-[18px] sm:rounded-[24px] p-6 sm:p-8 lg:p-10 transition-all duration-300 select-none cursor-pointer group"
                   onClick={() => handleToggle(idx)}
                 >
                   
                   {/* Question row */}
                   <div className="w-full flex items-center justify-between text-left">
-                    <span className="font-serif text-[#F6F3EB] text-[22px] sm:text-[28px] lg:text-[32px] font-light leading-tight tracking-wide pr-6 select-none">
+                    <span className="font-serif text-[#F6F3EB] text-[18px] sm:text-[24px] lg:text-[28px] xl:text-[32px] font-light leading-tight tracking-wide pr-6 select-none">
                       {faq.q}
                     </span>
                     
@@ -125,7 +125,7 @@ export default function FAQ() {
                         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] as const }}
                         className="overflow-hidden"
                       >
-                        <p className="text-[#B8B8B8] text-[15px] sm:text-[16px] lg:text-[18px] font-normal leading-[1.8] max-w-[650px] select-none">
+                        <p className="text-[#B8B8B8] text-[16px] lg:text-[18px] font-normal leading-[1.8] max-w-[650px] select-none">
                           {faq.a}
                         </p>
                       </motion.div>
