@@ -2,113 +2,141 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
-
-interface FAQItem {
-  q: string;
-  a: string;
-}
-
-const FAQS: FAQItem[] = [
-  {
-    q: "What is the current construction phase of Villa V?",
-    a: "We are currently in Phase 3 (Structural Framework & Finishing). Concrete foundations and retaining shell outlines have been successfully cast. Internal partition brickwork, MEP rough-ins, and high-performance structural glazing installations are underway, on schedule for a Q4 2026 delivery."
-  },
-  {
-    q: "Can the floor plan layouts and interior finishes be customized?",
-    a: "Yes. Early-stage purchasers can work directly with our design partners to customize internal partition layouts, fine-tune smart-home configurations, and select from a curated list of ultra-premium finishes, including Italian travertine quarries, solid American walnut cladding, and custom kitchen setups."
-  },
-  {
-    q: "What environmental and sustainability credentials does the villa have?",
-    a: "Villa V is engineered for low-carbon emissions. Features include solar roofing panels integrated into the rooftop deck, a greywater filtration system for landscaping irrigation, high-thermal mass concrete structures for thermal comfort, and double-glazed low-emissivity glass to minimize energy loss."
-  },
-  {
-    q: "What security systems are integrated into the home?",
-    a: "The residence is secured by secure, encrypted home automation systems. It features smart biometrics at all primary portals, CCTV cameras integrated with real-time AI perimeter detection, private security alarms, and a panic room backup option connected to localized emergency dispatch networks."
-  },
-  {
-    q: "How can I schedule a private tour of the construction site?",
-    a: "Private, escorted site tours are available strictly for qualified prospective clients. You can submit a request through our online booking terminal at the bottom of this page. A dedicated representative will contact you to perform standard pre-qualification and arrange helipad or private luxury car transfer details."
-  }
-];
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const handleToggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const faqs = [
+    {
+      q: "When will the residence be completed?",
+      a: "Villa Sérénité is scheduled for completion in Q4 2026. The construction schedule is strictly audited to guarantee museum-grade finishes and zero compromises on architectural integrity."
+    },
+    {
+      q: "Can the interiors be personalized?",
+      a: "Yes. Future residents can collaborate directly with our design atelier to customize wall finishes, select slab configurations of natural marble, and integrate customized storage systems."
+    },
+    {
+      q: "What amenities are included?",
+      a: "The estate features a 25-meter lava stone heated infinity pool, private wellness thermal spa suite, custom acoustic Dolby screening room, climate sommelier cellar, and smart home automation."
+    },
+    {
+      q: "How do I arrange a private consultation?",
+      a: "Private tours and detail reviews can be scheduled by submitting an inquiry via our contact form below or calling our private registrar office directly."
+    }
+  ];
+
+  const handleToggle = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] as const }
+    })
   };
 
   return (
-    <section id="faq" className="relative py-24 md:py-36 bg-[#0B0B0C] overflow-hidden select-none border-t border-gold/5">
-      <div className="absolute inset-0 grid-overlay opacity-10 pointer-events-none" />
+    <section 
+      id="faq" 
+      className="relative py-[100px] lg:py-[160px] bg-[#0B0B0C] overflow-hidden select-none"
+      aria-labelledby="faq-heading"
+    >
+      {/* Subtle Architectural Grid Texture (Almost invisible) */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
         
-        {/* Header */}
-        <div className="max-w-3xl mb-16 md:mb-24 flex flex-col gap-4 text-center items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-center"
-          >
-            <span className="text-xs tracking-[0.3em] uppercase text-gold font-sans font-medium">
-              The Details
+        {/* Two-Column Layout Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start">
+          
+          {/* COLUMN 1: Editorial Description (Left 35%) */}
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative">
+            
+            {/* Faint gold lighting glow behind heading */}
+            <div className="absolute -left-[10%] -top-[10%] w-[250px] h-[250px] rounded-full bg-[#C8A96A]/3 blur-[90px] pointer-events-none z-0" />
+
+            <span id="faq-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
+              THE DETAILS
             </span>
-            <h2 className="text-4xl md:text-5xl font-serif text-white font-light tracking-wide leading-tight mt-2">
-              Frequently Inquired
+
+            <h2 className="text-[38px] sm:text-[46px] lg:text-[54px] xl:text-[62px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-6 relative z-10 whitespace-pre-line">
+              Frequently{"\n"}Asked{"\n"}Questions
             </h2>
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm text-white/55 tracking-wider font-light"
-          >
-            Answers to key architectural, timeline, and buying queries.
-          </motion.p>
-        </div>
 
-        {/* Accordion Container */}
-        <div className="flex flex-col border-t border-white/10">
-          {FAQS.map((faq, index) => {
-            const isOpen = openIndex === index;
-            return (
-              <div key={index} className="border-b border-white/10 select-none">
-                <button
-                  onClick={() => handleToggle(index)}
-                  className="w-full py-6 md:py-8 flex items-center justify-between text-left cursor-pointer group"
+            <p className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[420px] mb-6 relative z-10">
+              Everything prospective owners need to know before arranging a private consultation.
+            </p>
+
+            <div className="w-12 h-[1.5px] bg-[#C8A96A] mt-2 relative z-10" />
+
+          </div>
+
+          {/* COLUMN 2: Luxury Accordion Cards (Right 65%) */}
+          <div className="col-span-12 lg:col-span-7 flex flex-col gap-6 w-full">
+            {faqs.map((faq, idx) => {
+              const isOpen = openIndex === idx;
+              return (
+                <motion.div
+                  key={faq.q}
+                  custom={idx}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={cardVariants}
+                  className="bg-[#121214] border border-[#C8A96A]/15 hover:border-[#C8A96A]/45 hover:bg-[#151518] hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(200,169,106,0.04)] rounded-[20px] sm:rounded-[24px] p-6 sm:p-8 lg:p-10 transition-all duration-300 select-none cursor-pointer group"
+                  onClick={() => handleToggle(idx)}
                 >
-                  <span className={`text-sm md:text-base font-serif tracking-wide transition-colors duration-300 ${isOpen ? "text-gold" : "text-white/80 group-hover:text-white"}`}>
-                    {faq.q}
-                  </span>
-                  <div className={`w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/60 group-hover:border-gold group-hover:text-gold transition-colors duration-300 shrink-0 ml-4`}>
-                    {isOpen ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                  </div>
-                </button>
-
-                {/* Animated collapse block */}
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
+                  
+                  {/* Question row */}
+                  <div className="w-full flex items-center justify-between text-left">
+                    <span className="font-serif text-[#F6F3EB] text-[22px] sm:text-[28px] lg:text-[32px] font-light leading-tight tracking-wide pr-6 select-none">
+                      {faq.q}
+                    </span>
+                    
+                    {/* Toggle button */}
+                    <div 
+                      className={`w-12 h-12 rounded-full border border-[#C8A96A]/30 flex items-center justify-center text-[#C8A96A] transition-all duration-300 shrink-0 select-none ${
+                        isOpen ? "bg-[#C8A96A] text-black border-[#C8A96A]" : "bg-transparent group-hover:bg-[#C8A96A] group-hover:text-black group-hover:border-[#C8A96A]"
+                      }`}
                     >
-                      <p className="pb-8 text-xs md:text-sm text-white/50 tracking-wider font-light leading-relaxed">
-                        {faq.a}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
+                      {/* Plus icon rotates 45 degrees to cross close */}
+                      <svg 
+                        className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor" 
+                        strokeWidth="2"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Height Crossfade Answer Block */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                        animate={{ height: "auto", opacity: 1, marginTop: 24 }}
+                        exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] as const }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-[#B8B8B8] text-[15px] sm:text-[16px] lg:text-[18px] font-normal leading-[1.8] max-w-[650px] select-none">
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                </motion.div>
+              );
+            })}
+          </div>
+
         </div>
 
       </div>
