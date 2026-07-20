@@ -142,7 +142,7 @@ export default function Amenities() {
   return (
     <section 
       id="amenities" 
-      className="relative py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />

@@ -65,15 +65,15 @@ export default function Location() {
     <section 
       ref={sectionRef}
       id="location" 
-      className="relative py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative w-full max-w-full py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-x-hidden select-none box-border"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Split Screen Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center w-full max-w-full box-border">
           
           {/* COLUMN 1: Location Editorial Details (Responsive Order 2 on Mobile) */}
           <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">

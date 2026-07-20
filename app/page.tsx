@@ -79,7 +79,7 @@ export default function Home() {
       <ScrollVideoScrub videoUrl={videoUrl} />
       
       {/* Post-Video Luxury Editorial Sections */}
-      <main id="main-content" className="relative z-10 bg-[#0B0B0C]">
+      <main id="main-content" className="relative z-10 bg-[#0B0B0C] w-full max-w-full overflow-x-hidden box-border">
         <About />
         
         <Amenities />

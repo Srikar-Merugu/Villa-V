@@ -26,22 +26,22 @@ export default function FAQ() {
   return (
     <section 
       id="faq" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border px-4 lg:px-0"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
       aria-labelledby="faq-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-0 md:px-12 lg:px-20 relative z-10 box-border">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Two-Column Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start w-full max-w-full box-border">
           
           {/* COLUMN 1: Editorial Description (Left 35%) */}
-          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border">
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
             
-            {/* Faint gold lighting glow behind heading */}
-            <div className="absolute -left-[10%] -top-[10%] w-[250px] h-[250px] rounded-full bg-[#C8A96A]/3 blur-[90px] pointer-events-none z-0" />
+            {/* Faint gold lighting glow behind heading — clipped inside column */}
+            <div className="absolute -left-4 -top-8 w-[200px] h-[200px] rounded-full bg-[#C8A96A]/3 blur-[70px] pointer-events-none z-0" />
 
             <span id="faq-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
               {t("faq.label")}

@@ -88,7 +88,7 @@ export default function FloorPlans() {
   return (
     <section 
       id="floor-plans" 
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />

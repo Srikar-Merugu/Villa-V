@@ -163,20 +163,20 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
       aria-labelledby="contact-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
       <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full max-w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full max-w-full box-border">
           
           {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}
-          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border">
+          <div className="col-span-12 lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
             
-            {/* Ambient gold glow behind heading */}
-            <div className="absolute -left-[10%] -top-[10%] w-[300px] h-[300px] rounded-full bg-[#C8A96A]/3 blur-[100px] pointer-events-none z-0" />
+            {/* Ambient gold glow behind heading — clipped inside column */}
+            <div className="absolute -left-4 -top-8 w-[200px] h-[200px] rounded-full bg-[#C8A96A]/3 blur-[80px] pointer-events-none z-0" />
 
             <span id="contact-heading" className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block relative z-10">
               {t("contact.label")}
@@ -285,7 +285,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
-              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[24px] sm:rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-5 sm:p-10 lg:p-12 w-full"
+              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[24px] sm:rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-5 sm:p-8 lg:p-12 w-full min-w-0 max-w-full box-border"
             >
               <AnimatePresence mode="wait">
                 {status === "success" ? (
@@ -357,7 +357,7 @@ export default function Contact() {
                     </div>
 
                     {/* Email and Phone Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-full box-border">
                       <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                         <label htmlFor="form-email" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
                           {t("contact.form.email")}

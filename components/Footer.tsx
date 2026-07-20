@@ -75,7 +75,7 @@ export default function Footer() {
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={containerVariants}
-      className="bg-[#0D0D0D] text-[#F6F3EB] pt-[100px] pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-[60px] relative overflow-hidden select-none"
+      className="bg-[#0D0D0D] text-[#F6F3EB] w-full max-w-full pt-[100px] pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-[60px] relative overflow-x-hidden select-none box-border"
     >
       {/* Subtle luxury dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 pointer-events-none" />

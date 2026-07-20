@@ -185,7 +185,7 @@ export default function Gallery() {
   return (
     <section 
       id="gallery"
-      className="relative py-20 lg:py-36 bg-[#0B0B0C] overflow-hidden select-none scroll-mt-24 lg:scroll-mt-20"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
       aria-labelledby="gallery-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}

@@ -86,7 +86,7 @@ export default function About() {
     <section 
       ref={sectionRef}
       id="about" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-visible select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
     >
       {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
@@ -168,7 +168,7 @@ export default function About() {
             
             <motion.div
               style={{ y: yParallax }}
-              className="relative aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] xl:aspect-[11/13] w-full max-w-full overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#C8A96A]/20 shadow-[0_24px_50px_rgba(0,0,0,0.6)] group"
+              className="relative aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] xl:aspect-[11/13] w-full max-w-full overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#C8A96A]/20 shadow-[0_24px_50px_rgba(0,0,0,0.6)] group isolate"
             >
               {/* Luxury interior outline overlay */}
               <div className="absolute inset-0 border border-white/5 z-10 rounded-[24px] sm:rounded-[32px] pointer-events-none" />
@@ -196,8 +196,8 @@ export default function About() {
 
             {/* Staggered Premium Glass Metric Cards */}
             {/* Desktop: Absolute Positioned Floaters | Mobile/Tablet: 2x2 Grid Layout below container */}
-            <div className="w-full max-w-full overflow-x-hidden box-border px-4 lg:px-0 mt-8 xl:mt-0 xl:overflow-visible">
-              <div className="grid grid-cols-2 gap-4 w-full max-w-full box-border xl:block">
+            <div className="w-full max-w-full overflow-hidden box-border mt-8 xl:mt-0 xl:overflow-visible">
+              <div className="grid grid-cols-2 gap-3 w-full max-w-full box-border xl:block">
                 {metrics.map((metric, i) => (
                   <motion.div
                     key={metric.label}
@@ -205,12 +205,12 @@ export default function About() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: i * 0.15 + 0.2, ease: "easeOut" }}
-                    className={`p-4 sm:p-5 flex flex-col items-center justify-center text-center rounded-[18px] border border-[#C8A96A]/15 bg-[#121214] backdrop-blur-md shadow-xl select-none w-full min-w-0 max-w-full box-border ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
+                    className={`p-3 sm:p-5 flex flex-col items-center justify-center text-center rounded-[14px] sm:rounded-[18px] border border-[#C8A96A]/15 bg-[#121214] backdrop-blur-md shadow-xl select-none w-full min-w-0 max-w-full box-border ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
                   >
-                    <span className="font-serif text-[#C8A96A] text-xl sm:text-2xl font-light tracking-wide">
+                    <span className="font-serif text-[#C8A96A] text-lg sm:text-2xl font-light tracking-wide">
                       {metric.val}
                     </span>
-                    <span className="font-sans text-[10px] tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
+                    <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
                       {metric.label}
                     </span>
                   </motion.div>

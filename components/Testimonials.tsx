@@ -59,13 +59,13 @@ export default function Testimonials() {
   return (
     <section 
       id="testimonials" 
-      className="relative py-[100px] lg:py-[160px] bg-[#0B0B0C] overflow-hidden select-none"
+      className="relative w-full max-w-full py-[100px] lg:py-[160px] bg-[#0B0B0C] overflow-x-hidden select-none box-border"
       aria-labelledby="testimonials-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
         
         {/* Section Header */}
         <div className="max-w-3xl mb-16 lg:mb-24 flex flex-col">
