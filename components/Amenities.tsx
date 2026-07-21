@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, animate, useMotionValue, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLanguage } from "../context/LanguageContext";
 
-/* ─────────────────────────────────────────────────────────────
-   Desktop-only 3D tilt card (unchanged from original)
-───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   DESKTOP CARD  —  Original 3D tilt card, completely unchanged
+═══════════════════════════════════════════════════════════════ */
 interface AmenityCardProps {
   category: string;
   title: string;
@@ -104,13 +106,19 @@ function DesktopAmenityCard({ category, title, desc, imageSrc, index }: AmenityC
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Mobile Swipe Carousel
-   – Scroll-driven: vertical scroll → horizontal card index
-   – Touch drag: Framer Motion drag with spring snap
-   – Pinned while scrolling through all cards via sticky
-   – Premium dot pagination indicator
-───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE SECTION  —  GSAP ScrollTrigger horizontal pin-scroll
+
+   How it works:
+   • sectionRef is pinned by GSAP (position: fixed during scroll).
+   • GSAP adds a spacer = (CARD_COUNT - 1) × 100vh so the next
+     section starts immediately after all cards finish.
+   • stripRef (flex row of cards, width = CARD_COUNT × 100vw)
+     is translated from x=0 → x=-(CARD_COUNT-1)*vw in perfect
+     sync with the user's scroll via scrub:true / ease:"none".
+   • Result: 1px of scroll = direct card movement. No fades,
+     no jumps, no black gaps. Identical to Apple's product pages.
+═══════════════════════════════════════════════════════════════ */
 interface MobileCard {
   category: string;
   title: string;
@@ -118,261 +126,214 @@ interface MobileCard {
   imageSrc: string;
 }
 
-function MobileCarousel({ cards, label, title }: {
+function MobileAmenitiesSection({
+  cards,
+  label,
+  title,
+}: {
   cards: MobileCard[];
   label: string;
   title: string;
-  desc: string;
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const CARD_COUNT = cards.length;
 
-  // The outer "scroll space" div — its height determines how much scrolling drives the carousel
-  const outerRef = useRef<HTMLDivElement>(null);
-
-  // Active card index (0-based)
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Track whether user is currently dragging (to suppress scroll-driven updates)
-  const isDragging = useRef(false);
-
-  // dragX is the drag offset relative to the locked position (springs back to 0)
-  const dragX = useMotionValue(0);
-  const springX = useSpring(dragX, { stiffness: 300, damping: 42, mass: 0.8 });
-
-  // Scroll progress over the outer container
-  const { scrollYProgress } = useScroll({
-    target: outerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Map scroll progress [0, 1] → card index [0, CARD_COUNT - 1]
-  const scrollCardIndex = useTransform(scrollYProgress, [0, 1], [0, CARD_COUNT - 1]);
-
-  // Update activeIndex from scroll when not dragging
   useEffect(() => {
-    const unsubscribe = scrollCardIndex.on("change", (v) => {
-      if (isDragging.current) return;
-      const snapped = Math.min(Math.max(Math.round(v), 0), CARD_COUNT - 1);
-      setActiveIndex(snapped);
-    });
-    return unsubscribe;
-  }, [scrollCardIndex, CARD_COUNT]);
+    if (typeof window === "undefined") return;
 
-  // Snap to a specific card (used by dots and drag-end)
-  const goTo = useCallback((idx: number) => {
-    setActiveIndex(Math.min(Math.max(idx, 0), CARD_COUNT - 1));
+    // Register plugin inside effect — safe for SSR
+    gsap.registerPlugin(ScrollTrigger);
+
+    // gsap.matchMedia ensures this ONLY fires on mobile.
+    // On resize to ≥768px, mm.revert() cleans everything up automatically.
+    const mm = gsap.matchMedia();
+
+    mm.add("(max-width: 767px)", () => {
+      const section = sectionRef.current;
+      const strip = stripRef.current;
+      if (!section || !strip) return;
+
+      // Animate the strip: 0 → -(CARD_COUNT-1) × viewport-width
+      // ease:"none" = scroll position maps 1:1 to translateX
+      // scrub:true = instant response (no lag buffer)
+      const tween = gsap.to(strip, {
+        x: () => -(CARD_COUNT - 1) * window.innerWidth,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          pin: true,           // Pins the section to top of viewport
+          scrub: true,         // Direct 1:1 scroll → animation
+          start: "top top",
+          // Scroll distance = (cards - 1) viewports.
+          // GSAP automatically adds pinSpacing of this same amount,
+          // so the next section starts exactly when card 4 finishes.
+          end: () => `+=${(CARD_COUNT - 1) * window.innerHeight}`,
+          anticipatePin: 1,       // Prevents layout jump on pin
+          invalidateOnRefresh: true, // Recalculates on resize / orientation change
+          onUpdate(self) {
+            // Update the active dot without triggering a full re-render
+            const idx = Math.min(
+              Math.round(self.progress * (CARD_COUNT - 1)),
+              CARD_COUNT - 1
+            );
+            setActiveIndex(idx);
+          },
+        },
+      });
+
+      // Cleanup returned to gsap.matchMedia — runs when breakpoint exits
+      return () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      };
+    });
+
+    return () => {
+      mm.revert();
+    };
   }, [CARD_COUNT]);
 
-  // Handle drag end — snap to next/prev card
-  const handleDragEnd = useCallback(
-    (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
-      isDragging.current = false;
-      const swipeThreshold = 40;
-      const velocityThreshold = 200;
-      const shouldNext = info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold;
-      const shouldPrev = info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold;
-
-      if (shouldNext) {
-        goTo(activeIndex + 1);
-      } else if (shouldPrev) {
-        goTo(activeIndex - 1);
-      }
-      animate(dragX, 0, { type: "spring", stiffness: 400, damping: 40 });
-    },
-    [activeIndex, goTo, dragX]
-  );
-
-  // Each card occupies 100svh of scroll space + 1 extra 100svh for the last card to settle
-  const outerHeight = `calc(${CARD_COUNT + 1} * 100svh)`;
-
   return (
-    <div
-      ref={outerRef}
-      style={{ height: outerHeight }}
-      className="relative w-full max-w-full"
-      aria-label="Amenities carousel"
+    <section
+      ref={sectionRef}
+      className="relative w-full overflow-hidden bg-[#0E0E0E]"
+      style={{ height: "100svh" }}
+      aria-labelledby="amenities-mobile-heading"
     >
-      {/* ── Sticky viewport — stays fixed while outer scrolls ── */}
-      <div className="sticky top-0 left-0 w-full h-svh overflow-hidden flex flex-col bg-[#0E0E0E]">
+      {/* Architectural grid texture */}
+      <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none z-0" />
 
-        {/* Compact section header */}
-        <div className="flex-shrink-0 pt-[72px] pb-3 px-5">
-          <span className="text-[#C8A96A] text-[10px] font-sans font-semibold tracking-[0.3em] uppercase block mb-1">
-            {label}
-          </span>
-          <h2 className="font-serif text-[#F6F3EB] text-[22px] leading-tight font-light tracking-wide">
-            {title}
-          </h2>
-        </div>
-
-        {/* ── Cards viewport (flex-1 fills remaining height) ── */}
-        <div className="flex-1 relative w-full overflow-hidden px-5 min-h-0">
-
-          {/* Draggable strip — acts as the touch handle */}
-          <motion.div
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.1}
-            onDragStart={() => { isDragging.current = true; }}
-            onDragEnd={handleDragEnd}
-            style={{ x: springX }}
-            className="absolute inset-0 cursor-grab active:cursor-grabbing"
-            aria-live="polite"
-          >
-            {/* Invisible drag capture layer */}
-            <div className="w-full h-full" />
-          </motion.div>
-
-          {/* Individual cards — animated by activeIndex */}
-          {cards.map((card, i) => {
-            const isActive = i === activeIndex;
-            const delta = i - activeIndex;
-            // Cards to the right are at +100%, left at -100%, active at 0%
-            const translateXPct = delta * 105; // slight gap between off-screen cards
-
-            return (
-              <motion.article
-                key={card.title}
-                animate={{
-                  x: `${translateXPct}%`,
-                  scale: isActive ? 1 : 0.9,
-                  opacity: isActive ? 1 : 0,
-                }}
-                transition={{
-                  x: { type: "spring", stiffness: 240, damping: 36, mass: 1.0 },
-                  scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-                  opacity: { duration: 0.35, ease: "easeInOut" },
-                }}
-                className="absolute inset-0 flex flex-col gap-4 will-change-transform pointer-events-none"
-                aria-hidden={!isActive}
-              >
-                {/* Image — takes most of the card height */}
-                <div className="relative w-full flex-1 min-h-0 rounded-[20px] overflow-hidden border border-[#C8A96A]/20 shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
-                  {/* Sub-pixel luxury overlay */}
-                  <div className="absolute inset-0 border border-white/5 rounded-[20px] z-10 pointer-events-none" />
-
-                  {/* Subtle parallax on image when switching */}
-                  <motion.div
-                    animate={{
-                      x: isActive ? "0%" : delta > 0 ? "8%" : "-8%",
-                    }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-[-8%] will-change-transform"
-                  >
-                    <Image
-                      src={card.imageSrc}
-                      alt={card.title}
-                      fill
-                      sizes="100vw"
-                      className="object-cover brightness-[0.88]"
-                      priority={i === 0}
-                    />
-                  </motion.div>
-
-                  {/* Gradient overlay for text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent z-10 pointer-events-none" />
-
-                  {/* Category badge floating on image */}
-                  <div className="absolute top-4 left-4 z-20">
-                    <span className="text-[#C8A96A] text-[10px] font-sans font-bold tracking-[0.22em] uppercase px-3 py-1.5 bg-black/55 backdrop-blur-md rounded-full border border-[#C8A96A]/25">
-                      {card.category}
-                    </span>
-                  </div>
-
-                  {/* Progress indicator on image (thin gold line at bottom) */}
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/5 z-20">
-                    <motion.div
-                      className="h-full bg-[#C8A96A]"
-                      animate={{ width: `${((i + 1) / CARD_COUNT) * 100}%` }}
-                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </div>
-                </div>
-
-                {/* Text block */}
-                <div className="flex-shrink-0 flex flex-col select-none pb-1">
-                  <motion.h3
-                    animate={{ y: isActive ? 0 : 10, opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.5, delay: isActive ? 0.1 : 0, ease: [0.16, 1, 0.3, 1] }}
-                    className="font-serif text-[#F6F3EB] text-[26px] font-light leading-tight tracking-wide mb-1.5"
-                  >
-                    {card.title}
-                  </motion.h3>
-                  <motion.p
-                    animate={{ y: isActive ? 0 : 8, opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.5, delay: isActive ? 0.16 : 0, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-[#B8B8B8] text-[14px] font-normal leading-[1.65] mb-3 max-w-full"
-                  >
-                    {card.desc}
-                  </motion.p>
-                  <motion.button
-                    animate={{ opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.4, delay: isActive ? 0.2 : 0 }}
-                    className="group/btn flex items-center gap-2 text-[10px] font-sans font-semibold tracking-[0.18em] uppercase text-[#F6F3EB] hover:text-[#C8A96A] transition-colors duration-300 self-start py-1 focus-visible:outline-none pointer-events-auto"
-                    aria-label={`Explore ${card.title}`}
-                  >
-                    <span className="relative">
-                      {card.category}
-                      <span className="absolute bottom-[-2px] left-0 w-0 group-hover/btn:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
-                    </span>
-                    <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300">→</span>
-                  </motion.button>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
-
-        {/* ── Premium dot pagination ── */}
-        <div
-          className="flex-shrink-0 flex items-center justify-center gap-3 py-5"
-          role="tablist"
-          aria-label="Card navigation"
+      {/* ── Fixed header overlay (stays put while strip slides) ── */}
+      <div className="absolute top-0 left-0 right-0 z-20 pt-[72px] px-5 pb-5 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, #0E0E0E 55%, rgba(14,14,14,0.7) 80%, transparent)" }}
+      >
+        <span className="text-[#C8A96A] text-[10px] font-sans font-semibold tracking-[0.3em] uppercase block mb-1">
+          {label}
+        </span>
+        <h2
+          id="amenities-mobile-heading"
+          className="font-serif text-[#F6F3EB] text-[22px] leading-tight font-light tracking-wide"
         >
-          {cards.map((_, i) => (
-            <button
-              key={i}
-              role="tab"
-              aria-selected={i === activeIndex}
-              aria-label={`Go to card ${i + 1}`}
-              onClick={() => goTo(i)}
-              className="flex items-center justify-center h-5 focus-visible:outline-none"
-            >
-              <motion.span
-                animate={{
-                  width: i === activeIndex ? 22 : 6,
-                  backgroundColor: i === activeIndex ? "#C8A96A" : "rgba(248,243,235,0.2)",
-                  opacity: i === activeIndex ? 1 : 0.45,
-                }}
-                transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
-                className="block h-[5px] rounded-full"
-                style={{ display: "block" }}
-              />
-            </button>
-          ))}
-        </div>
-
-        {/* ── "Continue scrolling" hint shown only on last card ── */}
-        <motion.div
-          animate={{ opacity: activeIndex === CARD_COUNT - 1 ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute bottom-[72px] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none z-30"
-        >
-          <span className="text-[9px] font-sans tracking-[0.3em] uppercase text-[#F6F3EB]/35">Continue</span>
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            className="w-[1px] h-5 bg-gradient-to-b from-[#C8A96A]/40 to-transparent"
-          />
-        </motion.div>
+          {title}
+        </h2>
       </div>
-    </div>
+
+      {/* ── Horizontal strip (GPU-translated by GSAP) ── */}
+      <div
+        ref={stripRef}
+        className="absolute top-0 left-0 h-full flex"
+        style={{
+          // Width = all cards side by side. overflow:hidden on section prevents page bleed.
+          width: `${CARD_COUNT * 100}vw`,
+          willChange: "transform",
+        }}
+      >
+        {cards.map((card, i) => (
+          <div
+            key={card.title}
+            // w-screen = 100vw; each card fills exactly one viewport width.
+            // overflow:hidden on parent section prevents horizontal page scroll.
+            className="relative flex-shrink-0 h-full w-screen"
+            aria-hidden={i !== activeIndex}
+          >
+            {/* Card layout: padded from header top + dots bottom */}
+            <div className="absolute inset-0 flex flex-col pt-[148px] pb-[68px] px-5 gap-4">
+
+              {/* Image (fills most of the card height) */}
+              <div className="relative flex-1 min-h-0 rounded-[20px] overflow-hidden border border-[#C8A96A]/20 shadow-[0_20px_48px_rgba(0,0,0,0.65)]">
+                {/* Sub-pixel luxury border overlay */}
+                <div className="absolute inset-0 border border-white/5 rounded-[20px] z-10 pointer-events-none" />
+
+                <Image
+                  src={card.imageSrc}
+                  alt={card.title}
+                  fill
+                  sizes="100vw"
+                  className="object-cover brightness-[0.88]"
+                  priority={i === 0}
+                />
+
+                {/* Gradient for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10 pointer-events-none" />
+
+                {/* Category badge */}
+                <div className="absolute top-4 left-4 z-20">
+                  <span className="text-[#C8A96A] text-[10px] font-sans font-bold tracking-[0.22em] uppercase px-3 py-1.5 bg-black/55 backdrop-blur-md rounded-full border border-[#C8A96A]/25">
+                    {card.category}
+                  </span>
+                </div>
+
+                {/* Gold progress bar at image bottom */}
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/5 z-20">
+                  <div
+                    className="h-full bg-[#C8A96A]"
+                    style={{ width: `${((i + 1) / CARD_COUNT) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Text block */}
+              <div className="flex-shrink-0 flex flex-col select-none">
+                <h3 className="font-serif text-[#F6F3EB] text-[26px] font-light leading-tight tracking-wide mb-1.5">
+                  {card.title}
+                </h3>
+                <p className="text-[#B8B8B8] text-[14px] font-normal leading-[1.65] mb-3">
+                  {card.desc}
+                </p>
+                <button
+                  className="group/btn flex items-center gap-2 text-[10px] font-sans font-semibold tracking-[0.18em] uppercase text-[#F6F3EB] hover:text-[#C8A96A] transition-colors duration-300 self-start py-1 focus-visible:outline-none"
+                  aria-label={`Explore ${card.title}`}
+                >
+                  <span className="relative">
+                    {card.category}
+                    <span className="absolute bottom-[-2px] left-0 w-0 group-hover/btn:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
+                  </span>
+                  <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300">→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Premium dot pagination (read-only progress indicator) ── */}
+      <div
+        className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-3 z-20 pointer-events-none"
+        role="tablist"
+        aria-label="Amenity card progress"
+      >
+        {cards.map((_, i) => (
+          <div
+            key={i}
+            role="tab"
+            aria-selected={i === activeIndex}
+            aria-label={`Card ${i + 1} of ${CARD_COUNT}`}
+            className="flex items-center justify-center h-5"
+          >
+            <motion.span
+              animate={{
+                width: i === activeIndex ? 22 : 6,
+                backgroundColor: i === activeIndex ? "#C8A96A" : "rgba(248,243,235,0.2)",
+                opacity: i === activeIndex ? 1 : 0.4,
+              }}
+              transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+              style={{ display: "block", height: 5, borderRadius: 999 }}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Root Section — renders MOBILE or DESKTOP version
-───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   ROOT EXPORT
+   • Mobile ( <768px ) → MobileAmenitiesSection (GSAP pin-scroll)
+   • Desktop ( ≥768px ) → Original staggered editorial grid
+   • Both wrapped in a single #amenities div for nav anchoring
+═══════════════════════════════════════════════════════════════ */
 export default function Amenities() {
   const { t } = useLanguage();
 
@@ -396,28 +357,17 @@ export default function Amenities() {
   const desc = t("amenities.desc") as string;
 
   return (
-    <>
-      {/* ══════════════════════════════════════════════════════
-          MOBILE  ( < md = 768px )
-          Scroll-pinned horizontal swipe carousel
-      ══════════════════════════════════════════════════════ */}
-      <section
-        id="amenities"
-        className="block md:hidden relative w-full max-w-full bg-[#0E0E0E] overflow-x-hidden box-border"
-        aria-labelledby="amenities-heading-mobile"
-      >
-        <h2 id="amenities-heading-mobile" className="sr-only">{title}</h2>
-        {/* Subtle architectural grid texture */}
-        <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none z-0" />
-        <MobileCarousel cards={cards} label={label} title={title} desc={desc} />
-      </section>
+    /* Single wrapper div carries id="amenities" so navbar scroll-to works
+       on both mobile (first child) and desktop (second child). */
+    <div id="amenities">
 
-      {/* ══════════════════════════════════════════════════════
-          DESKTOP  ( ≥ md = 768px )
-          Original staggered 2-col editorial grid — UNCHANGED
-      ══════════════════════════════════════════════════════ */}
+      {/* ── MOBILE ( < 768px ) ── */}
+      <div className="block md:hidden">
+        <MobileAmenitiesSection cards={cards} label={label} title={title} />
+      </div>
+
+      {/* ── DESKTOP ( ≥ 768px ) — ORIGINAL LAYOUT, ZERO CHANGES ── */}
       <section
-        id="amenities"
         className="hidden md:block relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
         aria-labelledby="amenities-heading-desktop"
       >
@@ -425,7 +375,6 @@ export default function Amenities() {
 
         <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
 
-          {/* Section Header */}
           <div className="max-w-3xl mb-8 lg:mb-16 flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -454,7 +403,6 @@ export default function Amenities() {
             </motion.p>
           </div>
 
-          {/* Staggered alternating grid of editorial cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-5 lg:gap-y-36 pb-24 w-full max-w-full">
             {cards.map((card, idx) => (
               <DesktopAmenityCard
@@ -470,6 +418,6 @@ export default function Amenities() {
 
         </div>
       </section>
-    </>
+    </div>
   );
 }
