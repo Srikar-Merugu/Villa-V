@@ -126,7 +126,7 @@ export default function FloorPlans() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 xl:gap-24 items-center w-full max-w-full">
           
           {/* COLUMN 1: Editorial Navigation & Highlight Bullets */}
-          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
+          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-4 lg:mb-6 block">
               {t("floorPlans.label")}
@@ -219,7 +219,7 @@ export default function FloorPlans() {
           </div>
 
           {/* COLUMN 2: Large Cinematic Showcase (Crossfading Absolute Overlays) */}
-          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
+          <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <div className="relative w-full h-[320px] sm:h-[400px] lg:h-[500px] xl:h-[580px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
               
