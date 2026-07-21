@@ -401,7 +401,7 @@ export default function Contact() {
                     </div>
 
                     {/* Preferred Date */}
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 w-full min-w-0 max-w-full box-border">
                       <label htmlFor="form-date" className="text-[10px] font-sans tracking-[0.2em] text-[#F6F3EB]/50 uppercase font-semibold">
                         {t("contact.form.date")}
                       </label>
@@ -412,7 +412,7 @@ export default function Contact() {
                         value={formData.date}
                         onChange={handleInputChange}
                         disabled={status === "submitting"}
-                        className="w-full h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer max-w-full box-border"
+                        className="w-full min-w-0 h-[56px] lg:h-[60px] bg-[#18181A] border border-white/10 focus:border-[#C8A96A]/60 focus:ring-1 focus:ring-[#C8A96A]/20 focus:outline-none px-5 rounded-[16px] text-sm text-[#F6F3EB] placeholder-[#F6F3EB]/25 transition-all duration-300 text-left cursor-pointer max-w-full box-border"
                       />
                     </div>
 
