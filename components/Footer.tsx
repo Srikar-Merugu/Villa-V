@@ -225,10 +225,10 @@ export default function Footer() {
                   concierge@villaserenite.com
                 </a>
                 <a
-                  href="tel:+385215550199"
+                  href="tel:+123456789012"
                   className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-start"
                 >
-                  +385 21 555 0199
+                  +123 45 678 9012
                 </a>
                 <span className="py-1.5">
                   {t("footer.address").replace("Address: ", "").replace("Adresa: ", "")}

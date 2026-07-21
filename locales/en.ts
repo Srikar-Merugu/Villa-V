@@ -166,7 +166,7 @@ export const en = {
       email: "Email Address *",
       emailPlaceholder: "e.g., alexander@mercer.com",
       phone: "Phone Number",
-      phonePlaceholder: "e.g., +385 21 555 0199",
+      phonePlaceholder: "e.g., +123 45 678 9012",
       date: "Preferred Date *",
       datePlaceholder: "Select date",
       message: "Private Message",

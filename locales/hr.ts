@@ -166,7 +166,7 @@ export const hr = {
       email: "E-mail adresa *",
       emailPlaceholder: "npr. aleksandar@horvat.com",
       phone: "Broj telefona",
-      phonePlaceholder: "npr. +385 21 555 0199",
+      phonePlaceholder: "npr. +123 45 678 9012",
       date: "Željeni datum *",
       datePlaceholder: "Odaberite datum",
       message: "Privatna poruka",

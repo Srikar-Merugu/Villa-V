@@ -73,8 +73,8 @@ export default function Contact() {
     },
     {
       label: language === "hr" ? "Privatni vratar" : "Private Concierge",
-      value: "+385 21 555 0199",
-      href: "tel:+385215550199",
+      value: "+123 45 678 9012",
+      href: "tel:+123456789012",
       icon: (
         <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
