@@ -40,7 +40,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
     >
       {/* COLUMN 1: Image container (Responsive Order 1 on Mobile/Tablet) */}
       <div 
-        className={`col-span-12 lg:col-span-7 order-1 ${
+        className={`lg:col-span-7 order-1 ${
           isImageLeft ? "lg:order-1" : "lg:order-2"
         } w-full min-w-0 max-w-full box-border`}
       >
@@ -76,7 +76,7 @@ function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: G
 
       {/* COLUMN 2: Typography & Navigation Links (Responsive Order 2 on Mobile/Tablet) */}
       <div 
-        className={`col-span-12 lg:col-span-5 order-2 ${
+        className={`lg:col-span-5 order-2 ${
           isImageLeft ? "lg:order-2" : "lg:order-1"
         } flex flex-col justify-center w-full min-w-0 max-w-full box-border`}
       >

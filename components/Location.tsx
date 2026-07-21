@@ -76,7 +76,7 @@ export default function Location() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center w-full max-w-full box-border">
           
           {/* COLUMN 1: Location Editorial Details (Responsive Order 2 on Mobile) */}
-          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
+          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               DESTINATION
@@ -169,7 +169,7 @@ export default function Location() {
           </div>
 
           {/* COLUMN 2: Large Visual Showcase (Responsive Order 1 on Mobile) */}
-          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 flex flex-col">
+          <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <motion.div
               initial={{ opacity: 0, y: 50 }}

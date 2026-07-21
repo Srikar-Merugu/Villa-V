@@ -97,8 +97,8 @@ export default function About() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-24 xl:gap-32 items-center w-full">
           
           {/* COLUMN 1: Storytelling Details & Feature Cards (Responsive Order 2 on Mobile) */}
-          <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 flex flex-col">
-            
+          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
+
             {/* Small Luxury Label */}
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               {t("about.label")}
@@ -164,7 +164,7 @@ export default function About() {
           </div>
 
           {/* COLUMN 2: Hero Visual Showcase & Metric Overlay (Responsive Order 1 on Mobile) */}
-          <div className="col-span-12 lg:col-span-7 order-1 lg:order-2 relative w-full max-w-full flex flex-col">
+          <div className="lg:col-span-7 order-1 lg:order-2 relative w-full min-w-0 max-w-full flex flex-col box-border">
             
             <motion.div
               style={{ y: yParallax }}
