@@ -206,7 +206,7 @@ export default function FloorPlans() {
                         className="flex items-center gap-3.5"
                       >
                         <div className="w-[5px] h-[5px] rounded-full bg-[#C8A96A]" />
-                        <span className="text-[12px] sm:text-[13px] font-sans font-bold tracking-[0.2em] text-[#F6F3EB] uppercase">
+                        <span className="text-[11px] sm:text-[12px] font-sans font-normal tracking-[0.2em] text-[#F6F3EB] uppercase">
                           {highlight}
                         </span>
                       </motion.div>
