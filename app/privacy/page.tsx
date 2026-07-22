@@ -76,7 +76,7 @@ export default function PrivacyPolicy() {
               For privacy audits or data erasure requests, please contact:
               <br />
               <span className="text-[#C8A96A] font-medium block mt-2">
-                compliance@villa-v.com | +385 (0) 21 555 0199
+                compliance@villa-v.com | +123 45 678 9012
               </span>
             </p>
           </section>

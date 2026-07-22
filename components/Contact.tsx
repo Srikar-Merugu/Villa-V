@@ -74,8 +74,8 @@ export default function Contact() {
     },
     {
       label: language === "hr" ? "Privatni vratar" : "Private Concierge",
-      value: "+385 (0) 21 555 0190",
-      href: "tel:+385215550190",
+      value: "+123 45 678 9012",
+      href: "tel:+123456789012",
       icon: (
         <svg className="w-4 h-4 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -186,7 +186,7 @@ export default function Contact() {
             </span>
 
             {/* Editorial Heading Line-by-Line */}
-            <h2 className="text-[clamp(32px,6.5vw,48px)] lg:text-[clamp(48px,5.5vw,72px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6 relative z-10 whitespace-pre-line">
+            <h2 className="text-[clamp(28px,6.5vw,40px)] lg:text-[clamp(48px,5.5vw,72px)] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-3 lg:mb-6 relative z-10 whitespace-pre-line">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span
@@ -207,7 +207,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-8 lg:mb-10 relative z-10"
+              className="text-[#B8B8B8] text-[14px] sm:text-[16px] lg:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-5 lg:mb-10 relative z-10"
             >
               {t("contact.desc")}
             </motion.p>
@@ -217,7 +217,7 @@ export default function Contact() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="flex flex-col gap-6 relative z-10"
+              className="flex flex-col gap-4 lg:gap-6 relative z-10"
             >
               {contactItems.map((item) => (
                 <motion.div 
@@ -249,13 +249,13 @@ export default function Contact() {
               ))}
             </motion.div>
 
-            {/* Luxury gold outline Appointment Badge */}
+            {/* Luxury gold outline Appointment Badge — desktop only */}
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="border border-[#C8A96A]/30 text-[#C8A96A] text-[11px] font-sans font-semibold px-6 py-2.5 rounded-full uppercase tracking-[0.2em] self-start mt-10 relative z-10"
+              className="hidden md:block border border-[#C8A96A]/30 text-[#C8A96A] text-[11px] font-sans font-semibold px-6 py-2.5 rounded-full uppercase tracking-[0.2em] self-start mt-10 relative z-10"
             >
               {badgesText[1] || "By Appointment Only"}
             </motion.div>

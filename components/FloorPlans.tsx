@@ -110,7 +110,7 @@ export default function FloorPlans() {
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
               {t("floorPlans.label")}
             </span>
-            <h2 className="text-[32px] sm:text-[38px] md:text-[42px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-5 lg:mb-6">
+            <h2 className="text-[26px] sm:text-[32px] md:text-[42px] lg:text-[68px] xl:text-[80px] font-serif text-[#F6F3EB] font-light tracking-tight leading-[1.05] mb-2 lg:mb-6">
               {t("floorPlans.title")}
             </h2>
           </motion.div>
@@ -120,7 +120,7 @@ export default function FloorPlans() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.6] max-w-[520px]"
+            className="text-[#B8B8B8] text-[14px] sm:text-[16px] md:text-[18px] font-normal leading-[1.6] max-w-[520px]"
           >
             {t("floorPlans.desc")}
           </motion.p>
@@ -132,7 +132,7 @@ export default function FloorPlans() {
           {/* COLUMN 1: Editorial Navigation & Highlight Bullets */}
           <div className="order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
             
-            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-4 lg:mb-6 block">
+            <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-2 lg:mb-6 block">
               {t("floorPlans.label")}
             </span>
 
@@ -151,7 +151,7 @@ export default function FloorPlans() {
                     aria-selected={isActive}
                     aria-controls={`panel-${item.id}`}
                     onClick={() => handleUserSelect(idx)}
-                    className="relative text-left h-[38px] sm:h-[44px] lg:h-auto lg:py-6 lg:border-b lg:border-white/10 flex items-center justify-center lg:justify-start px-2 sm:px-4 lg:px-0 text-[10px] sm:text-xs lg:text-[15px] font-sans font-medium lg:font-light tracking-[0.1em] lg:tracking-[0.15em] uppercase transition-all duration-500 ease-out cursor-pointer focus-visible:outline-none rounded-full lg:rounded-none"
+                    className="relative text-left h-[34px] sm:h-[40px] lg:h-auto lg:py-6 lg:border-b lg:border-white/10 flex items-center justify-center lg:justify-start px-2 sm:px-4 lg:px-0 text-[10px] sm:text-xs lg:text-[15px] font-sans font-medium lg:font-light tracking-[0.1em] lg:tracking-[0.15em] uppercase transition-all duration-500 ease-out cursor-pointer focus-visible:outline-none rounded-full lg:rounded-none"
                   >
                     {/* Sliding Pill Indicator on Mobile */}
                     {isActive && (
@@ -181,7 +181,7 @@ export default function FloorPlans() {
             </div>
 
             {/* Dynamic narrative description and bullet highlights */}
-            <div className="min-h-[160px] lg:min-h-[220px] mt-6 lg:mt-8 flex flex-col justify-start select-none">
+            <div className="lg:min-h-[220px] mt-3 lg:mt-8 flex flex-col justify-start select-none">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
@@ -193,7 +193,7 @@ export default function FloorPlans() {
                   id={`panel-${currentLevel.id}`}
                   role="tabpanel"
                 >
-                  <p className="text-[#B8B8B8] text-[15px] sm:text-[16px] font-normal leading-[1.8] mb-6 sm:mb-8">
+                  <p className="text-[#B8B8B8] text-[14px] sm:text-[15px] font-normal leading-[1.7] mb-3 lg:mb-8">
                     {currentLevel.desc}
                   </p>
 
@@ -201,7 +201,7 @@ export default function FloorPlans() {
                     variants={tabContainerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="flex flex-col gap-3.5"
+                    className="flex flex-col gap-2.5 lg:gap-3.5"
                   >
                     {currentLevel.highlights.map((highlight) => (
                       <motion.div
@@ -210,7 +210,7 @@ export default function FloorPlans() {
                         className="flex items-center gap-3.5"
                       >
                         <div className="w-[5px] h-[5px] rounded-full bg-[#C8A96A]" />
-                        <span className="text-[12px] sm:text-[13px] font-sans font-bold tracking-[0.2em] text-[#F6F3EB] uppercase">
+                        <span className="text-[11px] sm:text-[12px] font-sans font-normal tracking-[0.2em] text-[#F6F3EB] uppercase">
                           {highlight}
                         </span>
                       </motion.div>
