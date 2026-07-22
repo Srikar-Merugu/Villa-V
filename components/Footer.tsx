@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import { EASE_ENTRANCE } from "../lib/motion";
 
 export default function Footer() {
   const { language, t } = useLanguage();
@@ -21,7 +23,7 @@ export default function Footer() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
+      transition: { duration: 0.8, ease: EASE_ENTRANCE }
     }
   };
 
@@ -30,6 +32,15 @@ export default function Footer() {
     { name: language === "hr" ? "Uvjeti i odredbe" : "Terms & Conditions", href: "/terms" },
     { name: language === "hr" ? "Pravila o kolačićima" : "Cookie Policy", href: "/cookies" },
     { name: language === "hr" ? "Izjava o odricanju odgovornosti" : "Disclaimer", href: "/disclaimer" }
+  ];
+
+  const exploreLinks = [
+    { name: t("navbar.about"), href: "#about" },
+    { name: t("navbar.amenities"), href: "#amenities" },
+    { name: t("navbar.gallery"), href: "#gallery" },
+    { name: t("navbar.floorPlans"), href: "#floor-plans" },
+    { name: t("navbar.faq"), href: "#faq" },
+    { name: t("navbar.contact"), href: "#contact" }
   ];
 
   // Raw inline outline SVG nodes for bulletproof asset compiling
@@ -67,6 +78,10 @@ export default function Footer() {
     }
   ];
 
+  const handleScrollToContact = () => {
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <motion.footer
       role="contentinfo"
@@ -75,26 +90,52 @@ export default function Footer() {
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={containerVariants}
-      className="bg-[#0D0D0D] text-[#F6F3EB] w-full max-w-full pt-[100px] pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-[60px] relative overflow-x-hidden select-none box-border"
+      className="bg-[#0D0D0D] text-[#F6F3EB] w-full max-w-full pt-[100px] pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-[60px] relative overflow-x-hidden select-none box-border"
     >
       {/* Subtle luxury dark gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 pointer-events-none" />
 
+      {/* Ambient gold glow anchoring the closing statement -- a quiet echo of the same
+          detail used in FAQ/Contact, so the footer doesn't read as an afterthought */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-[#C8A96A]/[0.04] blur-[100px] pointer-events-none" />
+
       <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-[80px] relative z-10 box-border">
-        
+
+        {/* Closing Statement + CTA -- a deliberate final beat rather than dropping straight
+            into utility link columns */}
+        <motion.div
+          variants={columnVariants}
+          className="flex flex-col items-center text-center border-b border-white/10 pb-14 mb-14 lg:pb-20 lg:mb-20"
+        >
+          <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-5 block">
+            {t("contact.badges.1")}
+          </span>
+          <h2 className="font-serif text-[#F6F3EB] font-light text-[clamp(32px,6vw,64px)] leading-[1.1] tracking-tight max-w-2xl mb-8">
+            {language === "hr" ? "Vaše utočište vas čeka." : "Your sanctuary awaits."}
+          </h2>
+          <button
+            onClick={handleScrollToContact}
+            className="group/cta relative flex items-center gap-2 bg-[#C8A96A] text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 hover:bg-[#D6B15C] hover:shadow-[0_12px_32px_rgba(200,169,106,0.25)] focus-visible:outline-none"
+          >
+            {t("navbar.cta")}
+          </button>
+        </motion.div>
+
         {/* Responsive Grid Columns (Collapses to 1 column on mobile) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16">
-          
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-12">
+
           {/* COLUMN 1: Brand Information & Developer Credit */}
-          <motion.div 
+          <motion.div
             variants={columnVariants}
-            className="flex flex-col items-center md:items-start text-center md:text-left"
+            className="flex flex-col items-center sm:items-start text-center sm:text-left sm:col-span-2 lg:col-span-1"
           >
             {/* Logo Row */}
             <div className="flex items-center gap-2 mb-4">
-              <img
+              <Image
                 src="/shield_icon.png"
                 alt=""
+                width={32}
+                height={32}
                 className="h-8 w-auto object-contain select-none pointer-events-none"
               />
               <span className="text-[15px] font-sans font-bold tracking-[0.08em] uppercase text-[#F6F3EB]">
@@ -109,15 +150,39 @@ export default function Footer() {
             <p className="text-[#B8B8B8] text-[15px] font-normal leading-[1.8] mb-6 max-w-sm">
               {t("footer.desc")}
             </p>
-            <div className="text-[#B8B8B8]/60 text-[13px] font-mono tracking-wider uppercase mt-auto hidden md:block">
+            <div className="text-[#B8B8B8]/60 text-[13px] font-mono tracking-wider uppercase mt-auto hidden sm:block">
               {t("footer.credit")}
             </div>
           </motion.div>
 
-          {/* COLUMN 2: Legal Navigation Directory */}
-          <motion.div 
+          {/* COLUMN 2: Explore -- sitemap anchors across every homepage section */}
+          <motion.div
             variants={columnVariants}
-            className="flex flex-col items-center md:items-start text-center md:text-left"
+            className="flex flex-col items-center sm:items-start text-center sm:text-left"
+          >
+            <h3 className="text-[#C8A96A] text-[13px] font-bold tracking-[0.20em] uppercase mb-8 leading-none">
+              {language === "hr" ? "Istražite" : "Explore"}
+            </h3>
+            <nav className="flex flex-col gap-2 w-full" aria-label="Section directory">
+              {exploreLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="group relative self-center sm:self-start py-2.5 text-[#F6F3EB] hover:text-[#C8A96A] text-[15px] font-normal leading-none tracking-wide transition-colors duration-300 min-h-[44px] flex items-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] px-2 rounded"
+                >
+                  <span className="relative">
+                    {link.name}
+                    <span className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-0 group-hover:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
+                  </span>
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+
+          {/* COLUMN 3: Legal Navigation Directory */}
+          <motion.div
+            variants={columnVariants}
+            className="flex flex-col items-center sm:items-start text-center sm:text-left"
           >
             <h3 className="text-[#C8A96A] text-[13px] font-bold tracking-[0.20em] uppercase mb-8 leading-none">
               {t("footer.legal")}
@@ -127,7 +192,7 @@ export default function Footer() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="group relative self-center md:self-start py-2.5 text-[#F6F3EB] hover:text-[#C8A96A] text-[15px] font-normal leading-none tracking-wide transition-colors duration-300 min-h-[44px] flex items-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] px-2 rounded"
+                  className="group relative self-center sm:self-start py-2.5 text-[#F6F3EB] hover:text-[#C8A96A] text-[15px] font-normal leading-none tracking-wide transition-colors duration-300 min-h-[44px] flex items-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] px-2 rounded"
                 >
                   <span className="relative">
                     {link.name}
@@ -139,10 +204,10 @@ export default function Footer() {
             </nav>
           </motion.div>
 
-          {/* COLUMN 3: Contact Channels & Social Handles */}
-          <motion.div 
+          {/* COLUMN 4: Contact Channels & Social Handles */}
+          <motion.div
             variants={columnVariants}
-            className="flex flex-col items-center md:items-start text-center md:text-left"
+            className="flex flex-col items-center sm:items-start text-center sm:text-left"
           >
             <h3 className="text-[#C8A96A] text-[13px] font-bold tracking-[0.20em] uppercase mb-8 leading-none">
               {t("footer.contact")}
@@ -150,13 +215,13 @@ export default function Footer() {
             <address className="not-italic flex flex-col gap-4 text-[#F6F3EB] text-[15px] font-normal leading-[1.8] w-full">
               <a
                 href="mailto:concierge@villaserenite.com"
-                className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-center md:self-start"
+                className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-center sm:self-start"
               >
                 concierge@villaserenite.com
               </a>
               <a
                 href="tel:+385215550190"
-                className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-center md:self-start"
+                className="hover:text-[#C8A96A] transition-colors duration-300 py-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded self-center sm:self-start"
               >
                 +385 (0) 21 555 0190
               </a>
@@ -188,7 +253,7 @@ export default function Footer() {
 
         {/* BOTTOM BAR: Divider & Horizontal Copyright Notices */}
         <div className="border-t border-white/10 w-full mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          
+
           {/* Left copyright (Exact requested wording) */}
           <div className="text-[#B8B8B8] text-[13px] md:text-[14px] tracking-wide font-normal">
             {language === "hr" ? "© 2026 Villa Sérénité. Sva prava pridržana." : "© 2026 Villa Sérénité. All Rights Reserved."}

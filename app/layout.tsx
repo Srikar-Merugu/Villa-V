@@ -134,8 +134,9 @@ export default function RootLayout({
       className={`${cormorantGaramond.variable} ${inter.variable} ${pinyonScript.variable} h-full antialiased`}
     >
       <head>
-        {/* Aggressive preloading of critical cinematic hero video */}
-        <link rel="preload" href="/videos/hero.mp4?v=3" as="video" type="video/mp4" />
+        {/* Preload the first hero frame-sequence still for each device tier (canvas scrub, not a <video>) */}
+        <link rel="preload" href="/frames/hero/desktop/frame_0001.webp" as="image" type="image/webp" media="(min-width: 768px)" />
+        <link rel="preload" href="/frames/hero/mobile/frame_0001.webp" as="image" type="image/webp" media="(max-width: 767px)" />
 
         {/* Standard Favicons and Touch Icons mapping */}
         <link rel="icon" href="/favicon.ico" sizes="any" />

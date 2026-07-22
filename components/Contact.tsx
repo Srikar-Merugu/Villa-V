@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_CONTAINER } from "../lib/motion";
 
 export default function Contact() {
   const { language, t } = useLanguage();
@@ -161,19 +162,21 @@ export default function Contact() {
   };
 
   return (
-    <section 
-      id="contact" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0E0E0E] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+    <section
+      id="contact"
+      className={`relative w-full max-w-full bg-[#0E0E0E] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
       aria-labelledby="contact-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start w-full max-w-full box-border">
-          
+      <div className={SECTION_CONTAINER}>
+        {/* Direct 2-column template, not grid-cols-12 + col-span: see About.tsx for why the
+            12-track version can blow out at common laptop widths with a large gap. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-20 items-start w-full max-w-full box-border">
+
           {/* COLUMN 1: Concierge Details & Office anchors (Left 40%) */}
-          <div className="lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
+          <div className="flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
             
             {/* Ambient gold glow behind heading — clipped inside column */}
             <div className="absolute -left-4 -top-8 w-[200px] h-[200px] rounded-full bg-[#C8A96A]/3 blur-[80px] pointer-events-none z-0" />
@@ -260,7 +263,7 @@ export default function Contact() {
           </div>
 
           {/* COLUMN 2: Private Booking Form Card (Right 60%) */}
-          <div className="lg:col-span-7 flex flex-col w-full min-w-0 max-w-full box-border relative z-10">
+          <div className="flex flex-col w-full min-w-0 max-w-full box-border relative z-10">
             
             {/* Form Badges Row */}
             <div className="flex flex-wrap items-center gap-3 mb-6 select-none">
@@ -285,8 +288,20 @@ export default function Contact() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
-              className="bg-[#121214] border border-[#C8A96A]/15 rounded-[24px] sm:rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-5 sm:p-8 lg:p-12 w-full min-w-0 max-w-full box-border"
+              className="relative bg-[#121214] border border-[#C8A96A]/15 rounded-[24px] sm:rounded-[32px] shadow-[0_24px_60px_rgba(0,0,0,0.55)] p-5 sm:p-8 lg:p-12 w-full min-w-0 max-w-full box-border overflow-hidden"
             >
+              {/* Slow ambient light sweep across the top edge -- a quiet premium detail rather
+                  than a loud animation, echoing the concierge/glass-portal framing of the form */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute -top-1/2 left-0 w-[60%] h-[200%] pointer-events-none"
+                style={{
+                  background: "linear-gradient(115deg, transparent 40%, rgba(200,169,106,0.05) 50%, transparent 60%)"
+                }}
+                animate={{ x: ["-30%", "220%"] }}
+                transition={{ duration: 7, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+              />
+
               <AnimatePresence mode="wait">
                 {status === "success" ? (
                   <motion.div 

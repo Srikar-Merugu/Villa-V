@@ -56,6 +56,29 @@ export const hr = {
     ],
     hud: "LAT: 43.7225° S | ALT: 114M"
   },
+  lifestyle: {
+    label: "ISKUSTVO",
+    heading: "Živite Iznad\nUobičajenog",
+    sub: "Villa Sérénité nije tlocrt — to je način obitavanja u svjetlu, tišini i vremenu."
+  },
+  philosophy: {
+    label: "FILOZOFIJA",
+    heading: "Oblik Prati\nTišinu",
+    body: "Svaka površina je promišljena. Svaka sjena je namjerna. Villa Sérénité izgrađena je na uvjerenju da je prava raskoš suzdržanost — prostor, svjetlo i materijal govore bez ukrasa."
+  },
+  location: {
+    label: "DESTINACIJA",
+    headings: ["Gdje se Priroda", "Susreće s Elegancijom"],
+    desc: "Probudite se uz nesmetan pogled na more, vrhunsku gastronomiju i potpunu privatnost na jednoj od najekskluzivnijih destinacija na obali.",
+    highlights: ["Pristup privatnoj plaži", "Vrhunski restorani u blizini", "Marina i jahting klub"],
+    stats: [
+      { label: "Privatna plaža", time: "2 min" },
+      { label: "Marina", time: "5 min" },
+      { label: "Vrhunski restorani", time: "3 min" }
+    ],
+    cta: "Istražite lokaciju",
+    badge: "Ekskluzivna rezidencija na obali"
+  },
   amenities: {
     label: "SADRŽAJI",
     title: "Doživite vrhunski život",
@@ -95,6 +118,11 @@ export const hr = {
         desc: "Svaka linija je dizajnirana da prihvati okolni krajolik."
       },
       {
+        label: "INFINITY RUB",
+        title: "Voda Susreće\nHorizont",
+        desc: "Nestajući rub bazena stapa se s obalom u daljini."
+      },
+      {
         label: "UNUTRAŠNJOST",
         title: "Dizajnirano\nza Druženje",
         desc: "Otvoreni prostori gdje se susreću arhitektura i udobnost."
@@ -103,6 +131,11 @@ export const hr = {
         label: "GLAVNI APARTMAN",
         title: "Privatno\nUtočište",
         desc: "Utočište mira s nesmetanim pogledom."
+      },
+      {
+        label: "KUPAONICA",
+        title: "Kamen\ni Svjetlo",
+        desc: "Slobodnostojeća kada uokvirena nesmetanim pogledom na more."
       },
       {
         label: "BAZEN",

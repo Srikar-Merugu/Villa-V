@@ -95,10 +95,10 @@ export default function Testimonials() {
         </div>
 
         {/* Two-Column Split Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-20 xl:gap-24 items-center">
+
           {/* COLUMN 1: Large Editorial Quote */}
-          <div className="lg:col-span-5 flex flex-col justify-center min-h-[300px] relative w-full min-w-0 max-w-full box-border">
+          <div className="flex flex-col justify-center min-h-[300px] relative w-full min-w-0 max-w-full box-border">
             
             <AnimatePresence mode="wait">
               <motion.div
@@ -129,7 +129,7 @@ export default function Testimonials() {
           </div>
 
           {/* COLUMN 2: Large Visual Showcase with Ambient Gold Glow */}
-          <div className="lg:col-span-7 relative flex flex-col justify-center w-full min-w-0 max-w-full box-border">
+          <div className="relative flex flex-col justify-center w-full min-w-0 max-w-full box-border">
             
             {/* Optional Ambient Gold Glow Behind Card */}
             <div className="absolute -right-[5%] top-[5%] w-[350px] h-[350px] rounded-full bg-[#C8A96A]/5 blur-[120px] pointer-events-none z-0 hidden lg:block" />

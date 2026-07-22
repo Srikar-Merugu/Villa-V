@@ -56,6 +56,29 @@ export const en = {
     ],
     hud: "LAT: 43.7225° N | ALT: 114M"
   },
+  lifestyle: {
+    label: "THE EXPERIENCE",
+    heading: "Live Above\nThe Ordinary",
+    sub: "Villa Sérénité is not a floor plan — it is a way of inhabiting light, silence, and time."
+  },
+  philosophy: {
+    label: "THE PHILOSOPHY",
+    heading: "Form Follows\nSilence",
+    body: "Every surface is considered. Every shadow is intentional. Villa Sérénité is built on the belief that true luxury is restraint — space, light, and material speaking without ornament."
+  },
+  location: {
+    label: "DESTINATION",
+    headings: ["Where Nature Meets", "Modern Elegance"],
+    desc: "Wake up to uninterrupted sea views, world-class dining, and complete privacy in one of the coast's most exclusive destinations.",
+    highlights: ["Private Beach Access", "Fine Dining Nearby", "Marina & Yacht Club"],
+    stats: [
+      { label: "Private Beach", time: "2 min" },
+      { label: "Marina", time: "5 min" },
+      { label: "Fine Dining", time: "3 min" }
+    ],
+    cta: "Explore the Location",
+    badge: "Exclusive Coastal Residence"
+  },
   amenities: {
     label: "AMENITIES",
     title: "Experience World-Class Living",
@@ -95,6 +118,11 @@ export const en = {
         desc: "Every line is designed to embrace the surrounding landscape."
       },
       {
+        label: "INFINITY EDGE",
+        title: "Water Meets\nHorizon",
+        desc: "The pool's vanishing edge dissolves into the coastline beyond."
+      },
+      {
         label: "LIVING",
         title: "Designed\nfor Gathering",
         desc: "Open spaces where architecture meets comfort."
@@ -103,6 +131,11 @@ export const en = {
         label: "MASTER SUITE",
         title: "Private\nRetreat",
         desc: "A sanctuary of calm with uninterrupted views."
+      },
+      {
+        label: "ENSUITE",
+        title: "Stone\n& Light",
+        desc: "A freestanding bath framed by uninterrupted sea views."
       },
       {
         label: "POOL",

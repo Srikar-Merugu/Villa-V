@@ -2,132 +2,86 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_HEADER_GAP, SECTION_CONTAINER } from "../lib/motion";
 
-interface GalleryPanelProps {
+interface GalleryItem {
   label: string;
   title: string;
   desc: string;
   imageSrc: string;
-  index: number;
-  onOpenLightbox: () => void;
 }
 
-function GalleryPanel({ label, title, desc, imageSrc, index, onOpenLightbox }: GalleryPanelProps) {
-  const panelRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+// Bento spans across two hero cells, two wide cells and two small cells -- a deliberately
+// asymmetric grid rather than a uniform gallery grid, per the brief. Mobile collapses every
+// cell to a single stacked column. Paired with grid-flow-dense on the container so the two
+// small cells fill in beside the hero cells instead of leaving gaps.
+const BENTO_SPANS = [
+  "col-span-2 row-span-2",
+  "col-span-2 row-span-1",
+  "col-span-1 row-span-1",
+  "col-span-1 row-span-1",
+  "col-span-2 row-span-2",
+  "col-span-2 row-span-1"
+];
 
-  // Scroll tracking metrics for slow parallax and scale transformations
-  const { scrollYProgress } = useScroll({
-    target: panelRef,
-    offset: ["start end", "end start"]
-  });
+function GalleryTile({ item, span, onOpen }: { item: GalleryItem; span: string; onOpen: () => void }) {
+  const tileRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const yParallax = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const scaleParallax = useTransform(scrollYProgress, [0, 1], [1.08, 1.00]);
+  // Magnetic hover: the image drifts a few pixels toward the cursor instead of a static
+  // hover-zoom, giving the grid a sense of depth that responds to the visitor directly.
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!tileRef.current) return;
+    const rect = tileRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setOffset({ x: x * 16, y: y * 16 });
+  };
 
-  // Split title string by newline for line-by-line reveal
-  const titleLines = title.split("\n");
-
-  const isImageLeft = index % 2 === 0;
+  const handleMouseLeave = () => setOffset({ x: 0, y: 0 });
 
   return (
-    <div
-      ref={panelRef}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center w-full max-w-full"
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      ref={tileRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onOpen}
+      className={`group relative w-full h-full min-h-[220px] overflow-hidden rounded-[20px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_16px_40px_rgba(0,0,0,0.5)] bg-black/40 cursor-pointer ${span}`}
     >
-      {/* COLUMN 1: Image container (Responsive Order 1 on Mobile/Tablet) */}
-      <div 
-        className={`lg:col-span-7 order-1 ${
-          isImageLeft ? "lg:order-1" : "lg:order-2"
-        } w-full min-w-0 max-w-full box-border`}
+      <div className="absolute inset-0 border border-white/5 rounded-[20px] z-10 pointer-events-none" />
+
+      <motion.div
+        animate={{ x: offset.x, y: offset.y, scale: 1.12 }}
+        transition={{ type: "spring", stiffness: 150, damping: 20 }}
+        className="absolute inset-[-6%] w-[112%] h-[112%]"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 80 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-          onClick={onOpenLightbox}
-          className="relative w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-none lg:h-[650px] xl:h-[720px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 hover:border-[#C8A96A]/50 shadow-[0_20px_45px_rgba(0,0,0,0.5)] hover:shadow-[0_24px_50px_rgba(200,169,106,0.08)] bg-black/40 cursor-pointer group"
-        >
-          {/* Inner bezel decoration */}
-          <div className="absolute inset-0 border border-white/5 rounded-[24px] z-10 pointer-events-none" />
+        <Image
+          src={item.imageSrc}
+          alt={item.title.replace("\n", " ")}
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover filter brightness-90 group-hover:brightness-100 transition-[filter] duration-500"
+        />
+      </motion.div>
 
-          {/* Luxury soft gradient layer */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent z-10 pointer-events-none" />
 
-          <motion.div 
-            style={{ y: yParallax, scale: scaleParallax }}
-            className="w-full h-full relative"
-          >
-            <Image
-              src={imageSrc}
-              alt={title.replace("\n", " ")}
-              fill
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.05] filter brightness-95"
-              loading="lazy"
-            />
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* COLUMN 2: Typography & Navigation Links (Responsive Order 2 on Mobile/Tablet) */}
-      <div 
-        className={`lg:col-span-5 order-2 ${
-          isImageLeft ? "lg:order-2" : "lg:order-1"
-        } flex flex-col justify-center w-full min-w-0 max-w-full box-border`}
-      >
-        <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.25em] uppercase mb-4 block">
-          {label}
+      <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 z-20">
+        <span className="text-[#C8A96A] text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-1.5 block">
+          {item.label}
         </span>
-
-        {/* Header Reveal Line-by-Line */}
-        <h3 className="font-serif text-[#F6F3EB] font-light text-[clamp(28px,6vw,38px)] lg:text-[clamp(38px,4vw,62px)] leading-[1.05] tracking-tight mb-5 lg:mb-6">
-          {titleLines.map((line, i) => (
-            <span key={i} className="block overflow-hidden pb-1">
-              <motion.span
-                initial={{ y: "100%" }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                className="block"
-              >
-                {line}
-              </motion.span>
-            </span>
-          ))}
-        </h3>
-
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[420px] mb-6 lg:mb-8"
-        >
-          {desc}
-        </motion.p>
-
-        <motion.button
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          onClick={onOpenLightbox}
-          className="group/btn relative self-start flex items-center gap-2 text-[#C8A96A] font-sans font-semibold text-[13px] uppercase tracking-[0.15em] hover:text-[#F6F3EB] transition-colors duration-300 min-h-[44px] focus-visible:outline-none"
-        >
-          <span>{t("gallery.cta")}</span>
-          <span className="group-hover/btn:translate-x-1.5 transition-transform duration-300 select-none">
-            →
-          </span>
-          {/* Animated Gold Underline on hover */}
-          <span className="absolute bottom-1 left-0 w-0 group-hover/btn:w-full h-[1px] bg-[#C8A96A] transition-all duration-300" />
-        </motion.button>
+        <h4 className="font-serif text-[#F6F3EB] text-lg sm:text-2xl font-light leading-tight whitespace-pre-line">
+          {item.title}
+        </h4>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -136,14 +90,19 @@ export default function Gallery() {
   const { t } = useLanguage();
 
   const panelsData = t("gallery.panels") as { label: string; title: string; desc: string }[];
+  // Distinct crops derived from the site's 4 property photos (see public/images/gallery) --
+  // none of these repeat a composition already shown in About/Amenities/FloorPlans/Location,
+  // even though they're drawn from the same 4 source images.
   const imageSources = [
-    "/images/about.webp",
-    "/images/terrace.webp",
-    "/images/bedroom.webp",
-    "/images/pool.webp"
+    "/images/gallery/exterior-detail.webp",
+    "/images/gallery/infinity-edge.webp",
+    "/images/gallery/living-corridor.webp",
+    "/images/gallery/master-suite.webp",
+    "/images/gallery/ensuite.webp",
+    "/images/gallery/pool-horizon.webp"
   ];
 
-  const panels = panelsData.map((p, idx) => ({
+  const panels: GalleryItem[] = panelsData.map((p, idx) => ({
     label: p.label,
     title: p.title,
     desc: p.desc,
@@ -183,18 +142,18 @@ export default function Gallery() {
   }, [activeImageIndex]);
 
   return (
-    <section 
+    <section
       id="gallery"
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+      className={`relative w-full max-w-full bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
       aria-labelledby="gallery-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
-        
+      <div className={SECTION_CONTAINER}>
+
         {/* Section Header */}
-        <div className="max-w-3xl mb-8 lg:mb-24 flex flex-col">
+        <div className={`max-w-3xl flex flex-col ${SECTION_HEADER_GAP}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -219,17 +178,14 @@ export default function Gallery() {
           </motion.p>
         </div>
 
-        {/* Dynamic Panels List */}
-        <div className="flex flex-col gap-20 lg:gap-36 relative z-10">
+        {/* Asymmetric Bento Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 grid-flow-dense auto-rows-[260px] sm:auto-rows-[300px] lg:auto-rows-[360px] gap-4 lg:gap-6 w-full max-w-full">
           {panels.map((panel, idx) => (
-            <GalleryPanel
+            <GalleryTile
               key={panel.title}
-              label={panel.label}
-              title={panel.title}
-              desc={panel.desc}
-              imageSrc={panel.imageSrc}
-              index={idx}
-              onOpenLightbox={() => setActiveImageIndex(idx)}
+              item={panel}
+              span={BENTO_SPANS[idx] ?? "col-span-1 row-span-1"}
+              onOpen={() => setActiveImageIndex(idx)}
             />
           ))}
         </div>
@@ -271,17 +227,17 @@ export default function Gallery() {
             </button>
 
             {/* Main Lightbox Frame */}
-            <div 
+            <div
               className="relative w-[90%] md:w-[80%] h-[75vh] flex items-center justify-center pointer-events-none"
               onClick={(e) => e.stopPropagation()}
             >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeImageIndex}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  initial={{ opacity: 0, scale: 0.9, clipPath: "inset(8% 8% 8% 8% round 20px)" }}
+                  animate={{ opacity: 1, scale: 1, clipPath: "inset(0% 0% 0% 0% round 20px)" }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   className="relative w-full h-full rounded-[20px] overflow-hidden border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.8)]"
                 >
                   <Image
@@ -292,7 +248,7 @@ export default function Gallery() {
                     className="object-cover pointer-events-none"
                     priority
                   />
-                  
+
                   {/* Subtle caption drawer card */}
                   <div className="absolute bottom-6 left-6 right-6 z-20 bg-black/60 backdrop-blur-md border border-white/10 rounded-[16px] p-5 md:p-6 text-left max-w-md filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
                     <span className="text-[#C8A96A] text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-1.5 block">

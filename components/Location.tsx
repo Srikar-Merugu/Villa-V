@@ -3,9 +3,24 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_CONTAINER } from "../lib/motion";
+
+const statIcons = [
+  <svg key="beach" className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+  </svg>,
+  <svg key="marina" className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+  </svg>,
+  <svg key="dining" className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  </svg>
+];
 
 export default function Location() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   // Scroll parallax image scales and transform bindings
   const { scrollYProgress } = useScroll({
@@ -16,43 +31,12 @@ export default function Location() {
   const yParallax = useTransform(scrollYProgress, [0, 1], [30, -30]);
   const scaleParallax = useTransform(scrollYProgress, [0, 1], [1.08, 1.00]);
 
-  const headingLines = ["Where Nature Meets", "Modern Elegance"];
-
-  const highlights = [
-    "Private Beach Access",
-    "Fine Dining Nearby",
-    "Marina & Yacht Club"
-  ];
-
-  const travelStats = [
-    {
-      label: "Private Beach",
-      time: "2 min",
-      icon: (
-        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
-        </svg>
-      )
-    },
-    {
-      label: "Marina",
-      time: "5 min",
-      icon: (
-        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-        </svg>
-      )
-    },
-    {
-      label: "Fine Dining",
-      time: "3 min",
-      icon: (
-        <svg className="w-5 h-5 text-[#C8A96A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      )
-    }
-  ];
+  const headingLines = t("location.headings") as string[];
+  const highlights = t("location.highlights") as string[];
+  const travelStats = (t("location.stats") as { label: string; time: string }[]).map((s, i) => ({
+    ...s,
+    icon: statIcons[i]
+  }));
 
   const handleScrollToContact = () => {
     const contactSection = document.getElementById("contact");
@@ -62,24 +46,24 @@ export default function Location() {
   };
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      id="location" 
-      className="relative w-full max-w-full py-[100px] lg:py-[180px] bg-[#0B0B0C] overflow-x-hidden select-none box-border"
+      id="location"
+      className={`relative w-full max-w-full bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
-        
+      <div className={SECTION_CONTAINER}>
+
         {/* Split Screen Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-center w-full max-w-full box-border">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-20 xl:gap-24 items-center w-full max-w-full box-border">
+
           {/* COLUMN 1: Location Editorial Details (Responsive Order 2 on Mobile) */}
-          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
-            
+          <div className="order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
+
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
-              DESTINATION
+              {t("location.label")}
             </span>
 
             {/* Editorial Heading Line-by-Line */}
@@ -106,7 +90,7 @@ export default function Location() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-[#B8B8B8] text-[16px] sm:text-[18px] font-normal leading-[1.7] max-w-[480px] mb-8"
             >
-              Wake up to uninterrupted sea views, world-class dining, and complete privacy in one of the coast's most exclusive destinations.
+              {t("location.desc")}
             </motion.p>
 
             {/* Checklist Highlights */}
@@ -159,7 +143,7 @@ export default function Location() {
               onClick={handleScrollToContact}
               className="group/cta relative self-start flex items-center gap-2 text-[#C8A96A] font-sans font-semibold text-[13px] uppercase tracking-[0.15em] hover:text-[#F6F3EB] transition-colors duration-300 min-h-[44px] mt-10 focus-visible:outline-none"
             >
-              <span>Explore the Location</span>
+              <span>{t("location.cta")}</span>
               <span className="group-hover/cta:translate-x-1.5 transition-transform duration-300 select-none">
                 →
               </span>
@@ -169,8 +153,8 @@ export default function Location() {
           </div>
 
           {/* COLUMN 2: Large Visual Showcase (Responsive Order 1 on Mobile) */}
-          <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
-            
+          <div className="order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
+
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -185,7 +169,7 @@ export default function Location() {
               <div className="absolute inset-0 bg-black/15 z-10 pointer-events-none transition-opacity duration-300 group-hover:bg-black/10" />
 
               {/* Parallax Image Render */}
-              <motion.div 
+              <motion.div
                 style={{ y: yParallax, scale: scaleParallax }}
                 className="w-full h-full relative"
               >
@@ -201,7 +185,7 @@ export default function Location() {
 
               {/* Staggered bottom-left label badge overlay */}
               <div className="absolute bottom-8 left-8 z-20 font-sans text-[10px] sm:text-xs tracking-[0.25em] text-[#F6F3EB] uppercase font-semibold bg-black/45 backdrop-blur-md px-4 py-2 border border-white/10 rounded">
-                Exclusive Coastal Residence
+                {t("location.badge")}
               </div>
 
             </motion.div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_CONTAINER } from "../lib/motion";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -24,21 +25,21 @@ export default function FAQ() {
   };
 
   return (
-    <section 
-      id="faq" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+    <section
+      id="faq"
+      className={`relative w-full max-w-full bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
       aria-labelledby="faq-heading"
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
+      <div className={SECTION_CONTAINER}>
         
         {/* Two-Column Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-24 items-start w-full max-w-full box-border">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-20 xl:gap-24 items-start w-full max-w-full box-border">
+
           {/* COLUMN 1: Editorial Description (Left 35%) */}
-          <div className="lg:col-span-5 flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
+          <div className="flex flex-col justify-center relative w-full min-w-0 max-w-full box-border overflow-hidden">
             
             {/* Faint gold lighting glow behind heading — clipped inside column */}
             <div className="absolute -left-4 -top-8 w-[200px] h-[200px] rounded-full bg-[#C8A96A]/3 blur-[70px] pointer-events-none z-0" />
@@ -60,7 +61,7 @@ export default function FAQ() {
           </div>
 
           {/* COLUMN 2: Luxury Accordion Cards (Right 65%) */}
-          <div className="lg:col-span-7 flex flex-col gap-6 w-full min-w-0 max-w-full box-border">
+          <div className="flex flex-col gap-6 w-full min-w-0 max-w-full box-border">
             {faqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
               return (
@@ -71,7 +72,11 @@ export default function FAQ() {
                   whileInView="visible"
                   viewport={{ once: true, margin: "-100px" }}
                   variants={cardVariants}
-                  className="w-full max-w-full min-w-0 box-border bg-[#121214] border border-[#C8A96A]/15 hover:border-[#C8A96A]/45 hover:bg-[#151518] hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(200,169,106,0.04)] rounded-[18px] sm:rounded-[24px] p-5 sm:p-8 lg:p-10 transition-all duration-300 select-none cursor-pointer group"
+                  className={`w-full max-w-full min-w-0 box-border bg-[#121214] border rounded-[18px] sm:rounded-[24px] p-5 sm:p-8 lg:p-10 transition-all duration-300 select-none cursor-pointer group ${
+                    isOpen
+                      ? "border-[#C8A96A]/50 bg-[#151518] shadow-[0_20px_48px_rgba(200,169,106,0.1)]"
+                      : "border-[#C8A96A]/15 hover:border-[#C8A96A]/45 hover:bg-[#151518] hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(200,169,106,0.04)]"
+                  }`}
                   onClick={() => handleToggle(idx)}
                 >
                   

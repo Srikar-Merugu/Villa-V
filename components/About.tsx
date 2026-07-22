@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_CONTAINER, EASE_CINEMATIC } from "../lib/motion";
 
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -52,19 +53,17 @@ export default function About() {
     }
   ];
 
-  const metricsData = t("about.metrics") as { val: string; label: string }[];
-  const posClasses = [
-    "xl:top-[8%] xl:-left-12",
-    "xl:top-[38%] xl:-right-12",
-    "xl:bottom-[38%] xl:-left-12",
-    "xl:bottom-[8%] xl:-right-12"
-  ];
-  
-  const metrics = metricsData.map((m, idx) => ({
-    val: m.val,
-    label: m.label,
-    posClass: posClasses[idx]
-  }));
+  const metrics = t("about.metrics") as { val: string; label: string }[];
+
+  // Divider borders for a stat strip that reflows from a 2x2 grid (mobile) to a single
+  // row (sm+) without a border appearing on the wrong edge at either layout.
+  const metricBorderClasses = (i: number) => {
+    const classes: string[] = [];
+    if (i % 2 === 1) classes.push("border-l");
+    else if (i > 0) classes.push("sm:border-l");
+    if (i >= 2) classes.push("border-t", "sm:border-t-0");
+    return classes.join(" ");
+  };
 
   const containerVariants = {
     hidden: {},
@@ -83,21 +82,27 @@ export default function About() {
   };
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      id="about" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+      id="about"
+      className={`relative w-full max-w-full bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
     >
       {/* Decorative Blueprint Background Grid - Reduced opacity to 4% (almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.04] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
+      <div className={SECTION_CONTAINER}>
         
         {/* Two-Column Responsive Grid Layout (Desktop Left 45%, Right 55%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-24 xl:gap-32 items-center w-full">
+        {/* Direct 2-column template instead of grid-cols-12 + col-span: with a 12-track grid,
+            `gap` reserves space at all 11 internal lines regardless of how few items use them,
+            so a large gap (here up to 128px) can need over 1000px of reserved gap alone --
+            more than the whole container at common laptop widths (~1024-1500px) -- and the
+            columns stop respecting their ratio, overflowing their own parent. A 2-column
+            template has exactly one gap line, so it can't blow out this way. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-24 xl:gap-32 items-center w-full">
           
           {/* COLUMN 1: Storytelling Details & Feature Cards (Responsive Order 2 on Mobile) */}
-          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
+          <div className="order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
 
             {/* Small Luxury Label */}
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-4 block">
@@ -105,7 +110,7 @@ export default function About() {
             </span>
 
             {/* Editorial Heading (Line by Line reveal) */}
-            <h3 className="font-serif text-[#F6F3EB] font-light text-[clamp(32px,6.5vw,42px)] lg:text-[clamp(48px,6vw,84px)] leading-[1.05] tracking-tight mb-5 lg:mb-8">
+            <h3 className="font-serif text-[#F6F3EB] font-light text-[clamp(34px,7vw,46px)] lg:text-[clamp(52px,6.5vw,96px)] leading-[1.05] tracking-tight mb-5 lg:mb-8">
               {headingLines.map((line, i) => (
                 <span key={i} className="block overflow-hidden pb-1">
                   <motion.span
@@ -164,16 +169,20 @@ export default function About() {
           </div>
 
           {/* COLUMN 2: Hero Visual Showcase & Metric Overlay (Responsive Order 1 on Mobile) */}
-          <div className="lg:col-span-7 order-1 lg:order-2 relative w-full min-w-0 max-w-full flex flex-col box-border">
+          <div className="order-1 lg:order-2 relative w-full min-w-0 max-w-full flex flex-col box-border">
             
             <motion.div
               style={{ y: yParallax }}
+              initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
+              whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.3, ease: EASE_CINEMATIC }}
               className="relative aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] xl:aspect-[11/13] w-full max-w-full overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#C8A96A]/20 shadow-[0_24px_50px_rgba(0,0,0,0.6)] group isolate"
             >
               {/* Luxury interior outline overlay */}
               <div className="absolute inset-0 border border-white/5 z-10 rounded-[24px] sm:rounded-[32px] pointer-events-none" />
 
-              <motion.div 
+              <motion.div
                 style={{ scale: scaleParallax }}
                 className="w-full h-full relative"
               >
@@ -194,29 +203,30 @@ export default function About() {
               </div>
             </motion.div>
 
-            {/* Staggered Premium Glass Metric Cards */}
-            {/* Desktop: Absolute Positioned Floaters | Mobile/Tablet: 2x2 Grid Layout below container */}
-            <div className="w-full max-w-full overflow-hidden box-border mt-8 xl:mt-0 xl:overflow-visible">
-              <div className="grid grid-cols-2 gap-3 w-full max-w-full box-border xl:block">
-                {metrics.map((metric, i) => (
-                  <motion.div
-                    key={metric.label}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: i * 0.15 + 0.2, ease: "easeOut" }}
-                    className={`p-3 sm:p-5 flex flex-col items-center justify-center text-center rounded-[14px] sm:rounded-[18px] border border-[#C8A96A]/15 bg-[#121214] backdrop-blur-md shadow-xl select-none w-full min-w-0 max-w-full box-border ${metric.posClass} xl:absolute xl:w-[155px] xl:z-20`}
-                  >
-                    <span className="font-serif text-[#C8A96A] text-lg sm:text-2xl font-light tracking-wide">
-                      {metric.val}
-                    </span>
-                    <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] text-[#F6F3EB] font-medium uppercase mt-1">
-                      {metric.label}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            {/* Signature Stats Strip: a bordered row of figures beneath the image, in normal
+                document flow. Replaces the old floating corner badges, which overlapped the
+                photo with negative offsets and clipped at several viewport widths. */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="grid grid-cols-2 sm:grid-cols-4 w-full max-w-full mt-8 rounded-[16px] border border-white/10 bg-[#121214] overflow-hidden box-border"
+            >
+              {metrics.map((metric, i) => (
+                <div
+                  key={metric.label}
+                  className={`flex flex-col items-center justify-center text-center gap-1.5 px-2 py-5 sm:py-6 border-white/10 min-w-0 ${metricBorderClasses(i)}`}
+                >
+                  <span className="font-serif text-[#C8A96A] text-lg sm:text-xl md:text-2xl font-light tracking-wide">
+                    {metric.val}
+                  </span>
+                  <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] text-[#F6F3EB] font-medium uppercase leading-tight">
+                    {metric.label}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
 
           </div>
           

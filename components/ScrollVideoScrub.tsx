@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
-
-interface ScrollVideoScrubProps {
-  videoUrl: string;
-}
 
 interface SceneContent {
   serifTitle: string;
@@ -44,6 +40,23 @@ const SCENES: SceneContent[] = [
   }
 ];
 
+// Frame-sequence assets: pre-extracted stills drawn to canvas instead of scrubbing a
+// real <video> element. Native video.currentTime seeking depends on the browser's H.264
+// decoder finding/decoding from the nearest keyframe, which behaves inconsistently across
+// Chrome/Safari/Firefox and across devices -- that inconsistency is the root cause of
+// production-only stutter that doesn't reproduce locally. Drawing an already-decoded
+// image to canvas is a deterministic, near-instant operation on every browser.
+const DESKTOP_FRAME_COUNT = 360;
+const MOBILE_FRAME_COUNT = 200;
+const DESKTOP_BASE_PATH = "/frames/hero/desktop/frame_";
+const MOBILE_BASE_PATH = "/frames/hero/mobile/frame_";
+const PRIORITY_FRAME_COUNT = 10;
+const BACKGROUND_LOAD_CONCURRENCY = 6;
+
+function framePath(basePath: string, index: number) {
+  return `${basePath}${String(index + 1).padStart(4, "0")}.webp`;
+}
+
 // Coordinated stagger animation variants
 const containerVariants = {
   initial: {},
@@ -61,34 +74,34 @@ const containerVariants = {
 
 const serifVariants = {
   initial: { opacity: 0, y: 8, filter: "blur(4px)" },
-  animate: { 
-    opacity: 1, 
-    y: 0, 
+  animate: {
+    opacity: 1,
+    y: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } 
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }
   },
-  exit: { 
-    opacity: 0, 
-    y: -8, 
+  exit: {
+    opacity: 0,
+    y: -8,
     filter: "blur(4px)",
-    transition: { duration: 0.5 } 
+    transition: { duration: 0.5 }
   }
 };
 
 const scriptVariants = {
   initial: { opacity: 0, x: -12, filter: "blur(4px)", scale: 0.96 },
-  animate: { 
-    opacity: 1, 
-    x: 0, 
+  animate: {
+    opacity: 1,
+    x: 0,
     filter: "blur(0px)",
     scale: 1,
-    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const } 
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }
   },
-  exit: { 
-    opacity: 0, 
-    x: 12, 
+  exit: {
+    opacity: 0,
+    x: 12,
     filter: "blur(4px)",
-    transition: { duration: 0.5 } 
+    transition: { duration: 0.5 }
   }
 };
 
@@ -124,11 +137,11 @@ function LuxuryTitle({ serifTitle, scriptTitle }: SceneContent) {
   );
 }
 
-export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
+export default function ScrollVideoScrub() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t } = useLanguage();
-  
+
   const [isInitialized, setIsInitialized] = useState(false);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -145,9 +158,17 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
 
   // Refs for tracking values inside the rAF loop without triggering React renders
   const progressRef = useRef(0);
-  const currentTimeRef = useRef(0);
   const activeSceneIndexRef = useRef(0);
   const inViewRef = useRef(true);
+  const frameCountRef = useRef(DESKTOP_FRAME_COUNT);
+  const basePathRef = useRef(DESKTOP_BASE_PATH);
+  const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const loadingSetRef = useRef<Set<number>>(new Set());
+  const lastDrawnIndexRef = useRef(-1);
+  const lastLowerIndexRef = useRef(-1);
+  const lastUpperIndexRef = useRef(-1);
+  const lastFracRef = useRef(0);
+  const lastRawIndexRef = useRef(-1);
 
   // Media Query listener for system-reduced motion compatibility (WCAG compliance)
   useEffect(() => {
@@ -177,83 +198,170 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
     };
   }, []);
 
-  // Frame initialization and browser paint detection sequence (WCAG & UX flash prevention)
+  // Draws the nearest frame to the current scroll position, using object-fit: cover math,
+  // scaled for the device pixel ratio so it stays crisp on high-DPI screens.
+  //
+  // Earlier this drew the floor/ceil frames as an alpha cross-fade to hide frame-to-frame
+  // stepping, but that only works when adjacent frames are near-identical (e.g. a slow product
+  // rotation). This footage has real camera movement between frames, so blending two frames
+  // that already differ in composition produced a visible double-exposure ghost and a darker,
+  // muddier image -- worse than the stepping it was meant to fix. A hard cut to the nearest
+  // frame, backed by a denser frame sequence (see DESKTOP_FRAME_COUNT/MOBILE_FRAME_COUNT), is
+  // the correct fix: it shrinks the visual gap between frames instead of faking a blend across it.
+  const drawBlended = useCallback((lowerIndex: number, upperIndex: number, frac: number) => {
+    const canvas = canvasRef.current;
+    const nearestIndex = frac < 0.5 ? lowerIndex : upperIndex;
+    const img = imagesRef.current[nearestIndex] ?? imagesRef.current[lowerIndex];
+    if (!canvas || !img) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const cssWidth = canvas.clientWidth;
+    const cssHeight = canvas.clientHeight;
+    const targetWidth = Math.round(cssWidth * dpr);
+    const targetHeight = Math.round(cssHeight * dpr);
+
+    if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const scale = Math.max(cssWidth / img.naturalWidth, cssHeight / img.naturalHeight);
+    const dw = img.naturalWidth * scale;
+    const dh = img.naturalHeight * scale;
+    const dx = (cssWidth - dw) / 2;
+    const dy = (cssHeight - dh) / 2;
+
+    ctx.drawImage(img, dx, dy, dw, dh);
+
+    lastDrawnIndexRef.current = nearestIndex;
+    lastLowerIndexRef.current = lowerIndex;
+    lastUpperIndexRef.current = upperIndex;
+    lastFracRef.current = frac;
+  }, []);
+
+  // Loads a single frame if not already loaded/loading. Used both for the initial
+  // priority batch and for scroll-triggered "jump ahead" requests.
+  const loadOne = useCallback((index: number): Promise<void> => {
+    if (imagesRef.current[index] || loadingSetRef.current.has(index)) {
+      return Promise.resolve();
+    }
+    loadingSetRef.current.add(index);
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.decoding = "async";
+      const finish = () => {
+        loadingSetRef.current.delete(index);
+        resolve();
+      };
+      img.onload = () => {
+        imagesRef.current[index] = img;
+        finish();
+      };
+      img.onerror = finish;
+      img.src = framePath(basePathRef.current, index);
+    });
+  }, []);
+
+  const requestPriorityLoad = useCallback((index: number) => {
+    void loadOne(index);
+  }, [loadOne]);
+
+  // Redraw the current frame at the new canvas size on resize/orientation change
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const handleResize = () => {
+      if (lastLowerIndexRef.current >= 0) {
+        drawBlended(lastLowerIndexRef.current, lastUpperIndexRef.current, lastFracRef.current);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [drawBlended]);
 
-    let completed = false;
+  // Initial frame-sequence load: pick the device-appropriate set, block only on a small
+  // priority window around the scroll-derived starting frame, then reveal and stream the
+  // rest of the sequence in behind a concurrency-limited background queue.
+  useEffect(() => {
+    let cancelled = false;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const frameCount = isMobile ? MOBILE_FRAME_COUNT : DESKTOP_FRAME_COUNT;
+    const basePath = isMobile ? MOBILE_BASE_PATH : DESKTOP_BASE_PATH;
 
-    const handleInitialization = () => {
-      if (completed) return;
-      
-      const duration = video.duration || 53;
-      
+    frameCountRef.current = frameCount;
+    basePathRef.current = basePath;
+    imagesRef.current = new Array(frameCount).fill(null);
+    loadingSetRef.current.clear();
+    lastDrawnIndexRef.current = -1;
+
+    const init = async () => {
+      let initialIndex = 0;
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         const scrollHeight = rect.height - window.innerHeight;
         let pct = -rect.top / scrollHeight;
         pct = Math.max(0, Math.min(1, pct));
-        
         progressRef.current = pct;
-        const initialTime = pct * duration;
-        currentTimeRef.current = initialTime;
-        
-        // Seek directly to scroll-based time frame
-        video.currentTime = initialTime;
+        initialIndex = Math.round(pct * (frameCount - 1));
       }
-    };
 
-    const handleSeeked = () => {
-      if (completed) return;
-      completed = true;
-      
-      // Delay slightly to confirm browser finishes rendering paint buffer
-      setTimeout(() => {
-        setIsInitialized(true);
-      }, 150);
-    };
-
-    // Unlock video playback capabilities for mobile browsers
-    const unlockMobile = () => {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            video.pause();
-            handleInitialization();
-          })
-          .catch((err) => {
-            console.warn("Mobile video decoder unlock deferred:", err);
-            handleInitialization();
-          });
-      } else {
-        handleInitialization();
+      const priorityIndices = new Set<number>();
+      for (let i = 0; i < Math.min(PRIORITY_FRAME_COUNT, frameCount); i++) {
+        priorityIndices.add(i);
       }
+      for (let i = Math.max(0, initialIndex - 3); i <= Math.min(frameCount - 1, initialIndex + 3); i++) {
+        priorityIndices.add(i);
+      }
+
+      await Promise.all(Array.from(priorityIndices).map(loadOne));
+      if (cancelled) return;
+
+      drawBlended(initialIndex, initialIndex, 0);
+
+      // Confirm the browser has actually painted the frame before revealing
+      // (double-rAF is a deterministic paint boundary; a fixed timeout is not)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!cancelled) setIsInitialized(true);
+        });
+      });
+
+      // Stream in the rest of the sequence in the background at a steady, bounded
+      // concurrency (not re-triggered by scrolling), expanding outward from the starting
+      // frame so the frames closest to where the visitor lands load first.
+      const loadOrder: number[] = [initialIndex];
+      for (let step = 1; loadOrder.length < frameCount; step++) {
+        const down = initialIndex - step;
+        const up = initialIndex + step;
+        if (down >= 0) loadOrder.push(down);
+        if (up <= frameCount - 1) loadOrder.push(up);
+      }
+
+      let cursor = 0;
+      const workers = new Array(BACKGROUND_LOAD_CONCURRENCY).fill(0).map(async () => {
+        while (cursor < loadOrder.length && !cancelled) {
+          const idx = loadOrder[cursor++];
+          await loadOne(idx);
+        }
+      });
+      await Promise.all(workers);
     };
 
-    video.addEventListener("loadedmetadata", unlockMobile);
-    video.addEventListener("seeked", handleSeeked);
-
-    // If metadata is already cached / pre-loaded
-    if (video.readyState >= 1) {
-      unlockMobile();
-    }
+    init();
 
     // Safety timeout fallback (3.5 seconds) to prevent infinite loaders on slow connections
     const safetyTimeout = setTimeout(() => {
-      if (!completed) {
-        completed = true;
-        setIsInitialized(true);
-      }
+      if (!cancelled) setIsInitialized(true);
     }, 3500);
 
     return () => {
-      video.removeEventListener("loadedmetadata", unlockMobile);
-      video.removeEventListener("seeked", handleSeeked);
+      cancelled = true;
       clearTimeout(safetyTimeout);
     };
-  }, [reducedMotion, videoUrl]);
+  }, [drawBlended, loadOne]);
 
   useEffect(() => {
     // If reduced motion is requested or page hasn't finished initial rendering, ignore scroll loop
@@ -261,31 +369,32 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       return;
     }
 
-    const handleScroll = () => {
-      if (!containerRef.current || !inViewRef.current) return;
-      
+    // Single per-frame layout read + scene calc, unified with the scrub loop below so
+    // there is exactly one layout read per animation frame, in a deterministic order.
+    const computeProgress = () => {
+      if (!containerRef.current) return;
+
       const rect = containerRef.current.getBoundingClientRect();
       const scrollHeight = rect.height - window.innerHeight;
-      
-      // Calculate fraction scrolled inside the scrub area
+
       let pct = -rect.top / scrollHeight;
       pct = Math.max(0, Math.min(1, pct));
-      
+
       progressRef.current = pct;
 
       // Determine active scene based on progress to control visual overlays
       let sceneIndex = 0;
       if (pct < 0.05) {
         sceneIndex = 0;
-      } else if (pct >= 0.05 && pct < 0.22) {
+      } else if (pct < 0.22) {
         sceneIndex = 1;
-      } else if (pct >= 0.22 && pct < 0.40) {
+      } else if (pct < 0.40) {
         sceneIndex = 2;
-      } else if (pct >= 0.40 && pct < 0.60) {
+      } else if (pct < 0.60) {
         sceneIndex = 3;
-      } else if (pct >= 0.60 && pct < 0.78) {
+      } else if (pct < 0.78) {
         sceneIndex = 4;
-      } else if (pct >= 0.78 && pct < 0.93) {
+      } else if (pct < 0.93) {
         sceneIndex = 5;
       } else {
         sceneIndex = 6;
@@ -297,48 +406,51 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    // requestAnimationFrame interpolation loop for smooth scrubbing
     let rAFId: number;
-    const smoothScrub = () => {
-      // Avoid running seeks if the component is out of the viewport
+    const tick = () => {
       if (!inViewRef.current) {
-        rAFId = requestAnimationFrame(smoothScrub);
+        rAFId = requestAnimationFrame(tick);
         return;
       }
 
-      const video = videoRef.current;
-      if (video && video.readyState >= 2) {
-        if (!video.paused) {
-          video.pause();
-        }
+      computeProgress();
 
-        const duration = video.duration || 53;
-        const targetTime = progressRef.current * duration;
+      const frameCount = frameCountRef.current;
+      const rawIndex = Math.min(frameCount - 1, Math.max(0, progressRef.current * (frameCount - 1)));
+      const lowerIndex = Math.floor(rawIndex);
+      const upperIndex = Math.min(frameCount - 1, lowerIndex + 1);
+      const frac = rawIndex - lowerIndex;
 
-        const diff = targetTime - currentTimeRef.current;
-        if (Math.abs(diff) > 1.5) {
-          currentTimeRef.current = targetTime;
-        } else {
-          currentTimeRef.current += diff * 0.08; // LERP easing LERP
-        }
-
-        if (Math.abs(diff) > 0.002 && !video.seeking) {
-          video.currentTime = currentTimeRef.current;
-        }
+      // Skip redundant work while genuinely static (e.g. scroll momentum has fully settled)
+      if (Math.abs(rawIndex - lastRawIndexRef.current) < 0.0008) {
+        rAFId = requestAnimationFrame(tick);
+        return;
       }
-      rAFId = requestAnimationFrame(smoothScrub);
+      lastRawIndexRef.current = rawIndex;
+
+      if (imagesRef.current[lowerIndex]) {
+        drawBlended(lowerIndex, upperIndex, frac);
+        if (!imagesRef.current[upperIndex] && frac > 0.002) {
+          requestPriorityLoad(upperIndex);
+        }
+      } else {
+        // Target frame hasn't loaded yet: keep the last successfully drawn frame on
+        // screen (no blank flash) and jump this frame + its immediate neighbors to
+        // the front of the load queue so fast scrolling still catches up quickly.
+        requestPriorityLoad(lowerIndex);
+        requestPriorityLoad(upperIndex);
+        requestPriorityLoad(Math.max(0, lowerIndex - 1));
+      }
+
+      rAFId = requestAnimationFrame(tick);
     };
 
-    rAFId = requestAnimationFrame(smoothScrub);
+    rAFId = requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rAFId);
     };
-  }, [isInitialized, reducedMotion]);
+  }, [isInitialized, reducedMotion, drawBlended, requestPriorityLoad]);
 
   const scenes = t("hero.scenes") as { serif: string; script: string }[];
   const currentScene = scenes[activeSceneIndex] || { serif: "", script: "" };
@@ -377,29 +489,31 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
         )}
       </AnimatePresence>
 
-      {/* Sticky Video Canvas Wrapper */}
-      <div 
+      {/* Sticky Frame-Sequence Canvas Wrapper */}
+      <div
         className="sticky top-0 left-0 w-full h-screen overflow-hidden z-0 transition-opacity duration-1000 ease-in-out"
         style={{
           opacity: isInitialized ? 1 : 0,
           visibility: isInitialized ? "visible" : "hidden"
         }}
       >
-        <video
-          ref={videoRef}
-          src={videoUrl}
-          preload="auto"
-          poster="/images/about.webp"
-          muted
-          playsInline
-          webkit-playsinline="true"
-          x5-playsinline="true"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ willChange: "transform" }}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full"
         />
-        
-        {/* Very subtle dark overlay for high text legibility, maintaining original colors */}
-        <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+
+        {/* Light overall grade to keep the frame rich rather than washed out... */}
+        <div className="absolute inset-0 bg-black/8 pointer-events-none" />
+
+        {/* ...with contrast concentrated in a soft vignette behind the title cluster instead,
+            so legibility holds on every frame without dulling the rest of the cinematic shot */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(58% 42% at 50% 46%, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.28) 48%, rgba(0,0,0,0) 78%)"
+          }}
+        />
 
         {/* Ambient Grid Overlay for Scene 1 & 2 */}
         <AnimatePresence>
@@ -464,7 +578,7 @@ export default function ScrollVideoScrub({ videoUrl }: ScrollVideoScrubProps) {
         {/* Unified Storytelling Layout */}
         <div className="absolute inset-0 flex items-center justify-center p-6 md:p-24 z-10">
           <div className="max-w-4xl w-full text-center flex flex-col items-center select-none">
-            
+
             {/* Serif & Script Overlap Container (Fixed inline bounds to map percentage alignment) */}
             <div className="relative inline-block overflow-visible min-h-[140px] md:min-h-[200px] filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
               <AnimatePresence mode="wait">

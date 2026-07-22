@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import { SECTION_PADDING, SECTION_HEADER_GAP, SECTION_CONTAINER } from "../lib/motion";
 
 export default function FloorPlans() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -12,9 +13,12 @@ export default function FloorPlans() {
   const { t } = useLanguage();
 
   const levelsData = t("floorPlans.levels") as { id: string; name: string; desc: string; highlights: string[] }[];
+  // Matched to what each level actually contains rather than arbitrary index order:
+  // ground level has no pool/terrace of its own (garage/spa/guest suite), first floor is
+  // where the infinity pool lives, sky terrace is the panoramic-view level.
   const imageSources = [
+    "/images/about.webp",
     "/images/pool.webp",
-    "/images/bedroom.webp",
     "/images/terrace.webp"
   ];
 
@@ -86,17 +90,17 @@ export default function FloorPlans() {
   };
 
   return (
-    <section 
-      id="floor-plans" 
-      className="relative w-full max-w-full py-20 lg:py-36 bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border"
+    <section
+      id="floor-plans"
+      className={`relative w-full max-w-full bg-[#0B0B0C] overflow-x-hidden select-none scroll-mt-24 lg:scroll-mt-20 box-border ${SECTION_PADDING}`}
     >
       {/* Subtle Architectural Grid Texture (Almost invisible) */}
       <div className="absolute inset-0 grid-overlay opacity-[0.03] pointer-events-none" />
 
-      <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-20 relative z-10 box-border">
-        
+      <div className={SECTION_CONTAINER}>
+
         {/* Section Header */}
-        <div className="max-w-3xl mb-8 lg:mb-24 flex flex-col">
+        <div className={`max-w-3xl flex flex-col ${SECTION_HEADER_GAP}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -123,10 +127,10 @@ export default function FloorPlans() {
         </div>
 
         {/* Two-Column Tour Layout (Left 40%, Right 60%) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 xl:gap-24 items-center w-full max-w-full">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-8 lg:gap-20 xl:gap-24 items-center w-full max-w-full">
+
           {/* COLUMN 1: Editorial Navigation & Highlight Bullets */}
-          <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
+          <div className="order-2 lg:order-1 flex flex-col w-full min-w-0 max-w-full box-border">
             
             <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.2em] uppercase mb-4 lg:mb-6 block">
               {t("floorPlans.label")}
@@ -219,9 +223,12 @@ export default function FloorPlans() {
           </div>
 
           {/* COLUMN 2: Large Cinematic Showcase (Crossfading Absolute Overlays) */}
-          <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
+          <div className="order-1 lg:order-2 flex flex-col w-full min-w-0 max-w-full box-border">
             
-            <div className="relative w-full h-[320px] sm:h-[400px] lg:h-[500px] xl:h-[580px] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
+            {/* Aspect-ratio driven (not a fixed pixel height) so this scales with column width
+                the same way About/Gallery/Location size their imagery, instead of the two
+                columns in this row growing independently and drifting out of visual balance */}
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] xl:aspect-[16/11] overflow-hidden rounded-[24px] border border-[#C8A96A]/20 shadow-[0_20px_45px_rgba(0,0,0,0.55)] bg-black/40">
               
               {/* Internal Bezel Decoration */}
               <div className="absolute inset-0 border border-white/5 rounded-[24px] z-15 pointer-events-none" />

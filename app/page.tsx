@@ -10,9 +10,12 @@ import { useLanguage } from "../context/LanguageContext";
 
 // Code-split dynamic loading of offscreen sections to improve LCP & reduce initial JS bundle sizes
 const About = dynamic(() => import("../components/About"));
+const Lifestyle = dynamic(() => import("../components/Lifestyle"));
 const Amenities = dynamic(() => import("../components/Amenities"));
+const ArchitecturalPhilosophy = dynamic(() => import("../components/ArchitecturalPhilosophy"));
 const Gallery = dynamic(() => import("../components/Gallery"));
 const FloorPlans = dynamic(() => import("../components/FloorPlans"));
+const Location = dynamic(() => import("../components/Location"));
 const FAQ = dynamic(() => import("../components/FAQ"));
 const Contact = dynamic(() => import("../components/Contact"));
 const Footer = dynamic(() => import("../components/Footer"));
@@ -71,22 +74,26 @@ function StickyMobileCTA() {
 }
 
 export default function Home() {
-  const videoUrl = "/videos/hero.mp4?v=3";
-
   return (
     <SmoothScroll>
       <Navbar />
-      <ScrollVideoScrub videoUrl={videoUrl} />
+      <ScrollVideoScrub />
       
       {/* Post-Video Luxury Editorial Sections */}
       <main id="main-content" className="relative z-10 bg-[#0B0B0C] w-full max-w-full overflow-x-hidden box-border">
         <About />
-        
+
+        <Lifestyle />
+
         <Amenities />
+
+        <ArchitecturalPhilosophy />
 
         <Gallery />
 
         <FloorPlans />
+
+        <Location />
 
         <FAQ />
 
