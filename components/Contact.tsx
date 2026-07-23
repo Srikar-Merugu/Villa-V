@@ -249,16 +249,6 @@ export default function Contact() {
               ))}
             </motion.div>
 
-            {/* Luxury gold outline Appointment Badge — desktop only */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="hidden md:block border border-[#C8A96A]/30 text-[#C8A96A] text-[11px] font-sans font-semibold px-6 py-2.5 rounded-full uppercase tracking-[0.2em] self-start mt-10 relative z-10"
-            >
-              {badgesText[1] || "By Appointment Only"}
-            </motion.div>
 
           </div>
 
