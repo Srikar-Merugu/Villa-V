@@ -10,7 +10,6 @@ import { useLanguage } from "../context/LanguageContext";
 
 // Code-split dynamic loading of offscreen sections to improve LCP & reduce initial JS bundle sizes
 const About = dynamic(() => import("../components/About"));
-const Lifestyle = dynamic(() => import("../components/Lifestyle"));
 const Amenities = dynamic(() => import("../components/Amenities"));
 const Gallery = dynamic(() => import("../components/Gallery"));
 const FloorPlans = dynamic(() => import("../components/FloorPlans"));
@@ -81,8 +80,6 @@ export default function Home() {
       {/* Post-Video Luxury Editorial Sections */}
       <main id="main-content" className="relative z-10 bg-[#0B0B0C] w-full max-w-full overflow-x-hidden box-border">
         <About />
-
-        <Lifestyle />
 
         <Amenities />
 
