@@ -397,17 +397,17 @@ export default function ScrollVideoScrub() {
 
       // Determine active scene based on progress to control visual overlays
       let sceneIndex = 0;
-      if (pct < 0.05) {
+      if (pct < 0.08) {
         sceneIndex = 0;
-      } else if (pct < 0.22) {
+      } else if (pct < 0.23) {
         sceneIndex = 1;
-      } else if (pct < 0.40) {
+      } else if (pct < 0.38) {
         sceneIndex = 2;
-      } else if (pct < 0.60) {
+      } else if (pct < 0.54) {
         sceneIndex = 3;
-      } else if (pct < 0.78) {
+      } else if (pct < 0.70) {
         sceneIndex = 4;
-      } else if (pct < 0.93) {
+      } else if (pct < 0.86) {
         sceneIndex = 5;
       } else {
         sceneIndex = 6;
@@ -469,7 +469,7 @@ export default function ScrollVideoScrub() {
   const currentScene = scenes[activeSceneIndex] || { serif: "", script: "" };
 
   return (
-    <div ref={containerRef} className="relative w-full h-[520vh] bg-[#0B0B0C]">
+    <div ref={containerRef} className="relative w-full h-[950vh] bg-[#0B0B0C]">
       {/* Premium Luxury Loading Screen */}
       <AnimatePresence>
         {!isInitialized && (
