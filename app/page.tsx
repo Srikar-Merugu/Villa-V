@@ -12,7 +12,6 @@ import { useLanguage } from "../context/LanguageContext";
 const About = dynamic(() => import("../components/About"));
 const Lifestyle = dynamic(() => import("../components/Lifestyle"));
 const Amenities = dynamic(() => import("../components/Amenities"));
-const ArchitecturalPhilosophy = dynamic(() => import("../components/ArchitecturalPhilosophy"));
 const Gallery = dynamic(() => import("../components/Gallery"));
 const FloorPlans = dynamic(() => import("../components/FloorPlans"));
 const Location = dynamic(() => import("../components/Location"));
@@ -86,8 +85,6 @@ export default function Home() {
         <Lifestyle />
 
         <Amenities />
-
-        <ArchitecturalPhilosophy />
 
         <Gallery />
 
