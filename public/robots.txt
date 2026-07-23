@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /_next/
+Disallow: /static/
+
+Sitemap: https://villa-v.vercel.app/sitemap.xml

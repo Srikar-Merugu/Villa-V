@@ -1,0 +1,216 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-gold: #C5A880;
+  --color-gold-dark: #8E7544;
+  --color-gold-light: #E5D5C0;
+  --color-charcoal: #0A0A0A;
+  --color-charcoal-light: #161616;
+  --font-serif: var(--font-serif-luxury), Georgia, serif;
+  --font-sans: var(--font-sans-luxury), system-ui, sans-serif;
+  --font-script: var(--font-script-luxury), cursive;
+  
+  --animate-fade-in: fade-in 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-up: slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-scale-up: scale-up 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-blur-in: blur-in 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes blur-in {
+  from {
+    filter: blur(10px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+:root {
+  --background: #0B0B0C;
+  --foreground: #E9E8E5;
+  --gold-rgba: 214, 177, 92;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 168, 128, 0.3);
+  border-radius: 3px;
+  transition: background 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 168, 128, 0.6);
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism helpers */
+.glass {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Typography styles */
+h1, h2, h3, h4, .font-serif-luxury {
+  font-family: var(--font-serif);
+  line-height: 1.35 !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 300;
+}
+
+p, .body-text {
+  line-height: 1.85 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+.text-shadow-subtle {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+/* Lenis smooth scrolling requirement */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overflow: clip;
+}
+
+.lenis-target {
+  position: relative;
+}
+
+/* Particle and mesh overlay styling */
+.grid-overlay {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(197, 168, 128, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(197, 168, 128, 0.04) 1px, transparent 1px);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF 0%, #C5A880 50%, #8E7544 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Global Keyboard Focus States (WCAG AA Compliance) */
+*:focus-visible {
+  outline: 2px solid #C8A96A !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 4px rgba(200, 169, 106, 0.15) !important;
+}
+
+/* Accessible Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #C8A96A;
+  color: #0B0B0C;
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  z-index: 100000;
+  transition: top 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.skip-link:focus-visible {
+  top: 16px;
+}
+
+/* Reduced Motion Overrides */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+/* Floor Plans: mobile image container — 16:10 aspect ratio, capped at 42vh */
+@media (max-width: 767px) {
+  .floor-image-container {
+    aspect-ratio: 16 / 10;
+    max-height: 42vh;
+    height: auto;
+  }
+}
