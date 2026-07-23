@@ -101,25 +101,6 @@ export default function Footer() {
 
       <div className="w-full max-w-full lg:max-w-[1400px] mx-auto px-4 md:px-12 lg:px-[80px] relative z-10 box-border">
 
-        {/* Closing Statement + CTA -- a deliberate final beat rather than dropping straight
-            into utility link columns */}
-        <motion.div
-          variants={columnVariants}
-          className="flex flex-col items-center text-center border-b border-white/10 pb-14 mb-14 lg:pb-20 lg:mb-20"
-        >
-          <span className="text-[#C8A96A] text-xs font-sans font-semibold tracking-[0.3em] uppercase mb-5 block">
-            {t("contact.badges.1")}
-          </span>
-          <h2 className="font-serif text-[#F6F3EB] font-light text-[clamp(32px,6vw,64px)] leading-[1.1] tracking-tight max-w-2xl mb-8">
-            {language === "hr" ? "Vaše utočište vas čeka." : "Your sanctuary awaits."}
-          </h2>
-          <button
-            onClick={handleScrollToContact}
-            className="group/cta relative flex items-center gap-2 bg-[#C8A96A] text-[#0B0B0C] font-sans font-semibold text-xs uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 hover:bg-[#D6B15C] hover:shadow-[0_12px_32px_rgba(200,169,106,0.25)] focus-visible:outline-none"
-          >
-            {t("navbar.cta")}
-          </button>
-        </motion.div>
 
         {/* Responsive Grid Columns (Collapses to 1 column on mobile) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-8 lg:gap-12">
